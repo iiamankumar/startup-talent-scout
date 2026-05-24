@@ -44,7 +44,19 @@ function RolesPage() {
         {rolesQ.data?.requests.map((r) => (
           <RoleCard
             key={r.id}
-            role={r}
+            role={{
+              id: r.id,
+              role_title: r.role_title,
+              stack: r.stack,
+              urgency: r.urgency,
+              budget_monthly_usd: r.budget_monthly_usd,
+              companies: r.companies
+                ? {
+                    name: (r.companies as { name?: string }).name ?? undefined,
+                    stage: (r.companies as { stage?: string | null }).stage ?? undefined,
+                  }
+                : null,
+            }}
             alreadyApplied={appliedIds.has(r.id)}
             onApply={async (note) => {
               try {

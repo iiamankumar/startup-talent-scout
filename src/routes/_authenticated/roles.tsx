@@ -55,15 +55,7 @@ function RolesPage() {
                 : null,
             }}
             alreadyApplied={appliedIds.has(r.id)}
-            onApply={async (note) => {
-              try {
-                await apply({ data: { hire_request_id: r.id, note } });
-                toast.success("Application sent.");
-                minesQ.refetch();
-              } catch (e) {
-                toast.error((e as Error).message);
-              }
-            }}
+            onApply={async () => {}}
           />
         ))}
         {rolesQ.data && rolesQ.data.requests.length === 0 && (

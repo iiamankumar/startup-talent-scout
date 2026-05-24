@@ -313,30 +313,69 @@ function Index() {
         </div>
       </section>
 
-      <footer className="border-t border-border py-12">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-8 px-6 md:flex-row">
-          <div className="flex items-center gap-2">
-            <div className="size-4 rounded-sm bg-foreground" />
-            <span className="text-xs font-semibold tracking-tight">KLYRO</span>
+      <footer className="border-t border-border py-16">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="grid grid-cols-2 gap-y-12 gap-x-8 md:grid-cols-4">
+            <div>
+              <h4 className="text-sm font-semibold text-foreground">Engineers</h4>
+              <ul className="mt-5 space-y-3 text-sm text-muted-foreground">
+                <li><Link to="/network" className="hover:text-foreground">Find work</Link></li>
+                <li><a href="#" className="hover:text-foreground">Help center</a></li>
+                <li><a href="#" className="hover:text-foreground">Resources</a></li>
+                <li><a href="#" className="hover:text-foreground">Stories</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold text-foreground">Network</h4>
+              <ul className="mt-5 space-y-3 text-sm text-muted-foreground">
+                <li><Link to="/network" className="hover:text-foreground">Browse talent</Link></li>
+                <li><a href="#process" className="hover:text-foreground">How it works</a></li>
+                <li><Link to="/apply" className="hover:text-foreground">Apply</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold text-foreground">Business</h4>
+              <ul className="mt-5 space-y-3 text-sm text-muted-foreground">
+                <li><Link to="/hire" className="hover:text-foreground">Hire talent</Link></li>
+                <li><a href="#" className="hover:text-foreground">Enterprise</a></li>
+                <li><a href="#" className="hover:text-foreground">Data partnerships</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold text-foreground">Contact</h4>
+              <ul className="mt-5 space-y-3 text-sm text-muted-foreground">
+                <li><a href="#" className="hover:text-foreground">Support</a></li>
+                <li><a href="#" className="hover:text-foreground">Press</a></li>
+                <li><a href="#" className="hover:text-foreground">Sales</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold text-foreground">Klyro</h4>
+              <ul className="mt-5 space-y-3 text-sm text-muted-foreground">
+                <li><a href="#" className="hover:text-foreground">Careers</a></li>
+                <li><a href="#" className="hover:text-foreground">Security</a></li>
+                <li><a href="#" className="hover:text-foreground">Blog</a></li>
+              </ul>
+            </div>
           </div>
-          <div className="flex items-center gap-6">
-            <a href="#" aria-label="Twitter" className="text-muted-foreground hover:text-foreground">
-              <Twitter className="size-4" />
-            </a>
-            <a href="#" aria-label="GitHub" className="text-muted-foreground hover:text-foreground">
-              <Github className="size-4" />
-            </a>
-            <a
-              href="#"
-              aria-label="LinkedIn"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              <Linkedin className="size-4" />
-            </a>
+
+          <div className="mt-16 flex flex-col gap-6 border-t border-border pt-8 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-6 text-sm text-muted-foreground">
+              <span>© 2026 Klyro</span>
+              <span className="text-muted-foreground/70">Bengaluru, India</span>
+            </div>
+            <div className="flex items-center gap-5">
+              <a href="#" aria-label="Twitter" className="text-muted-foreground hover:text-foreground">
+                <Twitter className="size-4" />
+              </a>
+              <a href="#" aria-label="LinkedIn" className="text-muted-foreground hover:text-foreground">
+                <Linkedin className="size-4" />
+              </a>
+              <a href="#" aria-label="GitHub" className="text-muted-foreground hover:text-foreground">
+                <Github className="size-4" />
+              </a>
+            </div>
           </div>
-          <p className="text-xs text-muted-foreground/70">
-            © 2026 Klyro. Built honestly for the cracked.
-          </p>
         </div>
       </footer>
     </main>

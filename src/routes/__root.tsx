@@ -75,13 +75,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Avyra — Elite engineers, hired in 72 hours" },
+      { title: "Klyro — Elite engineers, hired in 72 hours" },
       {
         name: "description",
         content:
-          "Avyra is a hand-curated talent network. The top 0.1% of Indian AI and full-stack engineers, vetted and matched to startups in 72 hours.",
+          "Klyro is a hand-curated talent network. The top 0.1% of Indian AI and full-stack engineers, vetted and matched to startups in 72 hours.",
       },
-      { property: "og:title", content: "Avyra — Elite engineers, hired in 72h" },
+      { property: "og:title", content: "Klyro — Elite engineers, hired in 72h" },
       {
         property: "og:description",
         content:

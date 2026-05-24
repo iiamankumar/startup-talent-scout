@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_authenticated")({
 });
 
 function AuthLayout() {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, signOut, roles } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,7 +28,7 @@ function AuthLayout() {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <Link to="/" className="flex items-center gap-2">
             <div className="size-5 rounded-sm bg-foreground" />
-            <span className="text-sm font-semibold tracking-tight">AVYRA</span>
+            <span className="text-sm font-semibold tracking-tight">KLYRO</span>
           </Link>
           <nav className="flex items-center gap-6 text-sm">
             <Link

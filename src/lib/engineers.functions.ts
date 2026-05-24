@@ -9,11 +9,11 @@ export const listVettedEngineers = createServerFn({ method: "GET" }).handler(asy
   const { data, error } = await supabaseAdmin
     .from("engineers")
     .select(
-      "user_id, display_name, headline, location, years_experience, skills, github_url, linkedin_url, website_url, available, avyra_score, vetting"
+      "user_id, display_name, headline, location, years_experience, skills, github_url, linkedin_url, website_url, available, klyro_score, vetting"
     )
     .eq("vetting", "vetted")
     .eq("available", true)
-    .order("avyra_score", { ascending: false, nullsFirst: false })
+    .order("klyro_score", { ascending: false, nullsFirst: false })
     .limit(60);
   if (error) return { engineers: [], error: error.message };
   return { engineers: data ?? [], error: null };

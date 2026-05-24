@@ -36,7 +36,7 @@ function SignupPage() {
     });
     setSubmitting(false);
     if (error) return toast.error(error.message);
-    toast.success("Account created. Welcome to Avyra.");
+    toast.success("Account created. Welcome to Klyro.");
     navigate({ to: "/dashboard" });
   };
 
@@ -48,7 +48,7 @@ function SignupPage() {
   };
 
   return (
-    <AuthShell title="Join Avyra" subtitle="Hire elite talent or get matched with elite startups.">
+    <AuthShell title="Join Klyro" subtitle="Hire elite talent or get matched with elite startups.">
       <button
         onClick={handleGoogle}
         className="flex h-11 w-full items-center justify-center gap-2 rounded-md border border-border bg-card text-sm font-medium hover:bg-secondary"

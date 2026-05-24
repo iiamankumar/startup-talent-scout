@@ -4,13 +4,13 @@ import { Plus, FileText, Github, Twitter, Linkedin, ArrowRight } from "lucide-re
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Avyra — India's top 0.1% engineers, hired in 72 hours" },
+      { title: "Klyro — India's top 0.1% engineers, hired in 72 hours" },
       {
         name: "description",
         content:
-          "Avyra is a hand-curated talent network. We manually vet India's top AI and full-stack engineers so startups can hire world-class talent in 72 hours.",
+          "Klyro is a hand-curated talent network. We manually vet India's top AI and full-stack engineers so startups can hire world-class talent in 72 hours.",
       },
-      { property: "og:title", content: "Avyra — Elite engineers, hired in 72h" },
+      { property: "og:title", content: "Klyro — Elite engineers, hired in 72h" },
       {
         property: "og:description",
         content: "Hand-vetted AI and full-stack engineers from India. No resume spam.",
@@ -55,7 +55,7 @@ const engineers: Engineer[] = [
     role: "AI Research · GSoC 2023",
     tags: ["LLMs", "LangChain", "Python"],
     status: "ON INTERVIEW",
-    metricLabel: "Avyra Score",
+    metricLabel: "Klyro Score",
     metricValue: "98 / 100",
     metricAccent: true,
   },
@@ -83,7 +83,7 @@ const engineers: Engineer[] = [
     role: "ML Engineer · IIT Bombay",
     tags: ["PyTorch", "CUDA", "Triton"],
     status: "ON INTERVIEW",
-    metricLabel: "Avyra Score",
+    metricLabel: "Klyro Score",
     metricValue: "96 / 100",
     metricAccent: true,
   },
@@ -104,7 +104,7 @@ function Index() {
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-8">
         <Link to="/" className="flex items-center gap-2">
           <div className="size-5 rounded-sm bg-foreground" aria-hidden />
-          <span className="text-sm font-semibold tracking-tight">AVYRA</span>
+          <span className="text-sm font-semibold tracking-tight">KLYRO</span>
         </Link>
         <div className="flex items-center gap-6 md:gap-8">
           <Link
@@ -287,7 +287,7 @@ function Index() {
           <div className="max-w-[44ch]">
             <p className="text-2xl font-medium leading-snug text-pretty lg:text-3xl">
               <span className="font-serif italic text-background/60">"</span>
-              Avyra helped us scale engineering from 2 to 12 in under a month. Quality was
+              Klyro helped us scale engineering from 2 to 12 in under a month. Quality was
               consistently better than any agency we've used.
               <span className="font-serif italic text-background/60">"</span>
             </p>
@@ -351,7 +351,7 @@ function Index() {
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-8 px-6 md:flex-row">
           <div className="flex items-center gap-2">
             <div className="size-4 rounded-sm bg-foreground" />
-            <span className="text-xs font-semibold tracking-tight">AVYRA NETWORK</span>
+            <span className="text-xs font-semibold tracking-tight">KLYRO NETWORK</span>
           </div>
           <div className="flex items-center gap-6">
             <a href="#" aria-label="Twitter" className="text-muted-foreground hover:text-foreground">
@@ -369,7 +369,7 @@ function Index() {
             </a>
           </div>
           <p className="text-xs text-muted-foreground/70">
-            © 2026 Avyra. Built for the top 0.1%.
+            © 2026 Klyro. Built for the top 0.1%.
           </p>
         </div>
       </footer>

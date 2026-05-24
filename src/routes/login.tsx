@@ -38,7 +38,7 @@ function LoginPage() {
   };
 
   return (
-    <AuthShell title="Sign in to Avyra" subtitle="Welcome back to the network.">
+    <AuthShell title="Sign in to Klyro" subtitle="Welcome back to the network.">
       <button
         onClick={handleGoogle}
         className="flex h-11 w-full items-center justify-center gap-2 rounded-md border border-border bg-card text-sm font-medium hover:bg-secondary"
@@ -103,7 +103,7 @@ export function AuthShell({
       <div className="mx-auto flex max-w-md flex-col px-6 py-12">
         <Link to="/" className="mb-10 flex items-center gap-2">
           <div className="size-5 rounded-sm bg-foreground" />
-          <span className="text-sm font-semibold tracking-tight">AVYRA</span>
+          <span className="text-sm font-semibold tracking-tight">KLYRO</span>
         </Link>
         <h1 className="text-2xl font-medium tracking-tight">{title}</h1>
         <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>

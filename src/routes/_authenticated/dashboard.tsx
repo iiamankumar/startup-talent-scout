@@ -7,7 +7,7 @@ import { listMyHireRequests, listOpenRequestsForEngineers } from "@/lib/hire.fun
 import { ArrowRight, Briefcase, UserCircle2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard — Avyra" }] }),
+  head: () => ({ meta: [{ title: "Dashboard — Klyro" }] }),
   component: Dashboard,
 });
 
@@ -116,9 +116,13 @@ function Dashboard() {
                       {r.stack.slice(0, 3).join(", ")}
                     </p>
                   </div>
-                  <span className="rounded-full bg-background px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ring-black/5">
-                    {r.status}
-                  </span>
+                  <Link
+                    to="/requests/$requestId"
+                    params={{ requestId: r.id }}
+                    className="rounded-full bg-background px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ring-black/5 hover:bg-foreground hover:text-background"
+                  >
+                    {r.status} · view
+                  </Link>
                 </li>
               ))}
             </ul>

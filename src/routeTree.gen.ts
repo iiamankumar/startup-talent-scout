@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StoriesRouteImport } from './routes/stories'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SecurityRouteImport } from './routes/security'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as NetworkRouteImport } from './routes/network'
 import { Route as LoginRouteImport } from './routes/login'
@@ -38,6 +39,11 @@ const StoriesRoute = StoriesRouteImport.update({
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SecurityRoute = SecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResourcesRoute = ResourcesRouteImport.update({
@@ -140,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/network': typeof NetworkRoute
   '/resources': typeof ResourcesRoute
+  '/security': typeof SecurityRoute
   '/signup': typeof SignupRoute
   '/stories': typeof StoriesRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -161,6 +168,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/network': typeof NetworkRoute
   '/resources': typeof ResourcesRoute
+  '/security': typeof SecurityRoute
   '/signup': typeof SignupRoute
   '/stories': typeof StoriesRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -184,6 +192,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/network': typeof NetworkRoute
   '/resources': typeof ResourcesRoute
+  '/security': typeof SecurityRoute
   '/signup': typeof SignupRoute
   '/stories': typeof StoriesRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
@@ -207,6 +216,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/network'
     | '/resources'
+    | '/security'
     | '/signup'
     | '/stories'
     | '/admin'
@@ -228,6 +238,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/network'
     | '/resources'
+    | '/security'
     | '/signup'
     | '/stories'
     | '/admin'
@@ -250,6 +261,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/network'
     | '/resources'
+    | '/security'
     | '/signup'
     | '/stories'
     | '/_authenticated/admin'
@@ -273,6 +285,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   NetworkRoute: typeof NetworkRoute
   ResourcesRoute: typeof ResourcesRoute
+  SecurityRoute: typeof SecurityRoute
   SignupRoute: typeof SignupRoute
   StoriesRoute: typeof StoriesRoute
   EngineerUserIdRoute: typeof EngineerUserIdRoute
@@ -292,6 +305,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/security': {
+      id: '/security'
+      path: '/security'
+      fullPath: '/security'
+      preLoaderRoute: typeof SecurityRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/resources': {
@@ -459,6 +479,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   NetworkRoute: NetworkRoute,
   ResourcesRoute: ResourcesRoute,
+  SecurityRoute: SecurityRoute,
   SignupRoute: SignupRoute,
   StoriesRoute: StoriesRoute,
   EngineerUserIdRoute: EngineerUserIdRoute,

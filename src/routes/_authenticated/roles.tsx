@@ -2,9 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listOpenRequestsForEngineers } from "@/lib/hire.functions";
-import { applyToHireRequest, listMyApplications } from "@/lib/applications.functions";
-import { useState } from "react";
-import { toast } from "sonner";
+import { listMyApplications } from "@/lib/applications.functions";
 
 export const Route = createFileRoute("/_authenticated/roles")({
   head: () => ({ meta: [{ title: "Open roles — Klyro" }] }),
@@ -14,7 +12,6 @@ export const Route = createFileRoute("/_authenticated/roles")({
 function RolesPage() {
   const getOpen = useServerFn(listOpenRequestsForEngineers);
   const getMine = useServerFn(listMyApplications);
-  const apply = useServerFn(applyToHireRequest);
 
   const rolesQ = useQuery({ queryKey: ["openRoles"], queryFn: () => getOpen() });
   const minesQ = useQuery({ queryKey: ["myApps"], queryFn: () => getMine() });
@@ -58,15 +55,7 @@ function RolesPage() {
                 : null,
             }}
             alreadyApplied={appliedIds.has(r.id)}
-            onApply={async (note) => {
-              try {
-                await apply({ data: { hire_request_id: r.id, note } });
-                toast.success("Application sent.");
-                minesQ.refetch();
-              } catch (e) {
-                toast.error((e as Error).message);
-              }
-            }}
+            onApply={async () => {}}
           />
         ))}
         {rolesQ.data && rolesQ.data.requests.length === 0 && (
@@ -109,7 +98,6 @@ function RolesPage() {
 function RoleCard({
   role,
   alreadyApplied,
-  onApply,
 }: {
   role: {
     id: string;
@@ -122,15 +110,15 @@ function RoleCard({
   alreadyApplied: boolean;
   onApply: (note: string | null) => Promise<void>;
 }) {
-  const [open, setOpen] = useState(false);
-  const [note, setNote] = useState("");
-  const [busy, setBusy] = useState(false);
-
   return (
-    <div className="rounded-2xl bg-card p-6 ring-1 ring-black/5">
+    <Link
+      to="/jobs/$jobId"
+      params={{ jobId: role.id }}
+      className="group block rounded-2xl bg-card p-6 ring-1 ring-black/5 transition hover:ring-foreground/20"
+    >
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-base font-semibold">{role.role_title}</p>
+          <p className="text-base font-semibold group-hover:underline">{role.role_title}</p>
           <p className="mt-0.5 text-xs text-muted-foreground">
             {role.companies?.name ?? "Stealth"}
             {role.companies?.stage ? ` · ${role.companies.stage}` : ""}
@@ -154,41 +142,9 @@ function RoleCard({
         {alreadyApplied ? (
           <span className="text-xs font-medium text-muted-foreground">✓ Applied</span>
         ) : (
-          <button
-            onClick={() => setOpen((o) => !o)}
-            className="rounded-md bg-foreground px-3 py-1.5 text-xs font-medium text-background"
-          >
-            {open ? "Cancel" : "Apply"}
-          </button>
+          <span className="text-xs font-medium text-foreground">View role →</span>
         )}
       </div>
-      {open && !alreadyApplied && (
-        <div className="mt-4 space-y-2">
-          <textarea
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            rows={3}
-            placeholder="Brief note: why you're a great fit (optional)…"
-            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-          />
-          <button
-            disabled={busy}
-            onClick={async () => {
-              setBusy(true);
-              try {
-                await onApply(note.trim() || null);
-                setOpen(false);
-                setNote("");
-              } finally {
-                setBusy(false);
-              }
-            }}
-            className="rounded-md bg-foreground px-3 py-1.5 text-xs font-medium text-background disabled:opacity-50"
-          >
-            {busy ? "Sending…" : "Send application"}
-          </button>
-        </div>
-      )}
-    </div>
+    </Link>
   );
 }

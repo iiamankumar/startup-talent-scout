@@ -69,3 +69,22 @@ export const upsertMyEngineerProfile = createServerFn({ method: "POST" })
 
     return { ok: true };
   });
+
+// PUBLIC: full engineer profile (vetted only)
+export const getEngineerPublicProfile = createServerFn({ method: "GET" })
+  .inputValidator((input: { user_id: string }) => {
+    if (typeof input?.user_id !== "string") throw new Error("user_id required");
+    return input;
+  })
+  .handler(async ({ data }) => {
+    const { data: e, error } = await supabaseAdmin
+      .from("engineers")
+      .select(
+        "user_id, display_name, headline, bio, location, years_experience, hourly_rate_usd, skills, github_url, linkedin_url, website_url, available, klyro_score, vetting"
+      )
+      .eq("user_id", data.user_id)
+      .eq("vetting", "vetted")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    return { engineer: e };
+  });

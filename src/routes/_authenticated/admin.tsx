@@ -7,9 +7,10 @@ import {
   updateEngineerVetting,
   promoteSelfToAdmin,
 } from "@/lib/admin.functions";
+import { listPendingReviewsAdmin, setReviewApprovalAdmin } from "@/lib/reviews.functions";
 import { useState } from "react";
 import { toast } from "sonner";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, Star } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Klyro" }] }),
@@ -115,7 +116,77 @@ function AdminPage() {
           </tbody>
         </table>
       </div>
+
+      <ReviewModeration />
     </main>
+  );
+}
+
+function ReviewModeration() {
+  const list = useServerFn(listPendingReviewsAdmin);
+  const setApproval = useServerFn(setReviewApprovalAdmin);
+  const q = useQuery({ queryKey: ["pendingReviews"], queryFn: () => list() });
+
+  return (
+    <section className="mt-12">
+      <div className="flex items-center justify-between border-b border-border pb-4">
+        <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+          Pending reviews
+        </h2>
+        <span className="text-xs text-muted-foreground/70">
+          {q.data?.reviews.length ?? 0} awaiting
+        </span>
+      </div>
+      <ul className="mt-6 space-y-4">
+        {q.isLoading && <li className="text-sm text-muted-foreground">Loading…</li>}
+        {q.data?.reviews.map((r) => {
+          const eng = r.engineers as { display_name?: string } | null;
+          return (
+            <li key={r.id} className="rounded-2xl bg-card p-5 ring-1 ring-black/5">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-sm font-semibold">
+                    For {eng?.display_name ?? "—"} · by {r.reviewer_name}
+                    {r.reviewer_company ? ` @ ${r.reviewer_company}` : ""}
+                  </p>
+                  <div className="mt-1 flex items-center gap-1 text-success">
+                    {Array.from({ length: r.rating }).map((_, i) => (
+                      <Star key={i} className="size-3 fill-current" />
+                    ))}
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={async () => {
+                      await setApproval({ data: { id: r.id, approved: true } });
+                      toast.success("Approved");
+                      q.refetch();
+                    }}
+                    className="rounded-md bg-foreground px-3 py-1.5 text-xs font-medium text-background"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={async () => {
+                      await setApproval({ data: { id: r.id, approved: false } });
+                      toast.success("Hidden");
+                      q.refetch();
+                    }}
+                    className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground"
+                  >
+                    Hide
+                  </button>
+                </div>
+              </div>
+              <p className="mt-3 text-sm text-foreground/90">“{r.quote}”</p>
+            </li>
+          );
+        })}
+        {q.data && q.data.reviews.length === 0 && (
+          <li className="text-sm text-muted-foreground">No pending reviews.</li>
+        )}
+      </ul>
+    </section>
   );
 }
 

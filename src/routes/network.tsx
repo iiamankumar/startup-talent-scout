@@ -90,9 +90,11 @@ function NetworkPage() {
         ) : (
           <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {engineers.map((e) => (
-              <article
+              <Link
                 key={e.user_id}
-                className="rounded-xl bg-card p-6 ring-1 ring-black/5 transition-all hover:ring-black/10"
+                to="/engineer/$userId"
+                params={{ userId: e.user_id }}
+                className="block rounded-xl bg-card p-6 ring-1 ring-black/5 transition-all hover:ring-black/10"
               >
                 <div className="flex items-start justify-between">
                   <div className="grid size-12 place-items-center rounded-full bg-secondary text-sm font-semibold">
@@ -103,7 +105,7 @@ function NetworkPage() {
                       .join("")
                       .toUpperCase()}
                   </div>
-                  <div className="rounded-full bg-background px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground ring-1 ring-black/5">
+                  <div className="rounded-full bg-background px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-success ring-1 ring-black/5">
                     Available
                   </div>
                 </div>
@@ -125,21 +127,9 @@ function NetworkPage() {
                 </div>
                 <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
                   <div className="flex items-center gap-3 text-muted-foreground">
-                    {e.github_url && (
-                      <a href={e.github_url} target="_blank" rel="noreferrer">
-                        <Github className="size-4 hover:text-foreground" />
-                      </a>
-                    )}
-                    {e.linkedin_url && (
-                      <a href={e.linkedin_url} target="_blank" rel="noreferrer">
-                        <Linkedin className="size-4 hover:text-foreground" />
-                      </a>
-                    )}
-                    {e.website_url && (
-                      <a href={e.website_url} target="_blank" rel="noreferrer">
-                        <Globe className="size-4 hover:text-foreground" />
-                      </a>
-                    )}
+                    {e.github_url && <Github className="size-4" />}
+                    {e.linkedin_url && <Linkedin className="size-4" />}
+                    {e.website_url && <Globe className="size-4" />}
                   </div>
                   {e.klyro_score != null && (
                     <span className="text-xs">
@@ -148,7 +138,7 @@ function NetworkPage() {
                     </span>
                   )}
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         )}

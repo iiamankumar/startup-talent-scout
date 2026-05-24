@@ -320,16 +320,16 @@ function Index() {
               <h4 className="text-sm font-semibold text-foreground">Engineers</h4>
               <ul className="mt-5 space-y-3 text-sm text-muted-foreground">
                 <li><Link to="/network" className="hover:text-foreground">Find work</Link></li>
-                <li><a href="#" className="hover:text-foreground">Help center</a></li>
-                <li><a href="#" className="hover:text-foreground">Resources</a></li>
-                <li><a href="#" className="hover:text-foreground">Stories</a></li>
+                <li><Link to="/help-center" className="hover:text-foreground">Help center</Link></li>
+                <li><Link to="/resources" className="hover:text-foreground">Resources</Link></li>
+                <li><Link to="/stories" className="hover:text-foreground">Stories</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-semibold text-foreground">Network</h4>
               <ul className="mt-5 space-y-3 text-sm text-muted-foreground">
                 <li><Link to="/network" className="hover:text-foreground">Browse talent</Link></li>
-                <li><a href="#process" className="hover:text-foreground">How it works</a></li>
+                <li><a href="/#process" className="hover:text-foreground">How it works</a></li>
                 <li><Link to="/apply" className="hover:text-foreground">Apply</Link></li>
               </ul>
             </div>
@@ -337,24 +337,24 @@ function Index() {
               <h4 className="text-sm font-semibold text-foreground">Business</h4>
               <ul className="mt-5 space-y-3 text-sm text-muted-foreground">
                 <li><Link to="/hire" className="hover:text-foreground">Hire talent</Link></li>
-                <li><a href="#" className="hover:text-foreground">Enterprise</a></li>
-                <li><a href="#" className="hover:text-foreground">Data partnerships</a></li>
+                <li><Link to="/enterprise" className="hover:text-foreground">Enterprise</Link></li>
+                <li><Link to="/data-partnerships" className="hover:text-foreground">Data partnerships</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-semibold text-foreground">Contact</h4>
               <ul className="mt-5 space-y-3 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground">Support</a></li>
-                <li><a href="#" className="hover:text-foreground">Press</a></li>
-                <li><a href="#" className="hover:text-foreground">Sales</a></li>
+                <li><a href="mailto:support@klyro.dev" className="hover:text-foreground">Support</a></li>
+                <li><a href="mailto:press@klyro.dev" className="hover:text-foreground">Press</a></li>
+                <li><a href="mailto:sales@klyro.dev" className="hover:text-foreground">Sales</a></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-semibold text-foreground">Klyro</h4>
               <ul className="mt-5 space-y-3 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground">Careers</a></li>
-                <li><a href="#" className="hover:text-foreground">Security</a></li>
-                <li><a href="#" className="hover:text-foreground">Blog</a></li>
+                <li><Link to="/careers" className="hover:text-foreground">Careers</Link></li>
+                <li><Link to="/security" className="hover:text-foreground">Security</Link></li>
+                <li><Link to="/blog" className="hover:text-foreground">Blog</Link></li>
               </ul>
             </div>
           </div>

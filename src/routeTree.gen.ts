@@ -14,6 +14,7 @@ import { Route as NetworkRouteImport } from './routes/network'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EngineerUserIdRouteImport } from './routes/engineer.$userId'
 import { Route as AuthenticatedRolesRouteImport } from './routes/_authenticated/roles'
 import { Route as AuthenticatedHireRouteImport } from './routes/_authenticated/hire'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -43,6 +44,11 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EngineerUserIdRoute = EngineerUserIdRouteImport.update({
+  id: '/engineer/$userId',
+  path: '/engineer/$userId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRolesRoute = AuthenticatedRolesRouteImport.update({
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/hire': typeof AuthenticatedHireRoute
   '/roles': typeof AuthenticatedRolesRoute
+  '/engineer/$userId': typeof EngineerUserIdRoute
   '/requests/$requestId': typeof AuthenticatedRequestsRequestIdRoute
 }
 export interface FileRoutesByTo {
@@ -99,6 +106,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/hire': typeof AuthenticatedHireRoute
   '/roles': typeof AuthenticatedRolesRoute
+  '/engineer/$userId': typeof EngineerUserIdRoute
   '/requests/$requestId': typeof AuthenticatedRequestsRequestIdRoute
 }
 export interface FileRoutesById {
@@ -113,6 +121,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/hire': typeof AuthenticatedHireRoute
   '/_authenticated/roles': typeof AuthenticatedRolesRoute
+  '/engineer/$userId': typeof EngineerUserIdRoute
   '/_authenticated/requests/$requestId': typeof AuthenticatedRequestsRequestIdRoute
 }
 export interface FileRouteTypes {
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/hire'
     | '/roles'
+    | '/engineer/$userId'
     | '/requests/$requestId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/hire'
     | '/roles'
+    | '/engineer/$userId'
     | '/requests/$requestId'
   id:
     | '__root__'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/hire'
     | '/_authenticated/roles'
+    | '/engineer/$userId'
     | '/_authenticated/requests/$requestId'
   fileRoutesById: FileRoutesById
 }
@@ -161,6 +173,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   NetworkRoute: typeof NetworkRoute
   SignupRoute: typeof SignupRoute
+  EngineerUserIdRoute: typeof EngineerUserIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -198,6 +211,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/engineer/$userId': {
+      id: '/engineer/$userId'
+      path: '/engineer/$userId'
+      fullPath: '/engineer/$userId'
+      preLoaderRoute: typeof EngineerUserIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/roles': {
@@ -273,7 +293,18 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   NetworkRoute: NetworkRoute,
   SignupRoute: SignupRoute,
+  EngineerUserIdRoute: EngineerUserIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

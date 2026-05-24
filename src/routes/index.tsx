@@ -1,19 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, FileText, Github, Twitter, Linkedin, ArrowRight } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { Plus, FileText, Github, Twitter, Linkedin, ArrowRight, Star } from "lucide-react";
+import { getFeaturedEngineers, getLandingStats } from "@/lib/reviews.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Klyro — India's top 0.1% engineers, hired in 72 hours" },
+      { title: "Klyro — India's hand-vetted engineer network" },
       {
         name: "description",
         content:
-          "Klyro is a hand-curated talent network. We manually vet India's top AI and full-stack engineers so startups can hire world-class talent in 72 hours.",
+          "Klyro is a curated talent network. We manually vet Indian AI and full-stack engineers and match them to startups — no resume spam, no agency fluff.",
       },
-      { property: "og:title", content: "Klyro — Elite engineers, hired in 72h" },
+      { property: "og:title", content: "Klyro — Hand-vetted engineers for startups" },
       {
         property: "og:description",
-        content: "Hand-vetted AI and full-stack engineers from India. No resume spam.",
+        content: "Hand-vetted AI and full-stack engineers from India. Real profiles, real reviews.",
       },
     ],
     links: [
@@ -28,77 +31,16 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-type Engineer = {
-  initials: string;
-  name: string;
-  role: string;
-  tags: string[];
-  status: "AVAILABLE" | "ON INTERVIEW";
-  metricLabel: string;
-  metricValue: string;
-  metricAccent?: boolean;
-};
-
-const engineers: Engineer[] = [
-  {
-    initials: "IM",
-    name: "Ishaan M.",
-    role: "Full-stack Engineer · Ex-Razorpay",
-    tags: ["Next.js", "PyTorch", "Rust"],
-    status: "AVAILABLE",
-    metricLabel: "GitHub Activity",
-    metricValue: "Top 1% in India",
-  },
-  {
-    initials: "PS",
-    name: "Priya S.",
-    role: "AI Research · GSoC 2023",
-    tags: ["LLMs", "LangChain", "Python"],
-    status: "ON INTERVIEW",
-    metricLabel: "Klyro Score",
-    metricValue: "98 / 100",
-    metricAccent: true,
-  },
-  {
-    initials: "KR",
-    name: "Karthik R.",
-    role: "Systems Engineer · Hackathon Lead",
-    tags: ["C++", "Go", "Postgres"],
-    status: "AVAILABLE",
-    metricLabel: "Commits (YTD)",
-    metricValue: "1,284",
-  },
-  {
-    initials: "AN",
-    name: "Aanya N.",
-    role: "Frontend Engineer · Open Source",
-    tags: ["React", "Three.js", "TypeScript"],
-    status: "AVAILABLE",
-    metricLabel: "OSS Stars",
-    metricValue: "4.2k",
-  },
-  {
-    initials: "RV",
-    name: "Rohan V.",
-    role: "ML Engineer · IIT Bombay",
-    tags: ["PyTorch", "CUDA", "Triton"],
-    status: "ON INTERVIEW",
-    metricLabel: "Klyro Score",
-    metricValue: "96 / 100",
-    metricAccent: true,
-  },
-  {
-    initials: "DS",
-    name: "Devika S.",
-    role: "Infra Engineer · Ex-Swiggy",
-    tags: ["Kubernetes", "Go", "AWS"],
-    status: "AVAILABLE",
-    metricLabel: "Years Shipping",
-    metricValue: "6+",
-  },
-];
-
 function Index() {
+  const fetchStats = useServerFn(getLandingStats);
+  const fetchEngineers = useServerFn(getFeaturedEngineers);
+
+  const statsQ = useQuery({ queryKey: ["landingStats"], queryFn: () => fetchStats() });
+  const engineersQ = useQuery({ queryKey: ["featuredEngineers"], queryFn: () => fetchEngineers() });
+
+  const stats = statsQ.data;
+  const engineers = engineersQ.data?.engineers ?? [];
+
   return (
     <main className="min-h-screen bg-background text-foreground selection:bg-secondary">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-8">
@@ -146,8 +88,8 @@ function Index() {
 
           <div className="mt-8 flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
             <p className="max-w-[56ch] text-pretty text-lg text-muted-foreground lg:text-xl">
-              We manually vet the top 0.1% of Indian developer talent. No resume spam. No
-              ghosting. Just world-class engineers deployed to your startup in 72 hours.
+              We manually vet Indian AI and full-stack engineers and match them with startups.
+              Every profile on Klyro is reviewed by a human — no scraped lists, no inflated claims.
             </p>
             <div className="flex gap-3">
               <Link
@@ -166,14 +108,13 @@ function Index() {
             </div>
           </div>
 
-          <div className="mt-20 flex flex-wrap items-center gap-x-10 gap-y-4 border-t border-border pt-8 text-xs uppercase tracking-widest text-muted-foreground/70">
-            <span>Trusted by founders at</span>
-            <span className="font-semibold tracking-wider text-foreground/70">YC W24</span>
-            <span className="font-semibold tracking-wider text-foreground/70">SEQUOIA SURGE</span>
-            <span className="font-semibold tracking-wider text-foreground/70">ACCEL ATOMS</span>
-            <span className="font-semibold tracking-wider text-foreground/70">PEAK XV</span>
-            <span className="font-semibold tracking-wider text-foreground/70">SOUTH PARK</span>
-          </div>
+          {/* Real live stats from the DB */}
+          <dl className="mt-20 grid grid-cols-2 gap-x-10 gap-y-6 border-t border-border pt-8 md:grid-cols-4">
+            <Stat label="Vetted engineers" value={stats?.vettedEngineers} loading={statsQ.isLoading} />
+            <Stat label="In review" value={stats?.pendingEngineers} loading={statsQ.isLoading} />
+            <Stat label="Open roles" value={stats?.openRoles} loading={statsQ.isLoading} />
+            <Stat label="Verified reviews" value={stats?.approvedReviews} loading={statsQ.isLoading} />
+          </dl>
         </div>
       </section>
 
@@ -181,58 +122,105 @@ function Index() {
         <div className="mx-auto max-w-7xl px-6">
           <div className="flex items-center justify-between border-b border-border pb-6">
             <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
-              Featured Engineers
+              Featured engineers
             </h2>
             <Link to="/network" className="text-sm text-muted-foreground/80 hover:text-foreground">
               See full network →
             </Link>
           </div>
 
-          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {engineers.map((e) => (
-              <article
-                key={e.name}
-                className="group relative rounded-xl bg-card p-6 ring-1 ring-black/5 transition-all hover:ring-black/10"
+          {engineersQ.isLoading && (
+            <p className="mt-12 text-sm text-muted-foreground">Loading engineers…</p>
+          )}
+
+          {!engineersQ.isLoading && engineers.length === 0 && (
+            <div className="mt-12 rounded-xl bg-card p-10 ring-1 ring-black/5">
+              <h3 className="text-lg font-medium">The network is just opening up.</h3>
+              <p className="mt-2 max-w-[60ch] text-sm text-muted-foreground">
+                No engineers have been vetted onto Klyro yet. We're reviewing applications by hand.
+                Be one of the first profiles on the network — apply below.
+              </p>
+              <Link
+                to="/apply"
+                className="mt-6 inline-flex h-10 items-center rounded-md bg-foreground px-4 text-sm font-medium text-background"
               >
-                <div className="flex items-start justify-between">
-                  <div className="grid size-12 place-items-center rounded-full bg-secondary text-sm font-semibold text-foreground outline outline-1 -outline-offset-1 outline-black/5">
-                    {e.initials}
-                  </div>
-                  <div className="rounded-full bg-background px-2 py-1 text-[10px] font-semibold text-muted-foreground ring-1 ring-black/5">
-                    {e.status}
-                  </div>
-                </div>
-                <div className="mt-4">
-                  <h3 className="text-base font-semibold">{e.name}</h3>
-                  <p className="text-sm text-muted-foreground">{e.role}</p>
-                </div>
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {e.tags.map((t) => (
-                    <span
-                      key={t}
-                      className="rounded bg-background px-2 py-0.5 text-xs text-muted-foreground ring-1 ring-black/5"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-                <div className="mt-8 border-t border-border pt-4">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground/70">{e.metricLabel}</span>
-                    <span
-                      className={
-                        e.metricAccent
-                          ? "font-medium text-success"
-                          : "font-medium text-foreground"
-                      }
-                    >
-                      {e.metricValue}
-                    </span>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
+                Apply to the network <ArrowRight className="ml-2 size-4" />
+              </Link>
+            </div>
+          )}
+
+          {engineers.length > 0 && (
+            <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {engineers.map((e) => {
+                const initials = e.display_name
+                  .split(/\s+/)
+                  .map((p) => p[0])
+                  .slice(0, 2)
+                  .join("")
+                  .toUpperCase();
+                return (
+                  <article
+                    key={e.user_id}
+                    className="group relative rounded-xl bg-card p-6 ring-1 ring-black/5 transition-all hover:ring-black/10"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="grid size-12 place-items-center rounded-full bg-secondary text-sm font-semibold text-foreground outline outline-1 -outline-offset-1 outline-black/5">
+                        {initials}
+                      </div>
+                      <div className="rounded-full bg-background px-2 py-1 text-[10px] font-semibold text-success ring-1 ring-black/5">
+                        AVAILABLE
+                      </div>
+                    </div>
+                    <div className="mt-4">
+                      <h3 className="text-base font-semibold">{e.display_name}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {e.headline ?? "Engineer"}
+                        {e.location ? ` · ${e.location}` : ""}
+                      </p>
+                    </div>
+                    <div className="mt-6 flex flex-wrap gap-2">
+                      {(e.skills ?? []).slice(0, 4).map((t) => (
+                        <span
+                          key={t}
+                          className="rounded bg-background px-2 py-0.5 text-xs text-muted-foreground ring-1 ring-black/5"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                    {e.topReview && (
+                      <blockquote className="mt-5 rounded-md bg-background p-3 ring-1 ring-black/5">
+                        <div className="flex items-center gap-1 text-success">
+                          {Array.from({ length: e.topReview.rating }).map((_, i) => (
+                            <Star key={i} className="size-3 fill-current" />
+                          ))}
+                        </div>
+                        <p className="mt-2 line-clamp-3 text-xs text-foreground/80">
+                          “{e.topReview.quote}”
+                        </p>
+                        <p className="mt-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+                          {e.topReview.reviewer_name}
+                          {e.topReview.reviewer_company ? ` · ${e.topReview.reviewer_company}` : ""}
+                        </p>
+                      </blockquote>
+                    )}
+                    <div className="mt-6 flex items-center justify-between border-t border-border pt-4 text-xs">
+                      <span className="text-muted-foreground/70">
+                        {e.years_experience != null ? `${e.years_experience} yrs` : "—"}
+                      </span>
+                      {e.klyro_score != null ? (
+                        <span className="font-medium text-success">
+                          Klyro Score {e.klyro_score}
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground/70">Newly vetted</span>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 
@@ -253,18 +241,18 @@ function Index() {
               {[
                 {
                   n: "01",
-                  t: "Source globally, hire locally",
-                  d: "We scan open-source contributions, hackathon results, and competitive programming rankings to find invisible talent.",
+                  t: "Engineers apply, we review by hand",
+                  d: "Every applicant submits their GitHub, LinkedIn, and projects. A reviewer goes through them and assigns a Klyro Score before anyone goes live on the network.",
                 },
                 {
                   n: "02",
-                  t: "Technical proof of work",
-                  d: "Every candidate completes a rigorous live interview with a senior engineer. No automated MCQs. Real code, real signal.",
+                  t: "Founders post a brief",
+                  d: "Tell us your stack, stage, and budget. The brief goes to vetted engineers — they apply directly with a short note explaining why they're a fit.",
                 },
                 {
                   n: "03",
-                  t: "Handpicked matching",
-                  d: "Get a curated shortlist of 3–5 candidates who match your stack, stage, and culture — within 72 hours.",
+                  t: "You shortlist and hire",
+                  d: "See real applications, real GitHubs, and real reviews from past founders. Move them through shortlist → hired right inside Klyro.",
                 },
               ].map((s) => (
                 <div key={s.n} className="flex gap-6">
@@ -282,40 +270,18 @@ function Index() {
         </div>
       </section>
 
-      <section className="bg-foreground py-24 text-background">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="max-w-[44ch]">
-            <p className="text-2xl font-medium leading-snug text-pretty lg:text-3xl">
-              <span className="font-serif italic text-background/60">"</span>
-              Klyro helped us scale engineering from 2 to 12 in under a month. Quality was
-              consistently better than any agency we've used.
-              <span className="font-serif italic text-background/60">"</span>
-            </p>
-            <div className="mt-8 flex items-center gap-4">
-              <div className="grid size-10 place-items-center rounded-full bg-white/10 text-xs font-semibold text-background outline outline-1 -outline-offset-1 outline-white/10">
-                AV
-              </div>
-              <div>
-                <p className="text-sm font-semibold">Akash Verma</p>
-                <p className="text-xs text-background/60">Founder, TensorIndia (YC W24)</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section id="hire" className="border-t border-border py-24">
         <div className="mx-auto grid max-w-7xl gap-6 px-6 md:grid-cols-2">
           <div className="rounded-2xl bg-card p-10 ring-1 ring-black/5">
             <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              For Founders
+              For founders
             </p>
             <h3 className="mt-4 text-2xl font-medium tracking-tight">
-              Get a shortlist in 72 hours.
+              Post a brief. See real applications.
             </h3>
             <p className="mt-3 text-sm text-muted-foreground">
-              Tell us your stack and stage. We'll handpick 3–5 cracked engineers ready to ship from
-              day one.
+              Tell us your stack and stage. Vetted engineers apply directly — every profile has a
+              real GitHub, real experience, and (when available) verified reviews.
             </p>
             <Link
               to="/hire"
@@ -327,14 +293,14 @@ function Index() {
           </div>
           <div className="rounded-2xl bg-surface p-10 ring-1 ring-black/5">
             <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              For Engineers
+              For engineers
             </p>
             <h3 className="mt-4 text-2xl font-medium tracking-tight">
-              Get matched with elite startups.
+              Get matched with serious startups.
             </h3>
             <p className="mt-3 text-sm text-muted-foreground">
-              One interview. Lifetime access to YC, Sequoia Surge, and top-tier Indian founders
-              looking for cracked talent.
+              Apply once. Once you're vetted, you can apply to any open role on the network with one
+              click. Collect verified reviews from every founder you work with.
             </p>
             <Link
               to="/apply"
@@ -369,10 +335,21 @@ function Index() {
             </a>
           </div>
           <p className="text-xs text-muted-foreground/70">
-            © 2026 Klyro. Built for the top 0.1%.
+            © 2026 Klyro. Built honestly for the cracked.
           </p>
         </div>
       </footer>
     </main>
+  );
+}
+
+function Stat({ label, value, loading }: { label: string; value: number | undefined; loading: boolean }) {
+  return (
+    <div>
+      <dt className="text-xs uppercase tracking-widest text-muted-foreground/70">{label}</dt>
+      <dd className="mt-2 text-3xl font-medium tabular-nums tracking-tight">
+        {loading ? "—" : (value ?? 0)}
+      </dd>
+    </div>
   );
 }

@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Github, Linkedin, Globe } from "lucide-react";
 import { listVettedEngineers } from "@/lib/engineers.functions";
+import { KlyroLogo } from "@/components/KlyroLogo";
 
 export const Route = createFileRoute("/network")({
   head: () => ({
@@ -31,8 +32,7 @@ function NetworkPage() {
     <main className="min-h-screen bg-background">
       <header className="mx-auto flex max-w-7xl items-center justify-between px-6 py-8">
         <Link to="/" className="flex items-center gap-2">
-          <div className="size-5 rounded-sm bg-foreground" />
-          <span className="text-sm font-semibold tracking-tight">KLYRO</span>
+          <KlyroLogo />
         </Link>
         <nav className="flex items-center gap-6 text-sm">
           <Link to="/login" className="text-muted-foreground hover:text-foreground">

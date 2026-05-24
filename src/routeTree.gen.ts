@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StoriesRouteImport } from './routes/stories'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as NetworkRouteImport } from './routes/network'
@@ -26,6 +27,11 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedRequestsRequestIdRouteImport } from './routes/_authenticated/requests.$requestId'
 import { Route as AuthenticatedJobsJobIdRouteImport } from './routes/_authenticated/jobs.$jobId'
 
+const StoriesRoute = StoriesRouteImport.update({
+  id: '/stories',
+  path: '/stories',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -114,6 +120,7 @@ export interface FileRoutesByFullPath {
   '/network': typeof NetworkRoute
   '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
+  '/stories': typeof StoriesRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/apply': typeof AuthenticatedApplyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -131,6 +138,7 @@ export interface FileRoutesByTo {
   '/network': typeof NetworkRoute
   '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
+  '/stories': typeof StoriesRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/apply': typeof AuthenticatedApplyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   '/network': typeof NetworkRoute
   '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
+  '/stories': typeof StoriesRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/apply': typeof AuthenticatedApplyRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -169,6 +178,7 @@ export interface FileRouteTypes {
     | '/network'
     | '/resources'
     | '/signup'
+    | '/stories'
     | '/admin'
     | '/apply'
     | '/dashboard'
@@ -186,6 +196,7 @@ export interface FileRouteTypes {
     | '/network'
     | '/resources'
     | '/signup'
+    | '/stories'
     | '/admin'
     | '/apply'
     | '/dashboard'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/network'
     | '/resources'
     | '/signup'
+    | '/stories'
     | '/_authenticated/admin'
     | '/_authenticated/apply'
     | '/_authenticated/dashboard'
@@ -223,11 +235,19 @@ export interface RootRouteChildren {
   NetworkRoute: typeof NetworkRoute
   ResourcesRoute: typeof ResourcesRoute
   SignupRoute: typeof SignupRoute
+  StoriesRoute: typeof StoriesRoute
   EngineerUserIdRoute: typeof EngineerUserIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/stories': {
+      id: '/stories'
+      path: '/stories'
+      fullPath: '/stories'
+      preLoaderRoute: typeof StoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -377,6 +397,7 @@ const rootRouteChildren: RootRouteChildren = {
   NetworkRoute: NetworkRoute,
   ResourcesRoute: ResourcesRoute,
   SignupRoute: SignupRoute,
+  StoriesRoute: StoriesRoute,
   EngineerUserIdRoute: EngineerUserIdRoute,
 }
 export const routeTree = rootRouteImport

@@ -14,16 +14,258 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      applications: {
+        Row: {
+          created_at: string
+          engineer_id: string
+          hire_request_id: string
+          id: string
+          note: string | null
+          status: Database["public"]["Enums"]["application_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          engineer_id: string
+          hire_request_id: string
+          id?: string
+          note?: string | null
+          status?: Database["public"]["Enums"]["application_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          engineer_id?: string
+          hire_request_id?: string
+          id?: string
+          note?: string | null
+          status?: Database["public"]["Enums"]["application_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "applications_engineer_id_fkey"
+            columns: ["engineer_id"]
+            isOneToOne: false
+            referencedRelation: "engineers"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "applications_hire_request_id_fkey"
+            columns: ["hire_request_id"]
+            isOneToOne: false
+            referencedRelation: "hire_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      companies: {
+        Row: {
+          created_at: string
+          id: string
+          logo_url: string | null
+          name: string
+          owner_id: string
+          stage: Database["public"]["Enums"]["company_stage"] | null
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name: string
+          owner_id: string
+          stage?: Database["public"]["Enums"]["company_stage"] | null
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name?: string
+          owner_id?: string
+          stage?: Database["public"]["Enums"]["company_stage"] | null
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
+      engineers: {
+        Row: {
+          available: boolean
+          avyra_score: number | null
+          bio: string | null
+          created_at: string
+          display_name: string
+          github_url: string | null
+          headline: string | null
+          hourly_rate_usd: number | null
+          linkedin_url: string | null
+          location: string | null
+          skills: string[]
+          updated_at: string
+          user_id: string
+          vetting: Database["public"]["Enums"]["vetting_status"]
+          website_url: string | null
+          years_experience: number | null
+        }
+        Insert: {
+          available?: boolean
+          avyra_score?: number | null
+          bio?: string | null
+          created_at?: string
+          display_name: string
+          github_url?: string | null
+          headline?: string | null
+          hourly_rate_usd?: number | null
+          linkedin_url?: string | null
+          location?: string | null
+          skills?: string[]
+          updated_at?: string
+          user_id: string
+          vetting?: Database["public"]["Enums"]["vetting_status"]
+          website_url?: string | null
+          years_experience?: number | null
+        }
+        Update: {
+          available?: boolean
+          avyra_score?: number | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string
+          github_url?: string | null
+          headline?: string | null
+          hourly_rate_usd?: number | null
+          linkedin_url?: string | null
+          location?: string | null
+          skills?: string[]
+          updated_at?: string
+          user_id?: string
+          vetting?: Database["public"]["Enums"]["vetting_status"]
+          website_url?: string | null
+          years_experience?: number | null
+        }
+        Relationships: []
+      }
+      hire_requests: {
+        Row: {
+          budget_monthly_usd: number | null
+          company_id: string
+          created_at: string
+          id: string
+          notes: string | null
+          owner_id: string
+          role_title: string
+          stack: string[]
+          status: Database["public"]["Enums"]["hire_status"]
+          updated_at: string
+          urgency: string | null
+        }
+        Insert: {
+          budget_monthly_usd?: number | null
+          company_id: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          owner_id: string
+          role_title: string
+          stack?: string[]
+          status?: Database["public"]["Enums"]["hire_status"]
+          updated_at?: string
+          urgency?: string | null
+        }
+        Update: {
+          budget_monthly_usd?: number | null
+          company_id?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          owner_id?: string
+          role_title?: string
+          stack?: string[]
+          status?: Database["public"]["Enums"]["hire_status"]
+          updated_at?: string
+          urgency?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hire_requests_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          headline: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          headline?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          headline?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "engineer" | "founder"
+      application_status: "submitted" | "shortlisted" | "rejected" | "hired"
+      company_stage: "idea" | "pre_seed" | "seed" | "series_a" | "series_b_plus"
+      hire_status: "open" | "matched" | "closed"
+      vetting_status: "pending" | "in_review" | "vetted" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +392,12 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "engineer", "founder"],
+      application_status: ["submitted", "shortlisted", "rejected", "hired"],
+      company_stage: ["idea", "pre_seed", "seed", "series_a", "series_b_plus"],
+      hire_status: ["open", "matched", "closed"],
+      vetting_status: ["pending", "in_review", "vetted", "rejected"],
+    },
   },
 } as const

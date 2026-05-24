@@ -1,20 +1,19 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Plus, FileText, Github, Twitter, Linkedin, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Crackd — India's top 0.1% engineers, hired in 72 hours" },
+      { title: "Avyra — India's top 0.1% engineers, hired in 72 hours" },
       {
         name: "description",
         content:
-          "Crackd is a hand-curated talent network. We manually vet India's top AI and full-stack engineers so startups can hire world-class talent in 72 hours.",
+          "Avyra is a hand-curated talent network. We manually vet India's top AI and full-stack engineers so startups can hire world-class talent in 72 hours.",
       },
-      { property: "og:title", content: "Crackd — Elite engineers, hired in 72h" },
+      { property: "og:title", content: "Avyra — Elite engineers, hired in 72h" },
       {
         property: "og:description",
-        content:
-          "Hand-vetted AI and full-stack engineers from India. No resume spam. No ghosting.",
+        content: "Hand-vetted AI and full-stack engineers from India. No resume spam.",
       },
     ],
     links: [
@@ -56,7 +55,7 @@ const engineers: Engineer[] = [
     role: "AI Research · GSoC 2023",
     tags: ["LLMs", "LangChain", "Python"],
     status: "ON INTERVIEW",
-    metricLabel: "Crackd Score",
+    metricLabel: "Avyra Score",
     metricValue: "98 / 100",
     metricAccent: true,
   },
@@ -84,7 +83,7 @@ const engineers: Engineer[] = [
     role: "ML Engineer · IIT Bombay",
     tags: ["PyTorch", "CUDA", "Triton"],
     status: "ON INTERVIEW",
-    metricLabel: "Crackd Score",
+    metricLabel: "Avyra Score",
     metricValue: "96 / 100",
     metricAccent: true,
   },
@@ -102,42 +101,40 @@ const engineers: Engineer[] = [
 function Index() {
   return (
     <main className="min-h-screen bg-background text-foreground selection:bg-secondary">
-      {/* Nav */}
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-8">
-        <a href="/" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <div className="size-5 rounded-sm bg-foreground" aria-hidden />
-          <span className="text-sm font-semibold tracking-tight">CRACKD</span>
-        </a>
+          <span className="text-sm font-semibold tracking-tight">AVYRA</span>
+        </Link>
         <div className="flex items-center gap-6 md:gap-8">
-          <a
-            href="#network"
+          <Link
+            to="/network"
             className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-foreground sm:inline"
           >
             Network
-          </a>
+          </Link>
           <a
             href="#process"
             className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-foreground sm:inline"
           >
             How it works
           </a>
-          <a
-            href="#talent"
+          <Link
+            to="/login"
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
-            For Talent
-          </a>
-          <a
-            href="#hire"
+            Sign in
+          </Link>
+          <Link
+            to="/hire"
             className="inline-flex items-center rounded-full bg-foreground py-2 pl-3 pr-4 text-sm font-medium text-background ring-1 ring-foreground transition-transform hover:scale-[1.02]"
           >
             <Plus className="mr-1.5 size-4" />
             Hire Talent
-          </a>
+          </Link>
         </div>
       </nav>
 
-      {/* Hero */}
       <section className="px-6 py-16 lg:py-24">
         <div className="mx-auto max-w-7xl">
           <div className="max-w-[40ch]">
@@ -149,28 +146,26 @@ function Index() {
 
           <div className="mt-8 flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
             <p className="max-w-[56ch] text-pretty text-lg text-muted-foreground lg:text-xl">
-              We manually vet the top 0.1% of Indian developer talent. No resume
-              spam. No ghosting. Just world-class engineers deployed to your
-              startup in 72 hours.
+              We manually vet the top 0.1% of Indian developer talent. No resume spam. No
+              ghosting. Just world-class engineers deployed to your startup in 72 hours.
             </p>
             <div className="flex gap-3">
-              <a
-                href="#network"
+              <Link
+                to="/network"
                 className="inline-flex h-10 items-center rounded-md bg-foreground py-2 pl-3 pr-4 text-sm font-medium text-background ring-1 ring-foreground"
               >
                 <FileText className="mr-2 size-4" />
                 View Network
-              </a>
-              <a
-                href="#talent"
+              </Link>
+              <Link
+                to="/apply"
                 className="inline-flex h-10 items-center rounded-md bg-secondary py-2 pl-3 pr-4 text-sm font-medium text-foreground ring-1 ring-black/5 hover:bg-muted"
               >
                 Apply as Talent
-              </a>
+              </Link>
             </div>
           </div>
 
-          {/* Trust strip */}
           <div className="mt-20 flex flex-wrap items-center gap-x-10 gap-y-4 border-t border-border pt-8 text-xs uppercase tracking-widest text-muted-foreground/70">
             <span>Trusted by founders at</span>
             <span className="font-semibold tracking-wider text-foreground/70">YC W24</span>
@@ -182,14 +177,15 @@ function Index() {
         </div>
       </section>
 
-      {/* Talent Showcase */}
       <section id="network" className="bg-surface py-20">
         <div className="mx-auto max-w-7xl px-6">
           <div className="flex items-center justify-between border-b border-border pb-6">
             <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
               Featured Engineers
             </h2>
-            <span className="text-sm text-muted-foreground/70">Updated today</span>
+            <Link to="/network" className="text-sm text-muted-foreground/80 hover:text-foreground">
+              See full network →
+            </Link>
           </div>
 
           <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -240,21 +236,17 @@ function Index() {
         </div>
       </section>
 
-      {/* Process */}
       <section id="process" className="py-24">
         <div className="mx-auto max-w-7xl px-6">
           <div className="grid gap-12 lg:grid-cols-2">
             <div>
               <h2 className="text-3xl font-medium tracking-tight text-balance lg:text-4xl">
                 Hiring in India is broken.{" "}
-                <span className="font-serif italic text-muted-foreground">
-                  We fix the noise.
-                </span>
+                <span className="font-serif italic text-muted-foreground">We fix the noise.</span>
               </h2>
               <p className="mt-4 max-w-[56ch] text-pretty text-muted-foreground">
-                Stop sifting through thousands of generic applications. We do
-                the manual work of verifying code quality and communication so
-                you don't have to.
+                Stop sifting through thousands of generic applications. We do the manual work of
+                verifying code quality and communication so you don't have to.
               </p>
             </div>
             <div className="space-y-12">
@@ -281,9 +273,7 @@ function Index() {
                   </span>
                   <div>
                     <h3 className="font-semibold">{s.t}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                      {s.d}
-                    </p>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.d}</p>
                   </div>
                 </div>
               ))}
@@ -292,14 +282,13 @@ function Index() {
         </div>
       </section>
 
-      {/* Founder Quote */}
       <section className="bg-foreground py-24 text-background">
         <div className="mx-auto max-w-7xl px-6">
           <div className="max-w-[44ch]">
             <p className="text-2xl font-medium leading-snug text-pretty lg:text-3xl">
               <span className="font-serif italic text-background/60">"</span>
-              Crackd helped us scale engineering from 2 to 12 in under a month.
-              Quality was consistently better than any agency we've used.
+              Avyra helped us scale engineering from 2 to 12 in under a month. Quality was
+              consistently better than any agency we've used.
               <span className="font-serif italic text-background/60">"</span>
             </p>
             <div className="mt-8 flex items-center gap-4">
@@ -315,7 +304,6 @@ function Index() {
         </div>
       </section>
 
-      {/* CTAs */}
       <section id="hire" className="border-t border-border py-24">
         <div className="mx-auto grid max-w-7xl gap-6 px-6 md:grid-cols-2">
           <div className="rounded-2xl bg-card p-10 ring-1 ring-black/5">
@@ -326,18 +314,18 @@ function Index() {
               Get a shortlist in 72 hours.
             </h3>
             <p className="mt-3 text-sm text-muted-foreground">
-              Tell us your stack and stage. We'll handpick 3–5 cracked
-              engineers ready to ship from day one.
+              Tell us your stack and stage. We'll handpick 3–5 cracked engineers ready to ship from
+              day one.
             </p>
-            <a
-              href="mailto:founders@usecrackd.com"
+            <Link
+              to="/hire"
               className="mt-8 inline-flex h-10 items-center rounded-md bg-foreground py-2 pl-4 pr-3 text-sm font-medium text-background"
             >
-              Request talent
+              Post a brief
               <ArrowRight className="ml-2 size-4" />
-            </a>
+            </Link>
           </div>
-          <div id="talent" className="rounded-2xl bg-surface p-10 ring-1 ring-black/5">
+          <div className="rounded-2xl bg-surface p-10 ring-1 ring-black/5">
             <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               For Engineers
             </p>
@@ -345,26 +333,25 @@ function Index() {
               Get matched with elite startups.
             </h3>
             <p className="mt-3 text-sm text-muted-foreground">
-              One interview. Lifetime access to YC, Sequoia Surge, and
-              top-tier Indian founders looking for cracked talent.
+              One interview. Lifetime access to YC, Sequoia Surge, and top-tier Indian founders
+              looking for cracked talent.
             </p>
-            <a
-              href="mailto:apply@usecrackd.com"
+            <Link
+              to="/apply"
               className="mt-8 inline-flex h-10 items-center rounded-md bg-foreground py-2 pl-4 pr-3 text-sm font-medium text-background"
             >
               Apply to the network
               <ArrowRight className="ml-2 size-4" />
-            </a>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="border-t border-border py-12">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-8 px-6 md:flex-row">
           <div className="flex items-center gap-2">
             <div className="size-4 rounded-sm bg-foreground" />
-            <span className="text-xs font-semibold tracking-tight">CRACKD NETWORK</span>
+            <span className="text-xs font-semibold tracking-tight">AVYRA NETWORK</span>
           </div>
           <div className="flex items-center gap-6">
             <a href="#" aria-label="Twitter" className="text-muted-foreground hover:text-foreground">
@@ -373,12 +360,16 @@ function Index() {
             <a href="#" aria-label="GitHub" className="text-muted-foreground hover:text-foreground">
               <Github className="size-4" />
             </a>
-            <a href="#" aria-label="LinkedIn" className="text-muted-foreground hover:text-foreground">
+            <a
+              href="#"
+              aria-label="LinkedIn"
+              className="text-muted-foreground hover:text-foreground"
+            >
               <Linkedin className="size-4" />
             </a>
           </div>
           <p className="text-xs text-muted-foreground/70">
-            © 2026 Crackd. Built for the top 0.1%.
+            © 2026 Avyra. Built for the top 0.1%.
           </p>
         </div>
       </footer>

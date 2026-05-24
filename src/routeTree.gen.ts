@@ -19,6 +19,7 @@ import { Route as HelpCenterRouteImport } from './routes/help-center'
 import { Route as EnterpriseRouteImport } from './routes/enterprise'
 import { Route as DataPartnershipsRouteImport } from './routes/data-partnerships'
 import { Route as CareersRouteImport } from './routes/careers'
+import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EngineerUserIdRouteImport } from './routes/engineer.$userId'
@@ -81,6 +82,11 @@ const CareersRoute = CareersRouteImport.update({
   path: '/careers',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
@@ -139,6 +145,7 @@ const AuthenticatedJobsJobIdRoute = AuthenticatedJobsJobIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/blog': typeof BlogRoute
   '/careers': typeof CareersRoute
   '/data-partnerships': typeof DataPartnershipsRoute
   '/enterprise': typeof EnterpriseRoute
@@ -161,6 +168,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/blog': typeof BlogRoute
   '/careers': typeof CareersRoute
   '/data-partnerships': typeof DataPartnershipsRoute
   '/enterprise': typeof EnterpriseRoute
@@ -185,6 +193,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/blog': typeof BlogRoute
   '/careers': typeof CareersRoute
   '/data-partnerships': typeof DataPartnershipsRoute
   '/enterprise': typeof EnterpriseRoute
@@ -209,6 +218,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/blog'
     | '/careers'
     | '/data-partnerships'
     | '/enterprise'
@@ -231,6 +241,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/blog'
     | '/careers'
     | '/data-partnerships'
     | '/enterprise'
@@ -254,6 +265,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/blog'
     | '/careers'
     | '/data-partnerships'
     | '/enterprise'
@@ -278,6 +290,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  BlogRoute: typeof BlogRoute
   CareersRoute: typeof CareersRoute
   DataPartnershipsRoute: typeof DataPartnershipsRoute
   EnterpriseRoute: typeof EnterpriseRoute
@@ -361,6 +374,13 @@ declare module '@tanstack/react-router' {
       path: '/careers'
       fullPath: '/careers'
       preLoaderRoute: typeof CareersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -472,6 +492,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  BlogRoute: BlogRoute,
   CareersRoute: CareersRoute,
   DataPartnershipsRoute: DataPartnershipsRoute,
   EnterpriseRoute: EnterpriseRoute,

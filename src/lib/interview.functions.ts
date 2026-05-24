@@ -201,17 +201,21 @@ export const setMainInterviewVerdict = createServerFn({ method: "POST" })
       _role: "admin",
     });
     if (!isAdmin) throw new Error("Admin only");
-    const update: Record<string, unknown> = {
-      main_interview_status: data.verdict,
-      main_interview_verdict: data.verdict,
-      main_interview_notes: data.notes ?? null,
-    };
-    if (data.approve_to_network && data.verdict === "passed") {
-      update.vetting = "vetted";
-    } else if (data.verdict === "failed") {
-      update.vetting = "rejected";
-    }
-    const { error } = await supabaseAdmin.from("engineers").update(update).eq("user_id", data.user_id);
+    const vetting: "vetted" | "rejected" | undefined =
+      data.approve_to_network && data.verdict === "passed"
+        ? "vetted"
+        : data.verdict === "failed"
+          ? "rejected"
+          : undefined;
+    const { error } = await supabaseAdmin
+      .from("engineers")
+      .update({
+        main_interview_status: data.verdict,
+        main_interview_verdict: data.verdict,
+        main_interview_notes: data.notes ?? null,
+        ...(vetting ? { vetting } : {}),
+      })
+      .eq("user_id", data.user_id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });

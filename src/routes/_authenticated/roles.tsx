@@ -12,7 +12,6 @@ export const Route = createFileRoute("/_authenticated/roles")({
 function RolesPage() {
   const getOpen = useServerFn(listOpenRequestsForEngineers);
   const getMine = useServerFn(listMyApplications);
-  const apply = useServerFn(applyToHireRequest);
 
   const rolesQ = useQuery({ queryKey: ["openRoles"], queryFn: () => getOpen() });
   const minesQ = useQuery({ queryKey: ["myApps"], queryFn: () => getMine() });

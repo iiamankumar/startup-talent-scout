@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as NetworkRouteImport } from './routes/network'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HelpCenterRouteImport } from './routes/help-center'
@@ -28,6 +29,11 @@ import { Route as AuthenticatedJobsJobIdRouteImport } from './routes/_authentica
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResourcesRoute = ResourcesRouteImport.update({
+  id: '/resources',
+  path: '/resources',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NetworkRoute = NetworkRouteImport.update({
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/help-center': typeof HelpCenterRoute
   '/login': typeof LoginRoute
   '/network': typeof NetworkRoute
+  '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/apply': typeof AuthenticatedApplyRoute
@@ -122,6 +129,7 @@ export interface FileRoutesByTo {
   '/help-center': typeof HelpCenterRoute
   '/login': typeof LoginRoute
   '/network': typeof NetworkRoute
+  '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/apply': typeof AuthenticatedApplyRoute
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/help-center': typeof HelpCenterRoute
   '/login': typeof LoginRoute
   '/network': typeof NetworkRoute
+  '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/apply': typeof AuthenticatedApplyRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
     | '/help-center'
     | '/login'
     | '/network'
+    | '/resources'
     | '/signup'
     | '/admin'
     | '/apply'
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/help-center'
     | '/login'
     | '/network'
+    | '/resources'
     | '/signup'
     | '/admin'
     | '/apply'
@@ -191,6 +202,7 @@ export interface FileRouteTypes {
     | '/help-center'
     | '/login'
     | '/network'
+    | '/resources'
     | '/signup'
     | '/_authenticated/admin'
     | '/_authenticated/apply'
@@ -209,6 +221,7 @@ export interface RootRouteChildren {
   HelpCenterRoute: typeof HelpCenterRoute
   LoginRoute: typeof LoginRoute
   NetworkRoute: typeof NetworkRoute
+  ResourcesRoute: typeof ResourcesRoute
   SignupRoute: typeof SignupRoute
   EngineerUserIdRoute: typeof EngineerUserIdRoute
 }
@@ -220,6 +233,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resources': {
+      id: '/resources'
+      path: '/resources'
+      fullPath: '/resources'
+      preLoaderRoute: typeof ResourcesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/network': {
@@ -355,6 +375,7 @@ const rootRouteChildren: RootRouteChildren = {
   HelpCenterRoute: HelpCenterRoute,
   LoginRoute: LoginRoute,
   NetworkRoute: NetworkRoute,
+  ResourcesRoute: ResourcesRoute,
   SignupRoute: SignupRoute,
   EngineerUserIdRoute: EngineerUserIdRoute,
 }

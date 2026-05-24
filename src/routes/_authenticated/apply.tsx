@@ -7,7 +7,7 @@ import { getMyEngineerProfile, upsertMyEngineerProfile } from "@/lib/engineers.f
 import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/_authenticated/apply")({
-  head: () => ({ meta: [{ title: "Apply to the network — Avyra" }] }),
+  head: () => ({ meta: [{ title: "Apply to the network — Klyro" }] }),
   component: ApplyPage,
 });
 

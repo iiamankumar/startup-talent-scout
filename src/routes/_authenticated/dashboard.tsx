@@ -7,7 +7,7 @@ import { listMyHireRequests, listOpenRequestsForEngineers } from "@/lib/hire.fun
 import { ArrowRight, Briefcase, UserCircle2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard — Avyra" }] }),
+  head: () => ({ meta: [{ title: "Dashboard — Klyro" }] }),
   component: Dashboard,
 });
 

@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { createHireRequest } from "@/lib/hire.functions";
 
 export const Route = createFileRoute("/_authenticated/hire")({
-  head: () => ({ meta: [{ title: "Hire talent — Avyra" }] }),
+  head: () => ({ meta: [{ title: "Hire talent — Klyro" }] }),
   component: HirePage,
 });
 

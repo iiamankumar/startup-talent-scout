@@ -15,6 +15,7 @@ import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as NetworkRouteImport } from './routes/network'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HelpCenterRouteImport } from './routes/help-center'
+import { Route as EnterpriseRouteImport } from './routes/enterprise'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EngineerUserIdRouteImport } from './routes/engineer.$userId'
@@ -55,6 +56,11 @@ const LoginRoute = LoginRouteImport.update({
 const HelpCenterRoute = HelpCenterRouteImport.update({
   id: '/help-center',
   path: '/help-center',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnterpriseRoute = EnterpriseRouteImport.update({
+  id: '/enterprise',
+  path: '/enterprise',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -115,6 +121,7 @@ const AuthenticatedJobsJobIdRoute = AuthenticatedJobsJobIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/enterprise': typeof EnterpriseRoute
   '/help-center': typeof HelpCenterRoute
   '/login': typeof LoginRoute
   '/network': typeof NetworkRoute
@@ -133,6 +140,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/enterprise': typeof EnterpriseRoute
   '/help-center': typeof HelpCenterRoute
   '/login': typeof LoginRoute
   '/network': typeof NetworkRoute
@@ -153,6 +161,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/enterprise': typeof EnterpriseRoute
   '/help-center': typeof HelpCenterRoute
   '/login': typeof LoginRoute
   '/network': typeof NetworkRoute
@@ -173,6 +182,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/enterprise'
     | '/help-center'
     | '/login'
     | '/network'
@@ -191,6 +201,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/enterprise'
     | '/help-center'
     | '/login'
     | '/network'
@@ -210,6 +221,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/enterprise'
     | '/help-center'
     | '/login'
     | '/network'
@@ -230,6 +242,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  EnterpriseRoute: typeof EnterpriseRoute
   HelpCenterRoute: typeof HelpCenterRoute
   LoginRoute: typeof LoginRoute
   NetworkRoute: typeof NetworkRoute
@@ -281,6 +294,13 @@ declare module '@tanstack/react-router' {
       path: '/help-center'
       fullPath: '/help-center'
       preLoaderRoute: typeof HelpCenterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/enterprise': {
+      id: '/enterprise'
+      path: '/enterprise'
+      fullPath: '/enterprise'
+      preLoaderRoute: typeof EnterpriseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -392,6 +412,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  EnterpriseRoute: EnterpriseRoute,
   HelpCenterRoute: HelpCenterRoute,
   LoginRoute: LoginRoute,
   NetworkRoute: NetworkRoute,

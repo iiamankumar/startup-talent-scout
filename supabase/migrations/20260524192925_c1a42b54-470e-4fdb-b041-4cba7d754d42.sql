@@ -1,0 +1,1 @@
+ALTER TABLE public.engineers RENAME COLUMN avyra_score TO klyro_score;

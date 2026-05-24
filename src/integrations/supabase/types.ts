@@ -95,13 +95,13 @@ export type Database = {
       engineers: {
         Row: {
           available: boolean
-          avyra_score: number | null
           bio: string | null
           created_at: string
           display_name: string
           github_url: string | null
           headline: string | null
           hourly_rate_usd: number | null
+          klyro_score: number | null
           linkedin_url: string | null
           location: string | null
           skills: string[]
@@ -113,13 +113,13 @@ export type Database = {
         }
         Insert: {
           available?: boolean
-          avyra_score?: number | null
           bio?: string | null
           created_at?: string
           display_name: string
           github_url?: string | null
           headline?: string | null
           hourly_rate_usd?: number | null
+          klyro_score?: number | null
           linkedin_url?: string | null
           location?: string | null
           skills?: string[]
@@ -131,13 +131,13 @@ export type Database = {
         }
         Update: {
           available?: boolean
-          avyra_score?: number | null
           bio?: string | null
           created_at?: string
           display_name?: string
           github_url?: string | null
           headline?: string | null
           hourly_rate_usd?: number | null
+          klyro_score?: number | null
           linkedin_url?: string | null
           location?: string | null
           skills?: string[]

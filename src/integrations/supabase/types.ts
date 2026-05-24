@@ -136,6 +136,11 @@ export type Database = {
       }
       engineers: {
         Row: {
+          ai_interview_completed_at: string | null
+          ai_interview_score: number | null
+          ai_interview_status: Database["public"]["Enums"]["interview_status"]
+          ai_interview_summary: string | null
+          ai_interview_transcript: Json
           available: boolean
           bio: string | null
           created_at: string
@@ -146,14 +151,29 @@ export type Database = {
           klyro_score: number | null
           linkedin_url: string | null
           location: string | null
+          main_interview_notes: string | null
+          main_interview_scheduled_at: string | null
+          main_interview_status: Database["public"]["Enums"]["interview_status"]
+          main_interview_verdict: string | null
+          main_interviewer_id: string | null
+          resume_feedback: string | null
+          resume_score: number | null
+          resume_text: string | null
+          resume_url: string | null
           skills: string[]
           updated_at: string
           user_id: string
           vetting: Database["public"]["Enums"]["vetting_status"]
           website_url: string | null
+          work_authorization: Database["public"]["Enums"]["work_auth"]
           years_experience: number | null
         }
         Insert: {
+          ai_interview_completed_at?: string | null
+          ai_interview_score?: number | null
+          ai_interview_status?: Database["public"]["Enums"]["interview_status"]
+          ai_interview_summary?: string | null
+          ai_interview_transcript?: Json
           available?: boolean
           bio?: string | null
           created_at?: string
@@ -164,14 +184,29 @@ export type Database = {
           klyro_score?: number | null
           linkedin_url?: string | null
           location?: string | null
+          main_interview_notes?: string | null
+          main_interview_scheduled_at?: string | null
+          main_interview_status?: Database["public"]["Enums"]["interview_status"]
+          main_interview_verdict?: string | null
+          main_interviewer_id?: string | null
+          resume_feedback?: string | null
+          resume_score?: number | null
+          resume_text?: string | null
+          resume_url?: string | null
           skills?: string[]
           updated_at?: string
           user_id: string
           vetting?: Database["public"]["Enums"]["vetting_status"]
           website_url?: string | null
+          work_authorization?: Database["public"]["Enums"]["work_auth"]
           years_experience?: number | null
         }
         Update: {
+          ai_interview_completed_at?: string | null
+          ai_interview_score?: number | null
+          ai_interview_status?: Database["public"]["Enums"]["interview_status"]
+          ai_interview_summary?: string | null
+          ai_interview_transcript?: Json
           available?: boolean
           bio?: string | null
           created_at?: string
@@ -182,11 +217,21 @@ export type Database = {
           klyro_score?: number | null
           linkedin_url?: string | null
           location?: string | null
+          main_interview_notes?: string | null
+          main_interview_scheduled_at?: string | null
+          main_interview_status?: Database["public"]["Enums"]["interview_status"]
+          main_interview_verdict?: string | null
+          main_interviewer_id?: string | null
+          resume_feedback?: string | null
+          resume_score?: number | null
+          resume_text?: string | null
+          resume_url?: string | null
           skills?: string[]
           updated_at?: string
           user_id?: string
           vetting?: Database["public"]["Enums"]["vetting_status"]
           website_url?: string | null
+          work_authorization?: Database["public"]["Enums"]["work_auth"]
           years_experience?: number | null
         }
         Relationships: []
@@ -307,7 +352,25 @@ export type Database = {
       application_status: "submitted" | "shortlisted" | "rejected" | "hired"
       company_stage: "idea" | "pre_seed" | "seed" | "series_a" | "series_b_plus"
       hire_status: "open" | "matched" | "closed"
+      interview_status:
+        | "not_started"
+        | "in_progress"
+        | "completed"
+        | "passed"
+        | "failed"
+        | "skipped"
       vetting_status: "pending" | "in_review" | "vetted" | "rejected"
+      work_auth:
+        | "us_citizen"
+        | "us_green_card"
+        | "us_h1b"
+        | "us_opt_cpt"
+        | "us_tn"
+        | "other_visa"
+        | "india_resident"
+        | "eu_resident"
+        | "remote_only"
+        | "unspecified"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -439,7 +502,27 @@ export const Constants = {
       application_status: ["submitted", "shortlisted", "rejected", "hired"],
       company_stage: ["idea", "pre_seed", "seed", "series_a", "series_b_plus"],
       hire_status: ["open", "matched", "closed"],
+      interview_status: [
+        "not_started",
+        "in_progress",
+        "completed",
+        "passed",
+        "failed",
+        "skipped",
+      ],
       vetting_status: ["pending", "in_review", "vetted", "rejected"],
+      work_auth: [
+        "us_citizen",
+        "us_green_card",
+        "us_h1b",
+        "us_opt_cpt",
+        "us_tn",
+        "other_visa",
+        "india_resident",
+        "eu_resident",
+        "remote_only",
+        "unspecified",
+      ],
     },
   },
 } as const

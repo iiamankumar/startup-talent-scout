@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/lib/auth-context";
+import { KlyroLogo } from "@/components/KlyroLogo";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -102,8 +103,7 @@ export function AuthShell({
     <div className="min-h-screen bg-surface">
       <div className="mx-auto flex max-w-md flex-col px-6 py-12">
         <Link to="/" className="mb-10 flex items-center gap-2">
-          <div className="size-5 rounded-sm bg-foreground" />
-          <span className="text-sm font-semibold tracking-tight">KLYRO</span>
+          <KlyroLogo />
         </Link>
         <h1 className="text-2xl font-medium tracking-tight">{title}</h1>
         <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>

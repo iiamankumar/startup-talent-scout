@@ -7,6 +7,7 @@ import { getEngineerPublicProfile } from "@/lib/engineers.functions";
 import { listEngineerReviews, submitEngineerReview } from "@/lib/reviews.functions";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
+import { KlyroLogo } from "@/components/KlyroLogo";
 
 export const Route = createFileRoute("/engineer/$userId")({
   head: () => ({ meta: [{ title: "Engineer profile — Klyro" }] }),
@@ -40,8 +41,7 @@ function EngineerProfilePage() {
     <main className="min-h-screen bg-background">
       <header className="mx-auto flex max-w-5xl items-center justify-between px-6 py-8">
         <Link to="/" className="flex items-center gap-2">
-          <div className="size-5 rounded-sm bg-foreground" />
-          <span className="text-sm font-semibold tracking-tight">KLYRO</span>
+          <KlyroLogo />
         </Link>
         <Link to="/network" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="mr-1 size-4" /> Network

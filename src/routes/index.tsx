@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Plus, FileText, Github, Twitter, Linkedin, ArrowRight, Star } from "lucide-react";
 import { getFeaturedEngineers, getLandingStats } from "@/lib/reviews.functions";
+import { KlyroLogo } from "@/components/KlyroLogo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -45,8 +46,7 @@ function Index() {
     <main className="min-h-screen bg-background text-foreground selection:bg-secondary">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-8">
         <Link to="/" className="flex items-center gap-2">
-          <div className="size-5 rounded-sm bg-foreground" aria-hidden />
-          <span className="text-sm font-semibold tracking-tight">KLYRO</span>
+          <KlyroLogo />
         </Link>
         <div className="flex items-center gap-6 md:gap-8">
           <Link

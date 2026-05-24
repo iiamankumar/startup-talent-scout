@@ -92,6 +92,48 @@ export type Database = {
         }
         Relationships: []
       }
+      engineer_reviews: {
+        Row: {
+          approved: boolean
+          created_at: string
+          engineer_id: string
+          id: string
+          quote: string
+          rating: number
+          reviewer_company: string | null
+          reviewer_name: string
+          reviewer_role: string | null
+          reviewer_user_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          approved?: boolean
+          created_at?: string
+          engineer_id: string
+          id?: string
+          quote: string
+          rating: number
+          reviewer_company?: string | null
+          reviewer_name: string
+          reviewer_role?: string | null
+          reviewer_user_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          approved?: boolean
+          created_at?: string
+          engineer_id?: string
+          id?: string
+          quote?: string
+          rating?: number
+          reviewer_company?: string | null
+          reviewer_name?: string
+          reviewer_role?: string | null
+          reviewer_user_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       engineers: {
         Row: {
           available: boolean

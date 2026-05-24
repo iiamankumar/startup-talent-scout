@@ -2,9 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listOpenRequestsForEngineers } from "@/lib/hire.functions";
-import { applyToHireRequest, listMyApplications } from "@/lib/applications.functions";
-import { useState } from "react";
-import { toast } from "sonner";
+import { listMyApplications } from "@/lib/applications.functions";
 
 export const Route = createFileRoute("/_authenticated/roles")({
   head: () => ({ meta: [{ title: "Open roles — Klyro" }] }),

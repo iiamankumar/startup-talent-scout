@@ -85,3 +85,49 @@ export const listOpenRequestsForEngineers = createServerFn({ method: "GET" })
     if (error) return { requests: [], error: error.message };
     return { requests: data ?? [], error: null };
   });
+
+export const getJobDetail = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { job_id: string }) =>
+    z.object({ job_id: z.string().uuid() }).parse(input)
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+
+    const { data: job, error } = await supabase
+      .from("hire_requests")
+      .select(
+        "id, role_title, stack, urgency, budget_monthly_usd, notes, status, created_at, owner_id, companies(name, stage, website, logo_url)"
+      )
+      .eq("id", data.job_id)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!job) throw new Error("Job not found");
+
+    const { count: applicantCount } = await supabase
+      .from("applications")
+      .select("id", { count: "exact", head: true })
+      .eq("hire_request_id", data.job_id);
+
+    const { data: existingApp } = await supabase
+      .from("applications")
+      .select("id, status, created_at")
+      .eq("hire_request_id", data.job_id)
+      .eq("engineer_id", userId)
+      .maybeSingle();
+
+    const { data: eng } = await supabase
+      .from("engineers")
+      .select(
+        "vetting, resume_url, resume_score, ai_interview_status, main_interview_status, work_authorization"
+      )
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    return {
+      job,
+      applicantCount: applicantCount ?? 0,
+      myApplication: existingApp,
+      engineer: eng,
+    };
+  });

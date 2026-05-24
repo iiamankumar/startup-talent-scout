@@ -77,7 +77,7 @@ export const listApplicationsForRequest = createServerFn({ method: "GET" })
 
 const updateAppSchema = z.object({
   application_id: z.string().uuid(),
-  status: z.enum(["submitted", "shortlisted", "interview", "hired", "rejected"]),
+  status: z.enum(["submitted", "shortlisted", "hired", "rejected"]),
 });
 
 export const updateApplicationStatus = createServerFn({ method: "POST" })

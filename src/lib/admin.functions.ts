@@ -37,11 +37,12 @@ export const updateEngineerVetting = createServerFn({ method: "POST" })
   .inputValidator((input) => updateSchema.parse(input))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
-    const update: Record<string, unknown> = { vetting: data.vetting };
-    if (data.klyro_score !== undefined) update.klyro_score = data.klyro_score;
     const { error } = await supabaseAdmin
       .from("engineers")
-      .update(update)
+      .update({
+        vetting: data.vetting,
+        ...(data.klyro_score !== undefined ? { klyro_score: data.klyro_score } : {}),
+      })
       .eq("user_id", data.user_id);
     if (error) throw new Error(error.message);
     return { ok: true };

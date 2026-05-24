@@ -317,7 +317,7 @@ function Index() {
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-8 px-6 md:flex-row">
           <div className="flex items-center gap-2">
             <div className="size-4 rounded-sm bg-foreground" />
-            <span className="text-xs font-semibold tracking-tight">KLYRO NETWORK</span>
+            <span className="text-xs font-semibold tracking-tight">KLYRO</span>
           </div>
           <div className="flex items-center gap-6">
             <a href="#" aria-label="Twitter" className="text-muted-foreground hover:text-foreground">

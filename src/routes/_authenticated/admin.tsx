@@ -202,11 +202,25 @@ function AdminRow({
     skills: string[];
     klyro_score: number | null;
     vetting: string;
+    resume_score?: number | null;
+    resume_url?: string | null;
+    resume_feedback?: string | null;
+    work_authorization?: string;
+    ai_interview_status?: string;
+    ai_interview_score?: number | null;
+    ai_interview_summary?: string | null;
+    main_interview_status?: string;
+    main_interview_scheduled_at?: string | null;
   };
   onUpdate: (vetting: "pending" | "in_review" | "vetted" | "rejected", score: number | null) => Promise<void>;
 }) {
   const [score, setScore] = useState<string>(engineer.klyro_score?.toString() ?? "");
   const [busy, setBusy] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [schedAt, setSchedAt] = useState("");
+  const [schedNotes, setSchedNotes] = useState("");
+  const schedule = useServerFn(scheduleMainInterview);
+  const verdict = useServerFn(setMainInterviewVerdict);
 
   const act = async (vetting: "pending" | "in_review" | "vetted" | "rejected") => {
     setBusy(true);
@@ -219,61 +233,134 @@ function AdminRow({
   };
 
   return (
-    <tr>
-      <td className="px-4 py-4">
-        <p className="font-medium">{engineer.display_name}</p>
-        <p className="text-xs text-muted-foreground">{engineer.headline ?? "—"}</p>
-      </td>
-      <td className="px-4 py-4">
-        <div className="flex flex-wrap gap-1">
-          {engineer.skills.slice(0, 4).map((s) => (
-            <span key={s} className="rounded bg-secondary px-1.5 py-0.5 text-[10px]">
-              {s}
-            </span>
-          ))}
-        </div>
-      </td>
-      <td className="px-4 py-4">
-        <input
-          type="number"
-          min={0}
-          max={100}
-          value={score}
-          onChange={(e) => setScore(e.target.value)}
-          placeholder="0-100"
-          className="w-20 rounded-md border border-border bg-background px-2 py-1 text-sm"
-        />
-      </td>
-      <td className="px-4 py-4">
-        <span className="rounded-full bg-background px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ring-black/5">
-          {engineer.vetting}
-        </span>
-      </td>
-      <td className="px-4 py-4 text-right">
-        <div className="inline-flex gap-2">
-          <button
-            disabled={busy}
-            onClick={() => act("vetted")}
-            className="rounded-md bg-foreground px-3 py-1.5 text-xs font-medium text-background disabled:opacity-50"
-          >
-            Approve
+    <>
+      <tr>
+        <td className="px-4 py-4">
+          <button onClick={() => setOpen(!open)} className="flex items-center gap-2 text-left">
+            <ChevronDown className={`size-3 transition ${open ? "rotate-0" : "-rotate-90"}`} />
+            <div>
+              <p className="font-medium">{engineer.display_name}</p>
+              <p className="text-xs text-muted-foreground">{engineer.headline ?? "—"}</p>
+            </div>
           </button>
-          <button
-            disabled={busy}
-            onClick={() => act("in_review")}
-            className="rounded-md bg-secondary px-3 py-1.5 text-xs font-medium disabled:opacity-50"
-          >
-            Review
-          </button>
-          <button
-            disabled={busy}
-            onClick={() => act("rejected")}
-            className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground disabled:opacity-50"
-          >
-            Reject
-          </button>
-        </div>
-      </td>
-    </tr>
+        </td>
+        <td className="px-4 py-4">
+          <div className="flex flex-wrap gap-1">
+            {engineer.skills.slice(0, 4).map((s) => (
+              <span key={s} className="rounded bg-secondary px-1.5 py-0.5 text-[10px]">{s}</span>
+            ))}
+          </div>
+        </td>
+        <td className="px-4 py-4">
+          <div className="space-y-0.5 text-[11px] text-muted-foreground">
+            <p>Resume: <b className="text-foreground">{engineer.resume_score ?? "—"}</b></p>
+            <p>AI: <b className="text-foreground">{engineer.ai_interview_score ?? "—"}</b></p>
+            <input
+              type="number"
+              min={0}
+              max={100}
+              value={score}
+              onChange={(e) => setScore(e.target.value)}
+              placeholder="Final"
+              className="mt-1 w-20 rounded-md border border-border bg-background px-2 py-1 text-xs"
+            />
+          </div>
+        </td>
+        <td className="px-4 py-4">
+          <span className="rounded-full bg-background px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ring-black/5">
+            {engineer.vetting}
+          </span>
+          <p className="mt-1 text-[10px] text-muted-foreground">main: {engineer.main_interview_status ?? "—"}</p>
+        </td>
+        <td className="px-4 py-4 text-right">
+          <div className="inline-flex gap-2">
+            <button disabled={busy} onClick={() => act("vetted")} className="rounded-md bg-foreground px-3 py-1.5 text-xs font-medium text-background disabled:opacity-50">Approve</button>
+            <button disabled={busy} onClick={() => act("in_review")} className="rounded-md bg-secondary px-3 py-1.5 text-xs font-medium disabled:opacity-50">Review</button>
+            <button disabled={busy} onClick={() => act("rejected")} className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground disabled:opacity-50">Reject</button>
+          </div>
+        </td>
+      </tr>
+      {open && (
+        <tr className="bg-secondary/30">
+          <td colSpan={5} className="px-6 py-5">
+            <div className="grid gap-5 md:grid-cols-2">
+              <div>
+                <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Resume</h4>
+                <p className="mt-1 text-xs">
+                  {engineer.resume_url ? (
+                    <span className="text-muted-foreground">Path: <code>{engineer.resume_url}</code></span>
+                  ) : "No resume uploaded"}
+                </p>
+                {engineer.resume_feedback && (
+                  <p className="mt-2 whitespace-pre-wrap rounded bg-background p-3 text-xs">{engineer.resume_feedback}</p>
+                )}
+                <p className="mt-3 text-xs text-muted-foreground">
+                  Work auth: <b className="text-foreground">{engineer.work_authorization ?? "unspecified"}</b>
+                </p>
+              </div>
+              <div>
+                <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">AI interview (Kai)</h4>
+                <p className="mt-1 text-xs">Status: <b>{engineer.ai_interview_status ?? "not_started"}</b></p>
+                {engineer.ai_interview_summary && (
+                  <p className="mt-2 rounded bg-background p-3 text-xs">{engineer.ai_interview_summary}</p>
+                )}
+              </div>
+              <div className="md:col-span-2">
+                <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Final interview</h4>
+                {engineer.main_interview_scheduled_at && (
+                  <p className="mt-1 text-xs">Scheduled: <b>{new Date(engineer.main_interview_scheduled_at).toLocaleString()}</b></p>
+                )}
+                <div className="mt-3 flex flex-wrap items-end gap-3">
+                  <label className="text-xs">
+                    <span className="mb-1 block text-muted-foreground">Schedule at</span>
+                    <input
+                      type="datetime-local"
+                      value={schedAt}
+                      onChange={(e) => setSchedAt(e.target.value)}
+                      className="h-9 rounded-md border border-border bg-background px-2 text-xs"
+                    />
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Notes / meeting link"
+                    value={schedNotes}
+                    onChange={(e) => setSchedNotes(e.target.value)}
+                    className="h-9 flex-1 min-w-[200px] rounded-md border border-border bg-background px-2 text-xs"
+                  />
+                  <button
+                    onClick={async () => {
+                      if (!schedAt) return toast.error("Pick a date/time");
+                      await schedule({ data: { user_id: engineer.user_id, scheduled_at: new Date(schedAt).toISOString(), notes: schedNotes } });
+                      toast.success("Scheduled");
+                    }}
+                    className="h-9 rounded-md bg-foreground px-3 text-xs font-medium text-background"
+                  >
+                    Schedule
+                  </button>
+                  <button
+                    onClick={async () => {
+                      await verdict({ data: { user_id: engineer.user_id, verdict: "passed", notes: schedNotes, approve_to_network: true } });
+                      toast.success("Passed & added to network");
+                    }}
+                    className="h-9 rounded-md bg-success px-3 text-xs font-medium text-background"
+                  >
+                    Pass + Vet
+                  </button>
+                  <button
+                    onClick={async () => {
+                      await verdict({ data: { user_id: engineer.user_id, verdict: "failed", notes: schedNotes } });
+                      toast.success("Marked failed");
+                    }}
+                    className="h-9 rounded-md border border-border px-3 text-xs font-medium text-muted-foreground"
+                  >
+                    Fail
+                  </button>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      )}
+    </>
   );
 }

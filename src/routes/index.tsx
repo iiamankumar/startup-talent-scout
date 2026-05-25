@@ -373,9 +373,11 @@ function Index() {
           </div>
 
           <div className="mt-16 flex flex-col gap-6 border-t border-border pt-8 md:flex-row md:items-center md:justify-between">
-            <div className="flex items-center gap-6 text-sm text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
               <span>© 2026 Aveiq</span>
               <span className="text-muted-foreground/70">Bengaluru, India</span>
+              <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
+              <Link to="/terms" className="hover:text-foreground">Terms</Link>
             </div>
             <div className="flex items-center gap-5">
               <a href="https://x.com/aveiq" target="_blank" rel="noreferrer" aria-label="X (Twitter)" className="text-muted-foreground hover:text-foreground">

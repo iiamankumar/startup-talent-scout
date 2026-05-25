@@ -238,7 +238,7 @@ function ReferralsAdmin() {
               <tr key={r.id}>
                 <td className="px-3 py-2 font-mono">{r.referral_code}</td>
                 <td className="px-3 py-2">{r.status}</td>
-                <td className="px-3 py-2">${r.reward_amount_usd ?? 0}</td>
+                <td className="px-3 py-2">₹{(r.reward_amount_usd ?? 0).toLocaleString("en-IN")}</td>
                 <td className="px-3 py-2">{r.reward_status ?? "none"}</td>
                 <td className="px-3 py-2 text-muted-foreground">
                   {new Date(r.created_at).toLocaleDateString()}

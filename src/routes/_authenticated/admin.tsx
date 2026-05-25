@@ -5,15 +5,17 @@ import { useAuth } from "@/lib/auth-context";
 import {
   listAllEngineersAdmin,
   updateEngineerVetting,
+  bulkUpdateEngineerVetting,
   promoteSelfToAdmin,
   getAdminMetrics,
 } from "@/lib/admin.functions";
+import { listAllReferralsAdmin, updateReferralReward } from "@/lib/referrals.functions";
 
 import { scheduleMainInterview, setMainInterviewVerdict } from "@/lib/interview.functions";
 import { listPendingReviewsAdmin, setReviewApprovalAdmin } from "@/lib/reviews.functions";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { ChevronDown, ShieldCheck, Star } from "lucide-react";
+import { ChevronDown, Search, ShieldCheck, Star } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Aveiq" }] }),
@@ -26,13 +28,45 @@ function AdminPage() {
 
   const list = useServerFn(listAllEngineersAdmin);
   const update = useServerFn(updateEngineerVetting);
+  const bulkUpdate = useServerFn(bulkUpdateEngineerVetting);
   const promote = useServerFn(promoteSelfToAdmin);
+
+  const [search, setSearch] = useState("");
+  const [vettingFilter, setVettingFilter] = useState<string>("all");
+  const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const engineersQ = useQuery({
     queryKey: ["adminEngineers"],
     queryFn: () => list(),
     enabled: isAdmin,
   });
+
+  const filtered = useMemo(() => {
+    const all = engineersQ.data?.engineers ?? [];
+    const q = search.trim().toLowerCase();
+    return all.filter((e) => {
+      if (vettingFilter !== "all" && e.vetting !== vettingFilter) return false;
+      if (!q) return true;
+      return (
+        e.display_name?.toLowerCase().includes(q) ||
+        e.headline?.toLowerCase().includes(q) ||
+        (e.skills ?? []).some((s: string) => s.toLowerCase().includes(q))
+      );
+    });
+  }, [engineersQ.data, search, vettingFilter]);
+
+  const toggleAll = () => {
+    if (selected.size === filtered.length) setSelected(new Set());
+    else setSelected(new Set(filtered.map((e) => e.user_id)));
+  };
+
+  const runBulk = async (vetting: "vetted" | "rejected" | "in_review") => {
+    if (selected.size === 0) return toast.error("Select engineers first");
+    await bulkUpdate({ data: { user_ids: Array.from(selected), vetting } });
+    toast.success(`Updated ${selected.size} engineers`);
+    setSelected(new Set());
+    engineersQ.refetch();
+  };
 
   if (!isAdmin) {
     return (
@@ -86,15 +120,52 @@ function AdminPage() {
           Vetting queue
         </h2>
         <span className="text-xs text-muted-foreground/70">
-          {engineersQ.data?.engineers.length ?? 0} total
+          {filtered.length} of {engineersQ.data?.engineers.length ?? 0}
         </span>
       </div>
 
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <div className="relative flex-1 min-w-[220px]">
+          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search name, headline, or skill…"
+            className="h-10 w-full rounded-md border border-border bg-background pl-9 pr-3 text-sm"
+          />
+        </div>
+        <select
+          value={vettingFilter}
+          onChange={(e) => setVettingFilter(e.target.value)}
+          className="h-10 rounded-md border border-border bg-background px-3 text-sm"
+        >
+          <option value="all">All statuses</option>
+          <option value="pending">Pending</option>
+          <option value="in_review">In review</option>
+          <option value="vetted">Vetted</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        {selected.size > 0 && (
+          <div className="flex items-center gap-2 rounded-md bg-secondary px-3 py-1.5 text-xs">
+            <span className="font-medium">{selected.size} selected</span>
+            <button onClick={() => runBulk("vetted")} className="rounded bg-foreground px-2 py-1 text-background">Approve</button>
+            <button onClick={() => runBulk("in_review")} className="rounded bg-background px-2 py-1 ring-1 ring-border">Review</button>
+            <button onClick={() => runBulk("rejected")} className="rounded bg-background px-2 py-1 ring-1 ring-border">Reject</button>
+          </div>
+        )}
+      </div>
 
-      <div className="mt-8 overflow-hidden rounded-2xl bg-card ring-1 ring-black/5">
+      <div className="mt-4 overflow-hidden rounded-2xl bg-card ring-1 ring-black/5">
         <table className="w-full text-sm">
           <thead className="bg-secondary/50 text-xs uppercase tracking-widest text-muted-foreground">
             <tr>
+              <th className="px-3 py-3 text-left">
+                <input
+                  type="checkbox"
+                  checked={filtered.length > 0 && selected.size === filtered.length}
+                  onChange={toggleAll}
+                />
+              </th>
               <th className="px-4 py-3 text-left font-semibold">Engineer</th>
               <th className="px-4 py-3 text-left font-semibold">Stack</th>
               <th className="px-4 py-3 text-left font-semibold">Score</th>
@@ -104,16 +175,18 @@ function AdminPage() {
           </thead>
           <tbody className="divide-y divide-border">
             {engineersQ.isLoading && (
-              <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
-                  Loading…
-                </td>
-              </tr>
+              <tr><td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">Loading…</td></tr>
             )}
-            {engineersQ.data?.engineers.map((e) => (
+            {filtered.map((e) => (
               <AdminRow
                 key={e.user_id}
                 engineer={e}
+                selected={selected.has(e.user_id)}
+                onToggleSelect={() => {
+                  const s = new Set(selected);
+                  if (s.has(e.user_id)) s.delete(e.user_id); else s.add(e.user_id);
+                  setSelected(s);
+                }}
                 onUpdate={async (vetting, aveiq_score) => {
                   await update({ data: { user_id: e.user_id, vetting, aveiq_score } });
                   toast.success(`Updated ${e.display_name}`);
@@ -121,17 +194,14 @@ function AdminPage() {
                 }}
               />
             ))}
-            {engineersQ.data && engineersQ.data.engineers.length === 0 && (
-              <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
-                  No engineers in queue.
-                </td>
-              </tr>
+            {!engineersQ.isLoading && filtered.length === 0 && (
+              <tr><td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">No matches.</td></tr>
             )}
           </tbody>
         </table>
       </div>
 
+      <ReferralsAdmin />
       <ReviewModeration />
     </main>
   );
@@ -208,6 +278,8 @@ function ReviewModeration() {
 function AdminRow({
   engineer,
   onUpdate,
+  selected,
+  onToggleSelect,
 }: {
   engineer: {
     user_id: string;
@@ -227,6 +299,8 @@ function AdminRow({
     main_interview_scheduled_at?: string | null;
   };
   onUpdate: (vetting: "pending" | "in_review" | "vetted" | "rejected", score: number | null) => Promise<void>;
+  selected?: boolean;
+  onToggleSelect?: () => void;
 }) {
   const [score, setScore] = useState<string>(engineer.aveiq_score?.toString() ?? "");
   const [busy, setBusy] = useState(false);
@@ -249,6 +323,9 @@ function AdminRow({
   return (
     <>
       <tr>
+        <td className="px-3 py-4">
+          <input type="checkbox" checked={!!selected} onChange={onToggleSelect} />
+        </td>
         <td className="px-4 py-4">
           <button onClick={() => setOpen(!open)} className="flex items-center gap-2 text-left">
             <ChevronDown className={`size-3 transition ${open ? "rotate-0" : "-rotate-90"}`} />
@@ -296,7 +373,7 @@ function AdminRow({
       </tr>
       {open && (
         <tr className="bg-secondary/30">
-          <td colSpan={5} className="px-6 py-5">
+          <td colSpan={6} className="px-6 py-5">
             <div className="grid gap-5 md:grid-cols-2">
               <div>
                 <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Resume</h4>

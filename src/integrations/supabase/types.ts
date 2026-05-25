@@ -203,6 +203,33 @@ export type Database = {
         }
         Relationships: []
       }
+      engineer_paste_flags: {
+        Row: {
+          created_at: string
+          id: string
+          reason: string
+          snippet: string | null
+          turn_index: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reason: string
+          snippet?: string | null
+          turn_index: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reason?: string
+          snippet?: string | null
+          turn_index?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       engineer_reviews: {
         Row: {
           approved: boolean
@@ -424,6 +451,72 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_codes: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          converted_at: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          paid_at: string | null
+          referral_code: string
+          referred_user_id: string
+          referrer_user_id: string
+          reward_amount_usd: number
+          reward_status: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          converted_at?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          referral_code: string
+          referred_user_id: string
+          referrer_user_id: string
+          reward_amount_usd?: number
+          reward_status?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          converted_at?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          referral_code?: string
+          referred_user_id?: string
+          referrer_user_id?: string
+          reward_amount_usd?: number
+          reward_status?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       suppressed_emails: {
         Row: {
           created_at: string
@@ -482,6 +575,7 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      gen_referral_code: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

@@ -28,17 +28,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const ref = new URLSearchParams(window.location.search).get("ref");
+      if (ref) {
+        try { localStorage.setItem("aveiq_ref", ref.toUpperCase().slice(0, 16)); } catch {}
+      }
+    }
+
+    const attributeRef = async () => {
+      try {
+        const ref = localStorage.getItem("aveiq_ref");
+        if (!ref) return;
+        const { attributeReferral } = await import("@/lib/referrals.functions");
+        await attributeReferral({ data: { code: ref } });
+        localStorage.removeItem("aveiq_ref");
+      } catch { /* ignore */ }
+    };
+
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
       setSession(s);
       setUser(s?.user ?? null);
-      // Defer to avoid deadlock
-      setTimeout(() => loadRoles(s?.user?.id), 0);
+      setTimeout(() => {
+        loadRoles(s?.user?.id);
+        if (s?.user) attributeRef();
+      }, 0);
     });
 
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       setUser(data.session?.user ?? null);
       loadRoles(data.session?.user?.id).finally(() => setLoading(false));
+      if (data.session?.user) attributeRef();
     });
 
     return () => sub.subscription.unsubscribe();

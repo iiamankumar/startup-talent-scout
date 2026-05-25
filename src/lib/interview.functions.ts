@@ -37,7 +37,11 @@ Rules:
 export const sendInterviewMessage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i) =>
-    z.object({ message: z.string().trim().max(4000).optional() }).parse(i),
+    z.object({
+      message: z.string().trim().max(4000).optional(),
+      pasted: z.boolean().optional(),
+      typing_ms: z.number().int().min(0).max(60 * 60 * 1000).optional(),
+    }).parse(i),
   )
   .handler(async ({ data, context }) => {
     const { userId } = context;
@@ -56,6 +60,21 @@ export const sendInterviewMessage = createServerFn({ method: "POST" })
 
     if (data.message) {
       transcript.push({ role: "candidate", content: data.message, ts: new Date().toISOString() });
+
+      // Server-side integrity check
+      const { detectAiPaste } = await import("@/lib/interview-integrity");
+      const heur = detectAiPaste(data.message, data.typing_ms ?? 0);
+      const reasons: string[] = [];
+      if (data.pasted) reasons.push("client-paste");
+      if (heur.flagged && heur.reason) reasons.push(heur.reason);
+      if (reasons.length > 0) {
+        await supabaseAdmin.from("engineer_paste_flags").insert({
+          user_id: userId,
+          turn_index: transcript.length - 1,
+          reason: reasons.join(","),
+          snippet: data.message.slice(0, 280),
+        });
+      }
     }
 
     const messages: Array<{ role: string; content: string }> = [
@@ -97,7 +116,6 @@ Resume excerpt: ${(eng.resume_text ?? "").slice(0, 4000)}`,
       })
       .eq("user_id", userId);
 
-    // If finished, run grading
     if (finished) {
       await gradeInterview(userId, transcript);
     }

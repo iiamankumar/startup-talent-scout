@@ -22,6 +22,9 @@ function InterviewPage() {
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [finished, setFinished] = useState(false);
+  const [pasteWarning, setPasteWarning] = useState<string | null>(null);
+  const typingStartRef = useRef<number | null>(null);
+  const pastedRef = useRef(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -38,8 +41,11 @@ function InterviewPage() {
   const startOrSend = async (msg?: string) => {
     setSending(true);
     try {
-      const res = await send({ data: { message: msg } });
+      const typingMs = typingStartRef.current ? Date.now() - typingStartRef.current : 0;
+      const res = await send({ data: { message: msg, pasted: pastedRef.current, typing_ms: typingMs } });
       setTranscript(res.transcript);
+      pastedRef.current = false;
+      typingStartRef.current = null;
       if (res.finished) {
         setFinished(true);
         toast.success("Interview complete. Kai is reviewing your responses.");
@@ -192,22 +198,42 @@ function InterviewPage() {
               setInput("");
               startOrSend(m);
             }}
-            className="mt-5 flex gap-2"
+            className="mt-5 space-y-2"
           >
-            <input
+            <textarea
               value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your answer…"
-              className="h-12 flex-1 rounded-md border border-border bg-background px-4 text-sm"
+              onChange={(e) => {
+                if (!typingStartRef.current) typingStartRef.current = Date.now();
+                setInput(e.target.value);
+              }}
+              onPaste={(e) => {
+                e.preventDefault();
+                pastedRef.current = true;
+                setPasteWarning(
+                  "Paste blocked — please type your answer in your own words. Paste attempts are recorded for the reviewer.",
+                );
+                setTimeout(() => setPasteWarning(null), 5000);
+              }}
+              onDrop={(e) => e.preventDefault()}
+              onCopy={(e) => e.preventDefault()}
+              placeholder="Type your answer in your own words…"
+              rows={3}
+              className="w-full rounded-md border border-border bg-background p-3 text-sm"
               disabled={sending}
             />
-            <button
-              type="submit"
-              disabled={sending || !input.trim()}
-              className="inline-flex h-12 items-center gap-2 rounded-md bg-foreground px-5 text-sm font-medium text-background disabled:opacity-50"
-            >
-              <Send className="size-4" /> Send
-            </button>
+            {pasteWarning && (
+              <p className="text-xs text-destructive">{pasteWarning}</p>
+            )}
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Answers must be typed live. Pasted or AI-generated answers are flagged for the human reviewer.</span>
+              <button
+                type="submit"
+                disabled={sending || !input.trim()}
+                className="inline-flex h-10 items-center gap-2 rounded-md bg-foreground px-5 text-sm font-medium text-background disabled:opacity-50"
+              >
+                <Send className="size-4" /> Send
+              </button>
+            </div>
           </form>
         )
       )}

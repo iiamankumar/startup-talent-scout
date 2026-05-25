@@ -298,7 +298,14 @@ function JobDetailPage() {
                         await apply({
                           data: { hire_request_id: job.id, note: note.trim() || null },
                         });
-                        toast.success("Application sent.");
+                        if (user?.email) {
+                          void sendTransactionalEmail({
+                            templateName: 'application-submitted',
+                            recipientEmail: user.email,
+                            templateData: { displayName: user.user_metadata?.full_name ?? user.email, name: job.role_title, roleTitle: job.role_title },
+                          }).catch(() => {});
+                        }
+                        toast.success("Application sent. We emailed you a confirmation.");
                         jobQ.refetch();
                       } catch (e) {
                         toast.error((e as Error).message);

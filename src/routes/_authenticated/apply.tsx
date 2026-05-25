@@ -30,7 +30,7 @@ const WORK_AUTH_OPTIONS = [
 ];
 
 function ApplyPage() {
-  const { user, roles } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
   const get = useServerFn(getMyEngineerProfile);

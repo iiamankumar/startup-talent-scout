@@ -80,7 +80,7 @@ export const getEngineerPublicProfile = createServerFn({ method: "GET" })
     const { data: e, error } = await supabaseAdmin
       .from("engineers")
       .select(
-        "user_id, display_name, headline, bio, location, years_experience, hourly_rate_usd, skills, github_url, linkedin_url, website_url, available, aveiq_score, vetting, resume_score, ai_interview_score"
+        "user_id, display_name, headline, bio, location, years_experience, hourly_rate_usd, skills, github_url, linkedin_url, website_url, available, aveiq_score, vetting"
       )
 
       .eq("user_id", data.user_id)

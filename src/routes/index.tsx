@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Plus, FileText, Github, Twitter, Linkedin, ArrowRight, Star } from "lucide-react";
+import { Plus, FileText, Instagram, Linkedin, ArrowRight, Star } from "lucide-react";
 import { getFeaturedEngineers, getLandingStats } from "@/lib/reviews.functions";
 import { AveiqLogo } from "@/components/AveiqLogo";
 

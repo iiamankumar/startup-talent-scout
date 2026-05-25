@@ -15,10 +15,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 
 function Dashboard() {
   const { user, roles } = useAuth();
-  const isEngineer = roles.includes("engineer");
-  const isFounder = roles.includes("founder");
   const isAdmin = roles.includes("admin");
-  const showFounderPanel = isFounder && !isEngineer;
 
   const getProfile = useServerFn(getMyEngineerProfile);
   const getMyRequests = useServerFn(listMyHireRequests);
@@ -32,16 +29,27 @@ function Dashboard() {
   const requestsQ = useQuery({
     queryKey: ["myHireRequests", user?.id],
     queryFn: () => getMyRequests(),
-    enabled: showFounderPanel,
-  });
-  const openQ = useQuery({
-    queryKey: ["openRequests"],
-    queryFn: () => getOpen(),
-    enabled: isEngineer,
   });
   const referralsQ = useQuery({
     queryKey: ["myReferrals", user?.id],
     queryFn: () => getRefs(),
+  });
+
+  // Decide which dashboard to show based on actual activity (not just role).
+  const hasEngineerProfile = !!profileQ.data?.engineer;
+  const hasHireRequests = (requestsQ.data?.requests?.length ?? 0) > 0;
+  const roleEngineer = roles.includes("engineer");
+  const roleFounder = roles.includes("founder");
+
+  // Show founder dashboard if they've hired or are tagged founder (and not engineer).
+  const showFounderPanel = hasHireRequests || (roleFounder && !roleEngineer && !hasEngineerProfile);
+  // Show engineer dashboard if they've applied, are tagged engineer, or neither path yet.
+  const showEngineerPanel = hasEngineerProfile || roleEngineer || (!showFounderPanel);
+
+  const openQ = useQuery({
+    queryKey: ["openRequests"],
+    queryFn: () => getOpen(),
+    enabled: showEngineerPanel,
   });
 
   const referralCode = referralsQ.data?.code ?? "";
@@ -66,9 +74,11 @@ function Dashboard() {
         Welcome back, {user?.user_metadata?.full_name ?? user?.email}
       </h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        {isEngineer
-          ? "Manage your profile and browse open roles."
-          : "Post a brief and we'll match you with cracked engineers."}
+        {showFounderPanel && !showEngineerPanel
+          ? "Post a brief and we'll match you with cracked engineers."
+          : showEngineerPanel && !showFounderPanel
+            ? "Manage your profile and browse open roles."
+            : "Apply as an engineer or post a hire request — both work from this account."}
       </p>
 
       {isAdmin && (
@@ -80,9 +90,9 @@ function Dashboard() {
         </Link>
       )}
 
-      <div className={`mt-10 grid gap-6 ${showFounderPanel ? "md:grid-cols-2" : ""}`}>
+      <div className={`mt-10 grid gap-6 ${showFounderPanel && showEngineerPanel ? "md:grid-cols-2" : showFounderPanel ? "md:grid-cols-2" : ""}`}>
         {/* Engineer profile card */}
-        {!showFounderPanel && (
+        {showEngineerPanel && (
         <section className="rounded-2xl bg-card p-6 ring-1 ring-black/5">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
             <UserCircle2 className="size-4" /> Engineer profile
@@ -233,7 +243,7 @@ function Dashboard() {
       </div>
 
       {/* Engineer-only: open roles feed */}
-      {isEngineer && (
+      {showEngineerPanel && (
         <section className="mt-10 rounded-2xl bg-card p-6 ring-1 ring-black/5">
           <div className="flex items-center justify-between border-b border-border pb-4">
             <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">

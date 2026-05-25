@@ -14,19 +14,14 @@ export const Route = createFileRoute("/_authenticated/hire")({
 
 function HirePage() {
   const navigate = useNavigate();
-  const { user, roles } = useAuth();
-  const isEngineer = roles.includes("engineer");
-  const isFounder = roles.includes("founder");
-  const isAdmin = roles.includes("admin");
-  // Lock account to applying — engineer accounts can't post hire requests.
-  const blocked = isEngineer && !isFounder && !isAdmin;
+  const { user } = useAuth();
+  const blocked = false;
 
   const submitFn = useServerFn(createHireRequest);
   const getCompany = useServerFn(getMyLatestCompany);
   const { data: companyData } = useQuery({
     queryKey: ["myLatestCompany"],
     queryFn: () => getCompany(),
-    enabled: !blocked,
   });
   const [form, setForm] = useState({
     company_name: "",

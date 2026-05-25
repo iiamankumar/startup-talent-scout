@@ -5,6 +5,9 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { getJobDetail, listOpenRequestsForEngineers } from "@/lib/hire.functions";
 import { applyToHireRequest } from "@/lib/applications.functions";
+import { sendTransactionalEmail } from "@/lib/email/send";
+import { useAuth } from "@/lib/auth-context";
+
 
 export const Route = createFileRoute("/_authenticated/jobs/$jobId")({
   head: () => ({ meta: [{ title: "Role — Aveiq" }] }),
@@ -16,6 +19,7 @@ type StepState = "done" | "in_progress" | "todo";
 function JobDetailPage() {
   const { jobId } = Route.useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const getJob = useServerFn(getJobDetail);
   const getOpen = useServerFn(listOpenRequestsForEngineers);
   const apply = useServerFn(applyToHireRequest);
@@ -294,7 +298,14 @@ function JobDetailPage() {
                         await apply({
                           data: { hire_request_id: job.id, note: note.trim() || null },
                         });
-                        toast.success("Application sent.");
+                        if (user?.email) {
+                          void sendTransactionalEmail({
+                            templateName: 'application-submitted',
+                            recipientEmail: user.email,
+                            templateData: { displayName: user.user_metadata?.full_name ?? user.email, name: job.role_title, roleTitle: job.role_title },
+                          }).catch(() => {});
+                        }
+                        toast.success("Application sent. We emailed you a confirmation.");
                         jobQ.refetch();
                       } catch (e) {
                         toast.error((e as Error).message);

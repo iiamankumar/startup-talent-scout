@@ -4,10 +4,14 @@ import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/lib/auth-context";
 import { getMyEngineerProfile } from "@/lib/engineers.functions";
 import { listMyHireRequests, listOpenRequestsForEngineers } from "@/lib/hire.functions";
-import { promoteSelfToAdmin } from "@/lib/admin.functions";
-import { ArrowRight, Briefcase, ShieldCheck, UserCircle2 } from "lucide-react";
-import { useState } from "react";
+import { getMyReferrals } from "@/lib/referrals.functions";
+import { ArrowRight, Briefcase, Copy, Gift, ShieldCheck, UserCircle2 } from "lucide-react";
 import { toast } from "sonner";
+
+export const Route = createFileRoute("/_authenticated/dashboard")({
+  head: () => ({ meta: [{ title: "Dashboard — Aveiq" }] }),
+  component: Dashboard,
+});
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Aveiq" }] }),

@@ -437,11 +437,13 @@ function TextArea({
   value,
   onChange,
   placeholder,
+  required,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
+  required?: boolean;
 }) {
   return (
     <label className="block">
@@ -450,6 +452,7 @@ function TextArea({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
+        required={required}
         rows={6}
         className="w-full rounded-md border border-border bg-background p-3 text-sm"
       />

@@ -37,7 +37,7 @@ function ResourcesPage() {
       <InfoBlock title="Templates">
         <p>
           Free templates: job brief, offer letter, technical take-home, weekly 1:1 doc. Email{" "}
-          <a className="underline" href="mailto:hello@aveiq.com">hello@aveiq.com</a> and we'll send
+          <a className="underline" href="mailto:care@aveiq.app">care@aveiq.app</a> and we'll send
           the bundle.
         </p>
       </InfoBlock>

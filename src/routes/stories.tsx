@@ -32,7 +32,7 @@ function StoriesPage() {
       </InfoBlock>
       <p className="text-sm text-muted-foreground">
         More stories are published every few weeks. Want to share yours? Email{" "}
-        <a className="underline" href="mailto:stories@aveiq.com">stories@aveiq.com</a>.
+        <a className="underline" href="mailto:care@aveiq.app">care@aveiq.app</a>.
       </p>
     </InfoPage>
   );

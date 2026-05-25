@@ -31,7 +31,7 @@ function DataPartnershipsPage() {
         identifying data without a separate explicit opt-in.
       </InfoBlock>
       <InfoBlock title="Get in touch">
-        Email <a className="underline" href="mailto:data@aveiq.com">data@aveiq.com</a> with what
+        Email <a className="underline" href="mailto:care@aveiq.app">care@aveiq.app</a> with what
         you're researching and we'll get back within two business days.
       </InfoBlock>
     </InfoPage>

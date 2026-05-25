@@ -32,7 +32,7 @@ function BlogPage() {
       </InfoBlock>
       <p className="text-sm text-muted-foreground">
         Subscribe to the monthly Aveiq letter — email{" "}
-        <a className="underline" href="mailto:hello@aveiq.com?subject=Subscribe">hello@aveiq.com</a>{" "}
+        <a className="underline" href="mailto:care@aveiq.app?subject=Subscribe">care@aveiq.app</a>{" "}
         with the subject "Subscribe".
       </p>
     </InfoPage>

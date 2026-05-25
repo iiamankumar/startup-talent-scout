@@ -31,7 +31,7 @@ function CareersPage() {
       </InfoBlock>
       <InfoBlock title="Apply">
         Send a short note about you and a link or two that shows your work to{" "}
-        <a className="underline" href="mailto:careers@aveiq.com">careers@aveiq.com</a>. No cover
+        <a className="underline" href="mailto:care@aveiq.app">care@aveiq.app</a>. No cover
         letters, please.
       </InfoBlock>
     </InfoPage>

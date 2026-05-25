@@ -28,13 +28,45 @@ function AdminPage() {
 
   const list = useServerFn(listAllEngineersAdmin);
   const update = useServerFn(updateEngineerVetting);
+  const bulkUpdate = useServerFn(bulkUpdateEngineerVetting);
   const promote = useServerFn(promoteSelfToAdmin);
+
+  const [search, setSearch] = useState("");
+  const [vettingFilter, setVettingFilter] = useState<string>("all");
+  const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const engineersQ = useQuery({
     queryKey: ["adminEngineers"],
     queryFn: () => list(),
     enabled: isAdmin,
   });
+
+  const filtered = useMemo(() => {
+    const all = engineersQ.data?.engineers ?? [];
+    const q = search.trim().toLowerCase();
+    return all.filter((e) => {
+      if (vettingFilter !== "all" && e.vetting !== vettingFilter) return false;
+      if (!q) return true;
+      return (
+        e.display_name?.toLowerCase().includes(q) ||
+        e.headline?.toLowerCase().includes(q) ||
+        (e.skills ?? []).some((s: string) => s.toLowerCase().includes(q))
+      );
+    });
+  }, [engineersQ.data, search, vettingFilter]);
+
+  const toggleAll = () => {
+    if (selected.size === filtered.length) setSelected(new Set());
+    else setSelected(new Set(filtered.map((e) => e.user_id)));
+  };
+
+  const runBulk = async (vetting: "vetted" | "rejected" | "in_review") => {
+    if (selected.size === 0) return toast.error("Select engineers first");
+    await bulkUpdate({ data: { user_ids: Array.from(selected), vetting } });
+    toast.success(`Updated ${selected.size} engineers`);
+    setSelected(new Set());
+    engineersQ.refetch();
+  };
 
   if (!isAdmin) {
     return (

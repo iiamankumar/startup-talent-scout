@@ -120,15 +120,52 @@ function AdminPage() {
           Vetting queue
         </h2>
         <span className="text-xs text-muted-foreground/70">
-          {engineersQ.data?.engineers.length ?? 0} total
+          {filtered.length} of {engineersQ.data?.engineers.length ?? 0}
         </span>
       </div>
 
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <div className="relative flex-1 min-w-[220px]">
+          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search name, headline, or skill…"
+            className="h-10 w-full rounded-md border border-border bg-background pl-9 pr-3 text-sm"
+          />
+        </div>
+        <select
+          value={vettingFilter}
+          onChange={(e) => setVettingFilter(e.target.value)}
+          className="h-10 rounded-md border border-border bg-background px-3 text-sm"
+        >
+          <option value="all">All statuses</option>
+          <option value="pending">Pending</option>
+          <option value="in_review">In review</option>
+          <option value="vetted">Vetted</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        {selected.size > 0 && (
+          <div className="flex items-center gap-2 rounded-md bg-secondary px-3 py-1.5 text-xs">
+            <span className="font-medium">{selected.size} selected</span>
+            <button onClick={() => runBulk("vetted")} className="rounded bg-foreground px-2 py-1 text-background">Approve</button>
+            <button onClick={() => runBulk("in_review")} className="rounded bg-background px-2 py-1 ring-1 ring-border">Review</button>
+            <button onClick={() => runBulk("rejected")} className="rounded bg-background px-2 py-1 ring-1 ring-border">Reject</button>
+          </div>
+        )}
+      </div>
 
-      <div className="mt-8 overflow-hidden rounded-2xl bg-card ring-1 ring-black/5">
+      <div className="mt-4 overflow-hidden rounded-2xl bg-card ring-1 ring-black/5">
         <table className="w-full text-sm">
           <thead className="bg-secondary/50 text-xs uppercase tracking-widest text-muted-foreground">
             <tr>
+              <th className="px-3 py-3 text-left">
+                <input
+                  type="checkbox"
+                  checked={filtered.length > 0 && selected.size === filtered.length}
+                  onChange={toggleAll}
+                />
+              </th>
               <th className="px-4 py-3 text-left font-semibold">Engineer</th>
               <th className="px-4 py-3 text-left font-semibold">Stack</th>
               <th className="px-4 py-3 text-left font-semibold">Score</th>
@@ -138,16 +175,18 @@ function AdminPage() {
           </thead>
           <tbody className="divide-y divide-border">
             {engineersQ.isLoading && (
-              <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
-                  Loading…
-                </td>
-              </tr>
+              <tr><td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">Loading…</td></tr>
             )}
-            {engineersQ.data?.engineers.map((e) => (
+            {filtered.map((e) => (
               <AdminRow
                 key={e.user_id}
                 engineer={e}
+                selected={selected.has(e.user_id)}
+                onToggleSelect={() => {
+                  const s = new Set(selected);
+                  if (s.has(e.user_id)) s.delete(e.user_id); else s.add(e.user_id);
+                  setSelected(s);
+                }}
                 onUpdate={async (vetting, aveiq_score) => {
                   await update({ data: { user_id: e.user_id, vetting, aveiq_score } });
                   toast.success(`Updated ${e.display_name}`);
@@ -155,17 +194,14 @@ function AdminPage() {
                 }}
               />
             ))}
-            {engineersQ.data && engineersQ.data.engineers.length === 0 && (
-              <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
-                  No engineers in queue.
-                </td>
-              </tr>
+            {!engineersQ.isLoading && filtered.length === 0 && (
+              <tr><td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">No matches.</td></tr>
             )}
           </tbody>
         </table>
       </div>
 
+      <ReferralsAdmin />
       <ReviewModeration />
     </main>
   );

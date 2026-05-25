@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -14,12 +14,19 @@ export const Route = createFileRoute("/_authenticated/hire")({
 
 function HirePage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, roles } = useAuth();
+  const isEngineer = roles.includes("engineer");
+  const isFounder = roles.includes("founder");
+  const isAdmin = roles.includes("admin");
+  // Lock account to applying — engineer accounts can't post hire requests.
+  const blocked = isEngineer && !isFounder && !isAdmin;
+
   const submitFn = useServerFn(createHireRequest);
   const getCompany = useServerFn(getMyLatestCompany);
   const { data: companyData } = useQuery({
     queryKey: ["myLatestCompany"],
     queryFn: () => getCompany(),
+    enabled: !blocked,
   });
   const [form, setForm] = useState({
     company_name: "",
@@ -81,12 +88,36 @@ function HirePage() {
     }
   };
 
+  if (blocked) {
+    return (
+      <main className="mx-auto max-w-2xl px-6 py-20">
+        <div className="rounded-2xl bg-card p-8 ring-1 ring-black/5">
+          <h1 className="text-2xl font-medium tracking-tight">This is an engineer account</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            This account is set up to apply for roles. One account is locked to one path —
+            you can't post hire requests from an engineer account. To hire, sign out and create a
+            separate account with a different email.
+          </p>
+          <div className="mt-5 flex gap-3">
+            <Link to="/roles" className="inline-flex h-10 items-center rounded-md bg-foreground px-4 text-sm font-medium text-background">
+              Browse open roles
+            </Link>
+            <Link to="/dashboard" className="inline-flex h-10 items-center rounded-md border border-border px-4 text-sm font-medium">
+              Dashboard
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
       <h1 className="text-3xl font-medium tracking-tight">Tell us what you're hiring for</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         We'll hand-pick 3–5 cracked engineers and send the shortlist within 72 hours.
       </p>
+
 
       <form
         onSubmit={submit}

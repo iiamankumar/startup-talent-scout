@@ -13,6 +13,8 @@ import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 import { AuthProvider } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
+import { SiteFooter } from "@/components/SiteFooter";
+import { useRouterState } from "@tanstack/react-router";
 
 function NotFoundComponent() {
   return (
@@ -138,8 +140,16 @@ function RootComponent() {
       <AuthProvider>
         <AuthInvalidator />
         <Outlet />
+        <ConditionalFooter />
         <Toaster position="top-right" richColors />
       </AuthProvider>
     </QueryClientProvider>
   );
+}
+
+function ConditionalFooter() {
+  const path = useRouterState({ select: (s) => s.location.pathname });
+  // Home page has its own bespoke footer; skip there to avoid duplication.
+  if (path === "/") return null;
+  return <SiteFooter />;
 }

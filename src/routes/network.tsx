@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Github, Linkedin, Globe } from "lucide-react";
 import { listVettedEngineers } from "@/lib/engineers.functions";
 import { AveiqLogo } from "@/components/AveiqLogo";
+import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/network")({
   head: () => ({
@@ -21,6 +22,7 @@ export const Route = createFileRoute("/network")({
 
 function NetworkPage() {
   const fn = useServerFn(listVettedEngineers);
+  const { user } = useAuth();
   const { data, isLoading } = useQuery({
     queryKey: ["vettedEngineers"],
     queryFn: () => fn(),
@@ -35,15 +37,23 @@ function NetworkPage() {
           <AveiqLogo />
         </Link>
         <nav className="flex items-center gap-6 text-sm">
-          <Link to="/login" className="text-muted-foreground hover:text-foreground">
-            Sign in
-          </Link>
-          <Link
-            to="/hire"
-            className="rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background"
-          >
-            Hire talent
-          </Link>
+          {user ? (
+            <Link to="/dashboard" className="rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background">
+              Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link to="/login" className="text-muted-foreground hover:text-foreground">
+                Sign in
+              </Link>
+              <Link
+                to="/hire"
+                className="rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background"
+              >
+                Hire talent
+              </Link>
+            </>
+          )}
         </nav>
       </header>
 

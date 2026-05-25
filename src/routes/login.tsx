@@ -8,14 +8,14 @@ import { AveiqLogo } from "@/components/AveiqLogo";
 
 export const Route = createFileRoute("/login")({
   validateSearch: (search: Record<string, unknown>) => ({
-    redirect: typeof search.redirect === "string" ? search.redirect : "/dashboard",
+    redirect: typeof search.redirect === "string" ? search.redirect : undefined,
   }),
   component: LoginPage,
 });
 
-function safeRedirect(target: string): string {
+function safeRedirect(target: string | undefined): string {
   // Only allow same-origin paths to prevent open redirects
-  if (!target.startsWith("/") || target.startsWith("//")) return "/dashboard";
+  if (!target || !target.startsWith("/") || target.startsWith("//")) return "/dashboard";
   return target;
 }
 

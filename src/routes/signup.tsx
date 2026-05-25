@@ -8,13 +8,14 @@ import { AuthShell, Field, Divider, GoogleIcon } from "./login";
 
 export const Route = createFileRoute("/signup")({
   validateSearch: (search: Record<string, unknown>) => ({
-    redirect: typeof search.redirect === "string" ? search.redirect : "/dashboard",
+    redirect: typeof search.redirect === "string" ? search.redirect : undefined,
+    ref: typeof search.ref === "string" ? search.ref : undefined,
   }),
   component: SignupPage,
 });
 
-function safeRedirect(target: string): string {
-  if (!target.startsWith("/") || target.startsWith("//")) return "/dashboard";
+function safeRedirect(target: string | undefined): string {
+  if (!target || !target.startsWith("/") || target.startsWith("//")) return "/dashboard";
   return target;
 }
 

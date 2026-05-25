@@ -30,7 +30,7 @@ const WORK_AUTH_OPTIONS = [
 ];
 
 function ApplyPage() {
-  const { user } = useAuth();
+  const { user, roles } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
   const get = useServerFn(getMyEngineerProfile);
@@ -38,9 +38,16 @@ function ApplyPage() {
   const screen = useServerFn(screenResume);
   const setWA = useServerFn(setWorkAuthorization);
 
+  const isFounder = roles.includes("founder");
+  const isEngineer = roles.includes("engineer");
+  const isAdmin = roles.includes("admin");
+  // Account is locked to hiring — block applying.
+  const blocked = isFounder && !isEngineer && !isAdmin;
+
   const { data } = useQuery({
     queryKey: ["myEngineer", user?.id],
     queryFn: () => get(),
+    enabled: !blocked,
   });
 
   const [form, setForm] = useState({
@@ -187,12 +194,36 @@ function ApplyPage() {
   const mainScheduled = !!eng?.main_interview_scheduled_at;
   const mainDone = eng?.main_interview_status === "passed" || eng?.main_interview_status === "failed";
 
+  if (blocked) {
+    return (
+      <main className="mx-auto max-w-2xl px-6 py-20">
+        <div className="rounded-2xl bg-card p-8 ring-1 ring-black/5">
+          <h1 className="text-2xl font-medium tracking-tight">This is a hiring account</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            This account is already set up to hire talent. One account is locked to one path —
+            you can't apply to roles from a hiring account. To apply as an engineer, sign out and
+            create a separate account with a different email.
+          </p>
+          <div className="mt-5 flex gap-3">
+            <Link to="/hire" className="inline-flex h-10 items-center rounded-md bg-foreground px-4 text-sm font-medium text-background">
+              Go to hiring
+            </Link>
+            <Link to="/dashboard" className="inline-flex h-10 items-center rounded-md border border-border px-4 text-sm font-medium">
+              Dashboard
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
       <h1 className="text-3xl font-medium tracking-tight">Join the network</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Four steps. Complete your profile once — applying to any open role is then one click from <Link to="/roles" className="underline">/roles</Link>.
       </p>
+
 
       <ol className="mt-8 grid gap-2 md:grid-cols-4">
         <Step n={1} label="Profile" done={profileSaved} />

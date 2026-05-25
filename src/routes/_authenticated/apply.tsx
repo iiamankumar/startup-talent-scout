@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { CheckCircle2, FileText, Sparkles, Upload } from "lucide-react";
 import { getMyEngineerProfile, upsertMyEngineerProfile } from "@/lib/engineers.functions";
 import { screenResume, setWorkAuthorization } from "@/lib/screening.functions";
+import { extractTextFromFile } from "@/lib/pdf-extract";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -119,8 +120,27 @@ function ApplyPage() {
 
   const onFile = async (file: File) => {
     if (!user?.id) return;
+    if (!profileSaved) {
+      toast.error("Save your profile (Step 1) first.");
+      return;
+    }
     setUploading(true);
     try {
+      // 1. Extract text in the browser (PDF or TXT)
+      let extracted = "";
+      try {
+        extracted = await extractTextFromFile(file);
+      } catch (e) {
+        throw new Error((e as Error).message);
+      }
+      if (extracted.trim().length < 100) {
+        throw new Error(
+          "We couldn't read enough text from this file. If it's a scanned PDF, please upload a text-based PDF or .txt export.",
+        );
+      }
+      setResumeText(extracted);
+
+      // 2. Upload original file to storage
       const path = `${user.id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9_.-]/g, "_")}`;
       const { error } = await supabase.storage.from("resumes").upload(path, file, {
         upsert: true,
@@ -128,30 +148,20 @@ function ApplyPage() {
       });
       if (error) throw error;
       setResumeUrl(path);
-      toast.success("Resume uploaded. Paste the resume text below, then run AI screening.");
-      if (file.type.startsWith("text/")) {
-        const txt = await file.text();
-        setResumeText(txt);
+
+      // 3. Run AI screening immediately
+      setScreening(true);
+      try {
+        const r = await screen({ data: { resume_url: path, resume_text: extracted } });
+        toast.success(`Resume uploaded & screened — score ${r.score}/100`);
+        qc.invalidateQueries({ queryKey: ["myEngineer"] });
+      } finally {
+        setScreening(false);
       }
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
       setUploading(false);
-    }
-  };
-
-  const runScreen = async () => {
-    if (!resumeUrl) return toast.error("Upload your resume first.");
-    if (resumeText.trim().length < 200) return toast.error("Paste at least 200 chars of your resume text so AI can read it.");
-    setScreening(true);
-    try {
-      const r = await screen({ data: { resume_url: resumeUrl, resume_text: resumeText } });
-      toast.success(`Screening done — score ${r.score}/100`);
-      qc.invalidateQueries({ queryKey: ["myEngineer"] });
-    } catch (e) {
-      toast.error((e as Error).message);
-    } finally {
-      setScreening(false);
     }
   };
 

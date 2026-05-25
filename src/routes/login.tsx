@@ -7,19 +7,30 @@ import { useAuth } from "@/lib/auth-context";
 import { AveiqLogo } from "@/components/AveiqLogo";
 
 export const Route = createFileRoute("/login")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    redirect: typeof search.redirect === "string" ? search.redirect : "/dashboard",
+  }),
   component: LoginPage,
 });
 
+function safeRedirect(target: string): string {
+  // Only allow same-origin paths to prevent open redirects
+  if (!target.startsWith("/") || target.startsWith("//")) return "/dashboard";
+  return target;
+}
+
 function LoginPage() {
   const navigate = useNavigate();
+  const { redirect } = Route.useSearch();
+  const target = safeRedirect(redirect);
   const { user, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!loading && user) navigate({ to: "/dashboard" });
-  }, [loading, user, navigate]);
+    if (!loading && user) navigate({ to: target });
+  }, [loading, user, navigate, target]);
 
   const handleEmail = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,12 +39,12 @@ function LoginPage() {
     setSubmitting(false);
     if (error) return toast.error(error.message);
     toast.success("Welcome back.");
-    navigate({ to: "/dashboard" });
+    navigate({ to: target });
   };
 
   const handleGoogle = async () => {
     const res = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin + "/dashboard",
+      redirect_uri: window.location.origin + target,
     });
     if (res.error) toast.error(res.error.message ?? "Google sign-in failed");
   };
@@ -82,7 +93,7 @@ function LoginPage() {
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
         New here?{" "}
-        <Link to="/signup" className="font-medium text-foreground underline">
+        <Link to="/signup" search={{ redirect: target }} className="font-medium text-foreground underline">
           Create an account
         </Link>
       </p>

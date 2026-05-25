@@ -7,11 +7,21 @@ import { useAuth } from "@/lib/auth-context";
 import { AuthShell, Field, Divider, GoogleIcon } from "./login";
 
 export const Route = createFileRoute("/signup")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    redirect: typeof search.redirect === "string" ? search.redirect : "/dashboard",
+  }),
   component: SignupPage,
 });
 
+function safeRedirect(target: string): string {
+  if (!target.startsWith("/") || target.startsWith("//")) return "/dashboard";
+  return target;
+}
+
 function SignupPage() {
   const navigate = useNavigate();
+  const { redirect } = Route.useSearch();
+  const target = safeRedirect(redirect);
   const { user, loading } = useAuth();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -19,8 +29,8 @@ function SignupPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!loading && user) navigate({ to: "/dashboard" });
-  }, [loading, user, navigate]);
+    if (!loading && user) navigate({ to: target });
+  }, [loading, user, navigate, target]);
 
   const handleEmail = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,19 +40,19 @@ function SignupPage() {
       email,
       password,
       options: {
-        emailRedirectTo: window.location.origin + "/dashboard",
+        emailRedirectTo: window.location.origin + target,
         data: { full_name: fullName.trim() },
       },
     });
     setSubmitting(false);
     if (error) return toast.error(error.message);
     toast.success("Account created. Welcome to Aveiq.");
-    navigate({ to: "/dashboard" });
+    navigate({ to: target });
   };
 
   const handleGoogle = async () => {
     const res = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin + "/dashboard",
+      redirect_uri: window.location.origin + target,
     });
     if (res.error) toast.error(res.error.message ?? "Google sign-in failed");
   };
@@ -101,7 +111,7 @@ function SignupPage() {
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
-        <Link to="/login" className="font-medium text-foreground underline">
+        <Link to="/login" search={{ redirect: target }} className="font-medium text-foreground underline">
           Sign in
         </Link>
       </p>

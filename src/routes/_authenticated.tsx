@@ -21,7 +21,13 @@ function AuthLayout() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (!loading && !user) navigate({ to: "/login" });
+    if (!loading && !user) {
+      const redirect =
+        typeof window !== "undefined"
+          ? window.location.pathname + window.location.search
+          : "/dashboard";
+      navigate({ to: "/login", search: { redirect } });
+    }
   }, [loading, user, navigate]);
 
   if (loading || !user) {

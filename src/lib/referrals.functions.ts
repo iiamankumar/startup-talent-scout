@@ -92,7 +92,12 @@ export const updateReferralReward = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
-    const patch: Record<string, unknown> = {};
+    const patch: {
+      reward_amount_usd?: number;
+      reward_status?: "none" | "pending" | "paid";
+      paid_at?: string;
+      notes?: string;
+    } = {};
     if (data.reward_amount_usd !== undefined) patch.reward_amount_usd = data.reward_amount_usd;
     if (data.reward_status !== undefined) {
       patch.reward_status = data.reward_status;

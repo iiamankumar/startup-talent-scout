@@ -187,16 +187,15 @@ function ApplyPage() {
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
-      <h1 className="text-3xl font-medium tracking-tight">Apply to the network</h1>
+      <h1 className="text-3xl font-medium tracking-tight">Join the network</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Four steps. Every engineer is screened on resume signal, an AI interview, and a final human round.
+        Three steps. Complete your profile once — applying to any open role is then one click from <Link to="/roles" className="underline">/roles</Link>.
       </p>
 
-      <ol className="mt-8 grid gap-2 md:grid-cols-4">
+      <ol className="mt-8 grid gap-2 md:grid-cols-3">
         <Step n={1} label="Profile" done={profileSaved} />
         <Step n={2} label="Resume + AI screen" done={screened} />
         <Step n={3} label="AI interview" done={aiDone} />
-        <Step n={4} label="Final interview" done={eng?.main_interview_status === "passed"} />
       </ol>
 
       {/* STEP 1 */}

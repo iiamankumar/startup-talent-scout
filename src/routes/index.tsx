@@ -88,8 +88,9 @@ function Index() {
 
           <div className="mt-8 flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
             <p className="max-w-[56ch] text-pretty text-lg text-muted-foreground lg:text-xl">
-              We manually vet Indian AI and full-stack engineers and match them with startups.
-              Every profile on Aveiq is reviewed by a human — no scraped lists, no inflated claims.
+              The top 0.1% of India's AI and full-stack engineers — screened on real
+              shipped work, technical depth, and ownership. Matched to ambitious
+              startups in under 72 hours.
             </p>
             <div className="flex gap-3">
               <Link

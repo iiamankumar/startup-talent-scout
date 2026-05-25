@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as StoriesRouteImport } from './routes/stories'
 import { Route as SignupRouteImport } from './routes/signup'
@@ -42,6 +43,11 @@ import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/e
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -222,6 +228,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/stories': typeof StoriesRoute
   '/terms': typeof TermsRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/apply': typeof AuthenticatedApplyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -255,6 +262,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/stories': typeof StoriesRoute
   '/terms': typeof TermsRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/apply': typeof AuthenticatedApplyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -290,6 +298,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/stories': typeof StoriesRoute
   '/terms': typeof TermsRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/apply': typeof AuthenticatedApplyRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -325,6 +334,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/stories'
     | '/terms'
+    | '/unsubscribe'
     | '/admin'
     | '/apply'
     | '/dashboard'
@@ -358,6 +368,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/stories'
     | '/terms'
+    | '/unsubscribe'
     | '/admin'
     | '/apply'
     | '/dashboard'
@@ -392,6 +403,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/stories'
     | '/terms'
+    | '/unsubscribe'
     | '/_authenticated/admin'
     | '/_authenticated/apply'
     | '/_authenticated/dashboard'
@@ -427,6 +439,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   StoriesRoute: typeof StoriesRoute
   TermsRoute: typeof TermsRoute
+  UnsubscribeRoute: typeof UnsubscribeRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   EngineerUserIdRoute: typeof EngineerUserIdRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
@@ -439,6 +452,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -709,6 +729,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   StoriesRoute: StoriesRoute,
   TermsRoute: TermsRoute,
+  UnsubscribeRoute: UnsubscribeRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   EngineerUserIdRoute: EngineerUserIdRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,

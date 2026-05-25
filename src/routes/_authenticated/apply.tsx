@@ -9,6 +9,7 @@ import { screenResume, setWorkAuthorization } from "@/lib/screening.functions";
 import { extractTextFromFile } from "@/lib/pdf-extract";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
+import { sendTransactionalEmail } from "@/lib/email/send";
 
 export const Route = createFileRoute("/_authenticated/apply")({
   head: () => ({ meta: [{ title: "Apply to the network — Aveiq" }] }),

@@ -258,13 +258,10 @@ async function sendInterviewScheduledEmails(opts: {
       payload: {
         templateName,
         recipientEmail,
-        templateData,
+        templateData: templateData as never,
         idempotencyKey: `interview-${templateName}-${opts.candidateUserId}-${start.getTime()}`,
-      },
+      } as never,
     });
-    void supabaseUrl;
-    void serviceKey;
-    void sendUrl;
   };
 
   if (candidateEmail) {

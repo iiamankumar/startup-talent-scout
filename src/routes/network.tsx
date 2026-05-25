@@ -72,7 +72,7 @@ function NetworkPage() {
             {isLoading ? "Loading network…" : `${engineers.length} engineers available`}
           </h2>
           <Link
-            to="/apply"
+            to="/open-roles"
             className="text-sm font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
           >
             Apply to the network →

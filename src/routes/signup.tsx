@@ -14,8 +14,8 @@ export const Route = createFileRoute("/signup")({
   component: SignupPage,
 });
 
-function safeRedirect(target: string): string {
-  if (!target.startsWith("/") || target.startsWith("//")) return "/dashboard";
+function safeRedirect(target: string | undefined): string {
+  if (!target || !target.startsWith("/") || target.startsWith("//")) return "/dashboard";
   return target;
 }
 

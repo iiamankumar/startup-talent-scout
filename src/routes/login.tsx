@@ -13,9 +13,9 @@ export const Route = createFileRoute("/login")({
   component: LoginPage,
 });
 
-function safeRedirect(target: string): string {
+function safeRedirect(target: string | undefined): string {
   // Only allow same-origin paths to prevent open redirects
-  if (!target.startsWith("/") || target.startsWith("//")) return "/dashboard";
+  if (!target || !target.startsWith("/") || target.startsWith("//")) return "/dashboard";
   return target;
 }
 

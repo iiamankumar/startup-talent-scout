@@ -22,13 +22,13 @@ export const Route = createFileRoute("/_authenticated/admin")({
 });
 
 function AdminPage() {
-  const { roles, refreshRoles } = useAuth();
+  const { roles, loading } = useAuth();
   const isAdmin = roles.includes("admin");
+  const navigate = useNavigate();
 
   const list = useServerFn(listAllEngineersAdmin);
   const update = useServerFn(updateEngineerVetting);
   const bulkUpdate = useServerFn(bulkUpdateEngineerVetting);
-  const promote = useServerFn(promoteSelfToAdmin);
 
   const [search, setSearch] = useState("");
   const [vettingFilter, setVettingFilter] = useState<string>("all");
@@ -67,6 +67,22 @@ function AdminPage() {
     engineersQ.refetch();
   };
 
+  // Redirect non-admins — admin console is back-office only.
+  useEffect(() => {
+    if (!loading && !isAdmin) {
+      toast.error("Admin access required");
+      navigate({ to: "/dashboard" });
+    }
+  }, [loading, isAdmin, navigate]);
+
+  if (loading) {
+    return (
+      <main className="flex min-h-[40vh] items-center justify-center">
+        <p className="text-sm text-muted-foreground">Checking access…</p>
+      </main>
+    );
+  }
+
   if (!isAdmin) {
     return (
       <main className="mx-auto max-w-2xl px-6 py-20">
@@ -74,23 +90,9 @@ function AdminPage() {
           <ShieldCheck className="size-6 text-muted-foreground" />
           <h1 className="mt-4 text-2xl font-medium tracking-tight">Admin access required</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            If no admin has been set up for this Aveiq instance yet, you can claim it.
+            This console is for the Aveiq back-office team only.
           </p>
-          <button
-            onClick={async () => {
-              try {
-                await promote();
-                await refreshRoles();
-                toast.success("You are now the Aveiq admin.");
-              } catch (e) {
-                toast.error((e as Error).message);
-              }
-            }}
-            className="mt-5 inline-flex h-10 items-center rounded-md bg-foreground px-4 text-sm font-medium text-background"
-          >
-            Claim admin role
-          </button>
-          <Link to="/dashboard" className="ml-4 text-sm underline text-muted-foreground">
+          <Link to="/dashboard" className="mt-5 inline-flex h-10 items-center rounded-md bg-foreground px-4 text-sm font-medium text-background">
             Back to dashboard
           </Link>
         </div>

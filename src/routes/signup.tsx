@@ -10,6 +10,10 @@ export const Route = createFileRoute("/signup")({
   validateSearch: (search: Record<string, unknown>) => ({
     redirect: typeof search.redirect === "string" ? search.redirect : undefined,
     ref: typeof search.ref === "string" ? search.ref : undefined,
+    intent:
+      search.intent === "engineer" || search.intent === "founder"
+        ? (search.intent as "engineer" | "founder")
+        : undefined,
   }),
   component: SignupPage,
 });
@@ -21,9 +25,12 @@ function safeRedirect(target: string | undefined): string {
 
 function SignupPage() {
   const navigate = useNavigate();
-  const { redirect } = Route.useSearch();
-  const target = safeRedirect(redirect);
+  const { redirect, intent: intentParam } = Route.useSearch();
+  const defaultIntent: "engineer" | "founder" =
+    intentParam ?? (redirect?.startsWith("/apply") || redirect?.startsWith("/jobs") ? "engineer" : "founder");
+  const target = safeRedirect(redirect ?? (defaultIntent === "engineer" ? "/apply" : "/hire"));
   const { user, loading } = useAuth();
+  const [intent, setIntent] = useState<"engineer" | "founder">(defaultIntent);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,7 +49,7 @@ function SignupPage() {
       password,
       options: {
         emailRedirectTo: window.location.origin + target,
-        data: { full_name: fullName.trim() },
+        data: { full_name: fullName.trim(), intent },
       },
     });
     setSubmitting(false);
@@ -59,7 +66,33 @@ function SignupPage() {
   };
 
   return (
-    <AuthShell title="Join Aveiq" subtitle="Hire elite talent or get matched with elite startups.">
+    <AuthShell
+      title={intent === "engineer" ? "Apply to the Aveiq network" : "Hire on Aveiq"}
+      subtitle={
+        intent === "engineer"
+          ? "Create an engineer account to apply to open roles."
+          : "Create a founder account to post a brief and hire vetted engineers."
+      }
+    >
+      <div className="mb-4 grid grid-cols-2 gap-2 rounded-lg bg-secondary p-1 text-xs font-medium">
+        <button
+          type="button"
+          onClick={() => setIntent("founder")}
+          className={`h-9 rounded-md transition ${intent === "founder" ? "bg-background shadow-sm" : "text-muted-foreground"}`}
+        >
+          I'm hiring
+        </button>
+        <button
+          type="button"
+          onClick={() => setIntent("engineer")}
+          className={`h-9 rounded-md transition ${intent === "engineer" ? "bg-background shadow-sm" : "text-muted-foreground"}`}
+        >
+          I'm applying
+        </button>
+      </div>
+      <p className="mb-3 text-[11px] text-muted-foreground">
+        This choice is locked to your account. Use a different email if you need both.
+      </p>
       <button
         onClick={handleGoogle}
         className="flex h-11 w-full items-center justify-center gap-2 rounded-md border border-border bg-card text-sm font-medium hover:bg-secondary"

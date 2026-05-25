@@ -14,8 +14,17 @@ export const Route = createFileRoute("/_authenticated/hire")({
 
 function HirePage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const blocked = false;
+  const { user, roles } = useAuth();
+  const isEngineerOnly = roles.includes("engineer") && !roles.includes("founder") && !roles.includes("admin");
+
+  useEffect(() => {
+    if (isEngineerOnly) {
+      toast.error("Your account is an engineer account. Hiring is on founder accounts only.");
+      navigate({ to: "/apply" });
+    }
+  }, [isEngineerOnly, navigate]);
+
+  const blocked = isEngineerOnly;
 
   const submitFn = useServerFn(createHireRequest);
   const getCompany = useServerFn(getMyLatestCompany);

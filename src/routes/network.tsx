@@ -47,7 +47,8 @@ function NetworkPage() {
                 Sign in
               </Link>
               <Link
-                to="/hire"
+                to="/signup"
+                search={{ intent: "founder", redirect: "/hire" }}
                 className="rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background"
               >
                 Hire talent
@@ -71,7 +72,7 @@ function NetworkPage() {
             {isLoading ? "Loading network…" : `${engineers.length} engineers available`}
           </h2>
           <Link
-            to="/apply"
+            to="/open-roles"
             className="text-sm font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
           >
             Apply to the network →
@@ -91,10 +92,10 @@ function NetworkPage() {
               We're handpicking the first cohort. Be the first to apply.
             </p>
             <Link
-              to="/apply"
+              to="/open-roles"
               className="mt-6 inline-flex h-10 items-center rounded-md bg-foreground px-4 text-sm font-medium text-background"
             >
-              Apply to the network
+              Browse open roles
             </Link>
           </div>
         ) : (

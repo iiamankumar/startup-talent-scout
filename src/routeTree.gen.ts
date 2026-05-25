@@ -17,6 +17,7 @@ import { Route as SecurityRouteImport } from './routes/security'
 import { Route as ResumeReviewRouteImport } from './routes/resume-review'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as OpenRolesRouteImport } from './routes/open-roles'
 import { Route as NetworkRouteImport } from './routes/network'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HelpCenterRouteImport } from './routes/help-center'
@@ -81,6 +82,11 @@ const ResourcesRoute = ResourcesRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OpenRolesRoute = OpenRolesRouteImport.update({
+  id: '/open-roles',
+  path: '/open-roles',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NetworkRoute = NetworkRouteImport.update({
@@ -221,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/help-center': typeof HelpCenterRoute
   '/login': typeof LoginRoute
   '/network': typeof NetworkRoute
+  '/open-roles': typeof OpenRolesRoute
   '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
   '/resume-review': typeof ResumeReviewRoute
@@ -255,6 +262,7 @@ export interface FileRoutesByTo {
   '/help-center': typeof HelpCenterRoute
   '/login': typeof LoginRoute
   '/network': typeof NetworkRoute
+  '/open-roles': typeof OpenRolesRoute
   '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
   '/resume-review': typeof ResumeReviewRoute
@@ -291,6 +299,7 @@ export interface FileRoutesById {
   '/help-center': typeof HelpCenterRoute
   '/login': typeof LoginRoute
   '/network': typeof NetworkRoute
+  '/open-roles': typeof OpenRolesRoute
   '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
   '/resume-review': typeof ResumeReviewRoute
@@ -327,6 +336,7 @@ export interface FileRouteTypes {
     | '/help-center'
     | '/login'
     | '/network'
+    | '/open-roles'
     | '/privacy'
     | '/resources'
     | '/resume-review'
@@ -361,6 +371,7 @@ export interface FileRouteTypes {
     | '/help-center'
     | '/login'
     | '/network'
+    | '/open-roles'
     | '/privacy'
     | '/resources'
     | '/resume-review'
@@ -396,6 +407,7 @@ export interface FileRouteTypes {
     | '/help-center'
     | '/login'
     | '/network'
+    | '/open-roles'
     | '/privacy'
     | '/resources'
     | '/resume-review'
@@ -432,6 +444,7 @@ export interface RootRouteChildren {
   HelpCenterRoute: typeof HelpCenterRoute
   LoginRoute: typeof LoginRoute
   NetworkRoute: typeof NetworkRoute
+  OpenRolesRoute: typeof OpenRolesRoute
   PrivacyRoute: typeof PrivacyRoute
   ResourcesRoute: typeof ResourcesRoute
   ResumeReviewRoute: typeof ResumeReviewRoute
@@ -506,6 +519,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/open-roles': {
+      id: '/open-roles'
+      path: '/open-roles'
+      fullPath: '/open-roles'
+      preLoaderRoute: typeof OpenRolesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/network': {
@@ -722,6 +742,7 @@ const rootRouteChildren: RootRouteChildren = {
   HelpCenterRoute: HelpCenterRoute,
   LoginRoute: LoginRoute,
   NetworkRoute: NetworkRoute,
+  OpenRolesRoute: OpenRolesRoute,
   PrivacyRoute: PrivacyRoute,
   ResourcesRoute: ResourcesRoute,
   ResumeReviewRoute: ResumeReviewRoute,

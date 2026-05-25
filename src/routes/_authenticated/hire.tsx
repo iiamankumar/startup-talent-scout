@@ -204,12 +204,16 @@ function HirePage() {
 
         <Field label="Notes">
           <textarea
-            rows={5}
+            rows={6}
+            maxLength={5000}
             placeholder="What are you building? What does this person need to be cracked at?"
             value={form.notes}
-            onChange={(e) => setForm({ ...form, notes: e.target.value })}
+            onChange={(e) => setForm({ ...form, notes: e.target.value.slice(0, 5000) })}
             className="w-full rounded-md border border-border bg-background p-3 text-sm"
           />
+          <p className="mt-1 text-right text-[11px] text-muted-foreground tabular-nums">
+            {form.notes.length}/5000
+          </p>
         </Field>
 
         <button

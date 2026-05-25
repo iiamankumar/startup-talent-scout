@@ -330,25 +330,53 @@ function ApplyPage() {
         </div>
       </section>
 
-      {/* DONE → CTA to browse roles */}
-      {aiDone && (
-        <section className="mt-10">
-          <SectionHeader index={4} title="You're in — browse open roles" />
-          <div className="mt-4 rounded-2xl bg-card p-8 ring-1 ring-black/5">
+      {/* STEP 4 — Final interview scheduling */}
+      <section className="mt-10">
+        <SectionHeader index={4} title="Final interview with a senior Aveiq engineer" />
+        <div className="mt-4 rounded-2xl bg-card p-8 ring-1 ring-black/5">
+          {!aiDone ? (
             <p className="text-sm text-muted-foreground">
-              Your profile, resume, and AI interview are saved. From now on, applying to any open role is a single click — no re-entry. The final human round is scheduled per-role once a founder shortlists you.
+              Finish your AI interview with Kai (Step 3). Once you pass, a senior Aveiq engineer will reach out within 48 hours to schedule a 30-minute final round.
             </p>
-            <div className="mt-4 flex flex-wrap gap-3">
-              <Link to="/roles" className="inline-flex h-11 items-center rounded-md bg-foreground px-5 text-sm font-medium text-background">
-                Browse open roles
-              </Link>
-              <Link to="/dashboard" className="inline-flex h-11 items-center rounded-md bg-secondary px-5 text-sm font-medium">
-                Back to dashboard
-              </Link>
+          ) : mainDone ? (
+            <div className="flex items-start gap-3">
+              <CheckCircle2 className="mt-1 size-5 text-success" />
+              <div>
+                <p className="text-sm font-medium">
+                  Final interview {eng?.main_interview_status === "passed" ? "passed — welcome to the network." : "complete."}
+                </p>
+                {eng?.main_interview_notes && (
+                  <p className="mt-1 text-xs text-muted-foreground">{eng.main_interview_notes}</p>
+                )}
+              </div>
             </div>
-          </div>
-        </section>
-      )}
+          ) : mainScheduled ? (
+            <div>
+              <p className="text-sm font-medium">
+                Scheduled for {new Date(eng!.main_interview_scheduled_at!).toLocaleString()}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Check your email for the calendar invite. Bring a real project to discuss.
+              </p>
+              {eng?.main_interview_notes && (
+                <p className="mt-3 whitespace-pre-wrap rounded bg-secondary p-3 text-xs">{eng.main_interview_notes}</p>
+              )}
+            </div>
+          ) : (
+            <div>
+              <p className="text-sm text-muted-foreground">
+                Kai is reviewing your AI interview. A senior Aveiq engineer will reach out within 48 hours to schedule your final round.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <Link to="/roles" className="inline-flex h-11 items-center rounded-md bg-secondary px-5 text-sm font-medium">
+                  Meanwhile, browse open roles
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
     </main>
   );
 }

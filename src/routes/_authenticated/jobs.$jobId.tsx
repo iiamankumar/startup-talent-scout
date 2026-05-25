@@ -79,7 +79,7 @@ function JobDetailPage() {
   const pct = Math.round((doneCount / steps.length) * 100);
 
   const budget = job.budget_monthly_usd
-    ? `$${job.budget_monthly_usd.toLocaleString()}/mo`
+    ? `₹${job.budget_monthly_usd.toLocaleString("en-IN")}/mo`
     : "Budget on request";
 
   const postedAgo = relTime(new Date(job.created_at));

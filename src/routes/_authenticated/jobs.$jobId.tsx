@@ -5,6 +5,9 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { getJobDetail, listOpenRequestsForEngineers } from "@/lib/hire.functions";
 import { applyToHireRequest } from "@/lib/applications.functions";
+import { sendTransactionalEmail } from "@/lib/email/send";
+import { useAuth } from "@/lib/auth-context";
+
 
 export const Route = createFileRoute("/_authenticated/jobs/$jobId")({
   head: () => ({ meta: [{ title: "Role — Aveiq" }] }),

@@ -25,9 +25,12 @@ function safeRedirect(target: string | undefined): string {
 
 function SignupPage() {
   const navigate = useNavigate();
-  const { redirect } = Route.useSearch();
-  const target = safeRedirect(redirect);
+  const { redirect, intent: intentParam } = Route.useSearch();
+  const defaultIntent: "engineer" | "founder" =
+    intentParam ?? (redirect?.startsWith("/apply") || redirect?.startsWith("/jobs") ? "engineer" : "founder");
+  const target = safeRedirect(redirect ?? (defaultIntent === "engineer" ? "/apply" : "/hire"));
   const { user, loading } = useAuth();
+  const [intent, setIntent] = useState<"engineer" | "founder">(defaultIntent);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -46,7 +49,7 @@ function SignupPage() {
       password,
       options: {
         emailRedirectTo: window.location.origin + target,
-        data: { full_name: fullName.trim() },
+        data: { full_name: fullName.trim(), intent },
       },
     });
     setSubmitting(false);

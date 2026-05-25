@@ -245,7 +245,7 @@ function ApplyPage() {
             <Input label="Headline" placeholder="e.g. AI engineer · Ex-Razorpay" value={form.headline} onChange={(v) => setForm({ ...form, headline: v })} />
             <Input label="Location *" required placeholder="e.g. Bangalore, IN" value={form.location} onChange={(v) => setForm({ ...form, location: v })} />
             <Input label="Years of experience *" required type="number" value={form.years_experience} onChange={(v) => setForm({ ...form, years_experience: v })} />
-            <Input label="Hourly rate (INR) *" required type="number" value={form.hourly_rate_usd} onChange={(v) => setForm({ ...form, hourly_rate_usd: v })} />
+            <Input label="Expected stipend (INR / month) *" required type="number" value={form.hourly_rate_usd} onChange={(v) => setForm({ ...form, hourly_rate_usd: v })} />
             <label className="block">
               <span className="mb-1 block text-xs font-medium text-muted-foreground">Work authorization *</span>
               <select

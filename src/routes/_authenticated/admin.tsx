@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/lib/auth-context";
@@ -6,14 +6,13 @@ import {
   listAllEngineersAdmin,
   updateEngineerVetting,
   bulkUpdateEngineerVetting,
-  promoteSelfToAdmin,
   getAdminMetrics,
 } from "@/lib/admin.functions";
 import { listAllReferralsAdmin, updateReferralReward } from "@/lib/referrals.functions";
 
 import { scheduleMainInterview, setMainInterviewVerdict } from "@/lib/interview.functions";
 import { listPendingReviewsAdmin, setReviewApprovalAdmin } from "@/lib/reviews.functions";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ChevronDown, Search, ShieldCheck, Star } from "lucide-react";
 

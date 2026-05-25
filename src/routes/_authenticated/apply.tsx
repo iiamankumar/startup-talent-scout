@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { CheckCircle2, FileText, Sparkles, Upload } from "lucide-react";
 import { getMyEngineerProfile, upsertMyEngineerProfile } from "@/lib/engineers.functions";
 import { screenResume, setWorkAuthorization } from "@/lib/screening.functions";
+import { extractTextFromFile } from "@/lib/pdf-extract";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -119,8 +120,27 @@ function ApplyPage() {
 
   const onFile = async (file: File) => {
     if (!user?.id) return;
+    if (!profileSaved) {
+      toast.error("Save your profile (Step 1) first.");
+      return;
+    }
     setUploading(true);
     try {
+      // 1. Extract text in the browser (PDF or TXT)
+      let extracted = "";
+      try {
+        extracted = await extractTextFromFile(file);
+      } catch (e) {
+        throw new Error((e as Error).message);
+      }
+      if (extracted.trim().length < 100) {
+        throw new Error(
+          "We couldn't read enough text from this file. If it's a scanned PDF, please upload a text-based PDF or .txt export.",
+        );
+      }
+      setResumeText(extracted);
+
+      // 2. Upload original file to storage
       const path = `${user.id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9_.-]/g, "_")}`;
       const { error } = await supabase.storage.from("resumes").upload(path, file, {
         upsert: true,
@@ -128,30 +148,20 @@ function ApplyPage() {
       });
       if (error) throw error;
       setResumeUrl(path);
-      toast.success("Resume uploaded. Paste the resume text below, then run AI screening.");
-      if (file.type.startsWith("text/")) {
-        const txt = await file.text();
-        setResumeText(txt);
+
+      // 3. Run AI screening immediately
+      setScreening(true);
+      try {
+        const r = await screen({ data: { resume_url: path, resume_text: extracted } });
+        toast.success(`Resume uploaded & screened — score ${r.score}/100`);
+        qc.invalidateQueries({ queryKey: ["myEngineer"] });
+      } finally {
+        setScreening(false);
       }
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
       setUploading(false);
-    }
-  };
-
-  const runScreen = async () => {
-    if (!resumeUrl) return toast.error("Upload your resume first.");
-    if (resumeText.trim().length < 200) return toast.error("Paste at least 200 chars of your resume text so AI can read it.");
-    setScreening(true);
-    try {
-      const r = await screen({ data: { resume_url: resumeUrl, resume_text: resumeText } });
-      toast.success(`Screening done — score ${r.score}/100`);
-      qc.invalidateQueries({ queryKey: ["myEngineer"] });
-    } catch (e) {
-      toast.error((e as Error).message);
-    } finally {
-      setScreening(false);
     }
   };
 
@@ -226,48 +236,38 @@ function ApplyPage() {
       <section className="mt-10">
         <SectionHeader index={2} title="Resume + AI screening" />
         <div className="mt-4 space-y-5 rounded-2xl bg-card p-8 ring-1 ring-black/5">
-          <label className="flex cursor-pointer items-center justify-between rounded-xl border border-dashed border-border bg-background/50 p-5 hover:bg-background">
+          <label className={`flex cursor-pointer items-center justify-between rounded-xl border border-dashed border-border bg-background/50 p-5 hover:bg-background ${!profileSaved ? "pointer-events-none opacity-50" : ""}`}>
             <div className="flex items-center gap-3">
               {resumeUrl ? <FileText className="size-5 text-success" /> : <Upload className="size-5 text-muted-foreground" />}
               <div>
                 <p className="text-sm font-medium">
-                  {resumeUrl ? "Resume on file" : "Upload your resume (PDF, DOCX, TXT)"}
+                  {resumeUrl ? "Resume on file" : "Upload your resume (PDF or TXT)"}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Stored privately. Visible only to you and Aveiq reviewers.
+                  We'll read the text from your file and AI-screen it automatically. Stored privately.
                 </p>
               </div>
             </div>
             <input
               type="file"
-              accept=".pdf,.doc,.docx,.txt,.md"
+              accept=".pdf,.txt,.md,application/pdf,text/plain"
               className="hidden"
-              disabled={uploading}
+              disabled={uploading || screening || !profileSaved}
               onChange={(e) => {
                 const f = e.target.files?.[0];
                 if (f) onFile(f);
+                e.target.value = "";
               }}
             />
-            <span className="text-xs text-muted-foreground underline">
-              {uploading ? "Uploading…" : "Choose file"}
+            <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground underline">
+              <Sparkles className="size-3.5" />
+              {uploading ? "Reading file…" : screening ? "AI screening…" : resumeUrl ? "Replace & re-screen" : "Choose file"}
             </span>
           </label>
 
-          <TextArea
-            label="Paste resume text (so AI can read it accurately)"
-            value={resumeText}
-            onChange={setResumeText}
-            placeholder="Paste the full plain-text contents of your resume here…"
-          />
-
-          <button
-            onClick={runScreen}
-            disabled={screening || !profileSaved}
-            className="inline-flex h-11 items-center gap-2 rounded-md bg-foreground px-5 text-sm font-medium text-background disabled:opacity-50"
-          >
-            <Sparkles className="size-4" />
-            {screening ? "Screening…" : screened ? "Re-run AI screening" : "Run AI screening"}
-          </button>
+          {!profileSaved && (
+            <p className="text-xs text-muted-foreground">Save your profile in Step 1 to unlock resume upload.</p>
+          )}
 
           {eng?.resume_score != null && (
             <div className="rounded-xl bg-secondary p-5">

@@ -187,16 +187,15 @@ function ApplyPage() {
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
-      <h1 className="text-3xl font-medium tracking-tight">Apply to the network</h1>
+      <h1 className="text-3xl font-medium tracking-tight">Join the network</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Four steps. Every engineer is screened on resume signal, an AI interview, and a final human round.
+        Three steps. Complete your profile once — applying to any open role is then one click from <Link to="/roles" className="underline">/roles</Link>.
       </p>
 
-      <ol className="mt-8 grid gap-2 md:grid-cols-4">
+      <ol className="mt-8 grid gap-2 md:grid-cols-3">
         <Step n={1} label="Profile" done={profileSaved} />
         <Step n={2} label="Resume + AI screen" done={screened} />
         <Step n={3} label="AI interview" done={aiDone} />
-        <Step n={4} label="Final interview" done={eng?.main_interview_status === "passed"} />
       </ol>
 
       {/* STEP 1 */}
@@ -328,29 +327,25 @@ function ApplyPage() {
         </div>
       </section>
 
-      {/* STEP 4 */}
-      <section className="mt-10">
-        <SectionHeader index={4} title="Final human interview" />
-        <div className="mt-4 rounded-2xl bg-card p-8 ring-1 ring-black/5">
-          {eng?.main_interview_scheduled_at ? (
-            <p className="text-sm">
-              Scheduled for <span className="font-medium">{new Date(eng.main_interview_scheduled_at).toLocaleString()}</span>.
-              {eng.main_interview_notes && (
-                <span className="mt-2 block text-xs text-muted-foreground">{eng.main_interview_notes}</span>
-              )}
-            </p>
-          ) : aiDone ? (
+      {/* DONE → CTA to browse roles */}
+      {aiDone && (
+        <section className="mt-10">
+          <SectionHeader index={4} title="You're in — browse open roles" />
+          <div className="mt-4 rounded-2xl bg-card p-8 ring-1 ring-black/5">
             <p className="text-sm text-muted-foreground">
-              Kai has logged your AI interview. A senior Aveiq engineer will email you within 48 hours to schedule the final round.
+              Your profile, resume, and AI interview are saved. From now on, applying to any open role is a single click — no re-entry. The final human round is scheduled per-role once a founder shortlists you.
             </p>
-          ) : (
-            <p className="text-sm text-muted-foreground">Unlocks after the AI interview.</p>
-          )}
-          <Link to="/dashboard" className="mt-4 inline-block text-xs text-muted-foreground underline">
-            Back to dashboard
-          </Link>
-        </div>
-      </section>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Link to="/roles" className="inline-flex h-11 items-center rounded-md bg-foreground px-5 text-sm font-medium text-background">
+                Browse open roles
+              </Link>
+              <Link to="/dashboard" className="inline-flex h-11 items-center rounded-md bg-secondary px-5 text-sm font-medium">
+                Back to dashboard
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
     </main>
   );
 }

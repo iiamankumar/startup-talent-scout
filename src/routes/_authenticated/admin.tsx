@@ -378,3 +378,39 @@ function AdminRow({
     </>
   );
 }
+
+function MetricsDashboard() {
+  const fetchMetrics = useServerFn(getAdminMetrics);
+  const q = useQuery({ queryKey: ["adminMetrics"], queryFn: () => fetchMetrics() });
+  const m = q.data;
+
+  const cards = [
+    { label: "Vetted engineers", value: m?.engineers.vetted, sub: m ? `${m.engineers.total} total applied` : undefined },
+    { label: "In vetting queue", value: m ? m.engineers.pending + m.engineers.inReview : undefined, sub: m ? `${m.engineers.pending} pending · ${m.engineers.inReview} in review` : undefined },
+    { label: "Applied last 7d", value: m?.engineers.newLast7, sub: m ? `${m.engineers.newLast30} in last 30d` : undefined },
+    { label: "Avg Aveiq Score", value: m?.engineers.avgScore ?? "—", sub: "Across vetted engineers" },
+    { label: "Open briefs", value: m?.briefs.open, sub: m ? `${m.briefs.total} total briefs` : undefined },
+    { label: "Engineer applications", value: m?.applications.total, sub: "To briefs" },
+    { label: "Approved reviews", value: m?.reviews.approved, sub: m ? `${m.reviews.pending} pending` : undefined },
+    { label: "Rejected engineers", value: m?.engineers.rejected, sub: "Did not pass vetting" },
+  ];
+
+  return (
+    <section className="mt-8">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        {cards.map((c) => (
+          <div key={c.label} className="rounded-xl bg-card p-5 ring-1 ring-black/5">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+              {c.label}
+            </p>
+            <p className="mt-2 text-3xl font-medium tabular-nums tracking-tight">
+              {q.isLoading ? "—" : (c.value ?? 0)}
+            </p>
+            {c.sub && <p className="mt-1 text-[11px] text-muted-foreground/80">{c.sub}</p>}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+

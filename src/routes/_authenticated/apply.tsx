@@ -184,18 +184,21 @@ function ApplyPage() {
     eng?.ai_interview_status === "completed" ||
     eng?.ai_interview_status === "passed" ||
     eng?.ai_interview_status === "failed";
+  const mainScheduled = !!eng?.main_interview_scheduled_at;
+  const mainDone = eng?.main_interview_status === "passed" || eng?.main_interview_status === "failed";
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
       <h1 className="text-3xl font-medium tracking-tight">Join the network</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Three steps. Complete your profile once — applying to any open role is then one click from <Link to="/roles" className="underline">/roles</Link>.
+        Four steps. Complete your profile once — applying to any open role is then one click from <Link to="/roles" className="underline">/roles</Link>.
       </p>
 
-      <ol className="mt-8 grid gap-2 md:grid-cols-3">
+      <ol className="mt-8 grid gap-2 md:grid-cols-4">
         <Step n={1} label="Profile" done={profileSaved} />
         <Step n={2} label="Resume + AI screen" done={screened} />
         <Step n={3} label="AI interview" done={aiDone} />
+        <Step n={4} label="Final interview" done={mainDone} />
       </ol>
 
       {/* STEP 1 */}

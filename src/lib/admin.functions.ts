@@ -48,6 +48,24 @@ export const updateEngineerVetting = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+const bulkSchema = z.object({
+  user_ids: z.array(z.string().uuid()).min(1).max(100),
+  vetting: z.enum(["pending", "in_review", "vetted", "rejected"]),
+});
+
+export const bulkUpdateEngineerVetting = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => bulkSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const { error } = await supabaseAdmin
+      .from("engineers")
+      .update({ vetting: data.vetting })
+      .in("user_id", data.user_ids);
+    if (error) throw new Error(error.message);
+    return { ok: true, count: data.user_ids.length };
+  });
+
 export const promoteSelfToAdmin = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {

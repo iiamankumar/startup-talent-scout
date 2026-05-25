@@ -46,7 +46,7 @@ function PrivacyPage() {
           </section>
           <section>
             <h2 className="text-xl font-semibold text-foreground">5. Your rights</h2>
-            <p>You can access, correct, or delete your data anytime by emailing <a href="mailto:privacy@aveiq.app" className="text-foreground underline">privacy@aveiq.app</a>. EU/UK/India residents have additional rights under GDPR / DPDP Act.</p>
+            <p>You can access, correct, or delete your data anytime by emailing <a href="mailto:care@aveiq.app" className="text-foreground underline">care@aveiq.app</a>. EU/UK/India residents have additional rights under GDPR / DPDP Act.</p>
           </section>
           <section>
             <h2 className="text-xl font-semibold text-foreground">6. Security</h2>
@@ -54,7 +54,7 @@ function PrivacyPage() {
           </section>
           <section>
             <h2 className="text-xl font-semibold text-foreground">7. Contact</h2>
-            <p>Questions? <a href="mailto:privacy@aveiq.app" className="text-foreground underline">privacy@aveiq.app</a></p>
+            <p>Questions? <a href="mailto:care@aveiq.app" className="text-foreground underline">care@aveiq.app</a></p>
           </section>
         </div>
       </div>

@@ -8,7 +8,7 @@ import { AveiqLogo } from "@/components/AveiqLogo";
 
 export const Route = createFileRoute("/login")({
   validateSearch: (search: Record<string, unknown>) => ({
-    redirect: typeof search.redirect === "string" ? search.redirect : "/dashboard",
+    redirect: typeof search.redirect === "string" ? search.redirect : undefined,
   }),
   component: LoginPage,
 });

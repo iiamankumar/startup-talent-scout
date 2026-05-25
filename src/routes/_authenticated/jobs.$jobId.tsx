@@ -162,8 +162,8 @@ function JobDetailPage() {
             </h2>
             <ul className="mt-3 space-y-2 text-sm text-foreground">
               <li>· Engaged as an independent contractor.</li>
-              <li>· Fully remote, work on your own schedule.</li>
-              <li>· Weekly payouts via Stripe.</li>
+              <li>· Fully remote with flexible working hours.</li>
+              <li>· Monthly payouts.</li>
               <li>· Work at Aveiq never requires confidential or proprietary information from any current employer.</li>
             </ul>
           </section>

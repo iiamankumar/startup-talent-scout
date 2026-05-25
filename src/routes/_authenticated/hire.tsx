@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_authenticated/hire")({
 
 function HirePage() {
   const navigate = useNavigate();
-  const { user, roles } = useAuth();
+  const { user } = useAuth();
   const blocked = false;
 
   const submitFn = useServerFn(createHireRequest);

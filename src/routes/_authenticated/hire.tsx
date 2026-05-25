@@ -1,8 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { createHireRequest } from "@/lib/hire.functions";
+import { createHireRequest, getMyLatestCompany } from "@/lib/hire.functions";
 
 export const Route = createFileRoute("/_authenticated/hire")({
   head: () => ({ meta: [{ title: "Hire talent — Aveiq" }] }),
@@ -12,6 +13,11 @@ export const Route = createFileRoute("/_authenticated/hire")({
 function HirePage() {
   const navigate = useNavigate();
   const submitFn = useServerFn(createHireRequest);
+  const getCompany = useServerFn(getMyLatestCompany);
+  const { data: companyData } = useQuery({
+    queryKey: ["myLatestCompany"],
+    queryFn: () => getCompany(),
+  });
   const [form, setForm] = useState({
     company_name: "",
     company_website: "",
@@ -23,6 +29,17 @@ function HirePage() {
     notes: "",
   });
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const c = companyData?.company;
+    if (!c) return;
+    setForm((f) => ({
+      ...f,
+      company_name: f.company_name || c.name || "",
+      company_website: f.company_website || c.website || "",
+      company_stage: (f.company_stage || (c.stage ?? "")) as typeof f.company_stage,
+    }));
+  }, [companyData]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();

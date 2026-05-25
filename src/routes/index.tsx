@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Plus, FileText, Github, Twitter, Linkedin, ArrowRight, Star } from "lucide-react";
+import { Plus, FileText, Instagram, Linkedin, ArrowRight, Star } from "lucide-react";
 import { getFeaturedEngineers, getLandingStats } from "@/lib/reviews.functions";
 import { AveiqLogo } from "@/components/AveiqLogo";
 
@@ -378,14 +378,16 @@ function Index() {
               <span className="text-muted-foreground/70">Bengaluru, India</span>
             </div>
             <div className="flex items-center gap-5">
-              <a href="#" aria-label="Twitter" className="text-muted-foreground hover:text-foreground">
-                <Twitter className="size-4" />
+              <a href="https://x.com/aveiq" target="_blank" rel="noreferrer" aria-label="X (Twitter)" className="text-muted-foreground hover:text-foreground">
+                <svg viewBox="0 0 24 24" aria-hidden="true" className="size-4" fill="currentColor">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.25 2.25H8.08l4.713 6.231zM17.083 19.77h1.833L7.084 4.126H5.117z"/>
+                </svg>
               </a>
-              <a href="#" aria-label="LinkedIn" className="text-muted-foreground hover:text-foreground">
+              <a href="https://www.linkedin.com/company/aveiq" target="_blank" rel="noreferrer" aria-label="LinkedIn" className="text-muted-foreground hover:text-foreground">
                 <Linkedin className="size-4" />
               </a>
-              <a href="#" aria-label="GitHub" className="text-muted-foreground hover:text-foreground">
-                <Github className="size-4" />
+              <a href="https://www.instagram.com/aveiq" target="_blank" rel="noreferrer" aria-label="Instagram" className="text-muted-foreground hover:text-foreground">
+                <Instagram className="size-4" />
               </a>
             </div>
           </div>

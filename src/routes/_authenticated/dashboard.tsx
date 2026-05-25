@@ -96,7 +96,8 @@ function Dashboard() {
           )}
         </section>
 
-        {/* Founder hire requests */}
+        {/* Founder hire requests - only for founders without engineer profile */}
+        {showFounderPanel && (
         <section className="rounded-2xl bg-card p-6 ring-1 ring-black/5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
@@ -138,6 +139,7 @@ function Dashboard() {
             </p>
           )}
         </section>
+        )}
       </div>
 
       {/* Engineer-only: open roles feed */}

@@ -15,9 +15,12 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function Dashboard() {
-  const { user, roles } = useAuth();
+  const { user, roles, refreshRoles } = useAuth();
   const isEngineer = roles.includes("engineer");
   const isFounder = roles.includes("founder");
+  const isAdmin = roles.includes("admin" as never);
+  const promote = useServerFn(promoteSelfToAdmin);
+  const [promoting, setPromoting] = useState(false);
   // Treat as founder-only if no engineer profile yet AND has founder role
   // Hide hire-request panel if the user is an engineer (applied) but not also explicitly running a company
   const showFounderPanel = isFounder && !isEngineer;

@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/lib/auth-context";
-import { AuthShell, Field, Divider, GoogleIcon } from "./login";
+import { AuthShell, Field, Divider, GoogleIcon } from "@/components/AuthShell";
 
 export const Route = createFileRoute("/signup")({
   validateSearch: (search: Record<string, unknown>) => ({

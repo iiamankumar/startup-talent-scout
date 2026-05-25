@@ -308,3 +308,24 @@ function ReviewForm({
     </form>
   );
 }
+
+function ScoreBar({ label, value, highlight }: { label: string; value: number | null | undefined; highlight?: boolean }) {
+  const pct = typeof value === "number" ? Math.max(0, Math.min(100, value)) : 0;
+  return (
+    <div>
+      <div className="flex items-baseline justify-between">
+        <p className="text-xs text-muted-foreground">{label}</p>
+        <p className={`text-sm font-medium tabular-nums ${highlight ? "text-success" : "text-foreground"}`}>
+          {value ?? "—"}
+        </p>
+      </div>
+      <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+        <div
+          className={`h-full rounded-full transition-all ${highlight ? "bg-success" : "bg-foreground/60"}`}
+          style={{ width: typeof value === "number" ? `${pct}%` : "0%" }}
+        />
+      </div>
+    </div>
+  );
+}
+

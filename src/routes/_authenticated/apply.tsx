@@ -112,6 +112,17 @@ function ApplyPage() {
       await setWA({ data: { work_authorization: form.work_authorization as never } });
       toast.success("Profile saved.");
       qc.invalidateQueries({ queryKey: ["myEngineer"] });
+
+      // Send confirmation email on first save
+      const isFirstSave = !data?.engineer?.display_name;
+      if (isFirstSave && user?.email) {
+        sendTransactionalEmail({
+          templateName: 'application-submitted',
+          recipientEmail: user.email,
+          idempotencyKey: `app-submitted-${user.id}`,
+          templateData: { displayName: form.display_name, name: form.display_name },
+        }).catch(() => {});
+      }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not save profile");
     } finally {

@@ -373,7 +373,7 @@ function AdminRow({
       </tr>
       {open && (
         <tr className="bg-secondary/30">
-          <td colSpan={5} className="px-6 py-5">
+          <td colSpan={6} className="px-6 py-5">
             <div className="grid gap-5 md:grid-cols-2">
               <div>
                 <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Resume</h4>

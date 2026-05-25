@@ -92,10 +92,10 @@ function NetworkPage() {
               We're handpicking the first cohort. Be the first to apply.
             </p>
             <Link
-              to="/apply"
+              to="/open-roles"
               className="mt-6 inline-flex h-10 items-center rounded-md bg-foreground px-4 text-sm font-medium text-background"
             >
-              Apply to the network
+              Browse open roles
             </Link>
           </div>
         ) : (

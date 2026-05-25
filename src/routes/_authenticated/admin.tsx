@@ -207,6 +207,72 @@ function AdminPage() {
   );
 }
 
+function ReferralsAdmin() {
+  const list = useServerFn(listAllReferralsAdmin);
+  const update = useServerFn(updateReferralReward);
+  const q = useQuery({ queryKey: ["adminReferrals"], queryFn: () => list() });
+  const referrals = q.data?.referrals ?? [];
+
+  return (
+    <section className="mt-12">
+      <div className="flex items-center justify-between border-b border-border pb-4">
+        <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+          Referrals
+        </h2>
+        <span className="text-xs text-muted-foreground">{referrals.length} total</span>
+      </div>
+      <div className="mt-4 overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="text-left text-xs uppercase tracking-wider text-muted-foreground">
+            <tr>
+              <th className="px-3 py-2">Code</th>
+              <th className="px-3 py-2">Status</th>
+              <th className="px-3 py-2">Reward</th>
+              <th className="px-3 py-2">Payout</th>
+              <th className="px-3 py-2">Created</th>
+              <th className="px-3 py-2"></th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {referrals.map((r: any) => (
+              <tr key={r.id}>
+                <td className="px-3 py-2 font-mono">{r.referral_code}</td>
+                <td className="px-3 py-2">{r.status}</td>
+                <td className="px-3 py-2">${r.reward_amount_usd ?? 0}</td>
+                <td className="px-3 py-2">{r.reward_status ?? "none"}</td>
+                <td className="px-3 py-2 text-muted-foreground">
+                  {new Date(r.created_at).toLocaleDateString()}
+                </td>
+                <td className="px-3 py-2 text-right">
+                  {r.reward_status !== "paid" && (
+                    <button
+                      className="rounded border border-border px-2 py-1 text-xs hover:bg-accent"
+                      onClick={async () => {
+                        await update({ data: { id: r.id, reward_status: "paid" } });
+                        toast.success("Marked paid");
+                        q.refetch();
+                      }}
+                    >
+                      Mark paid
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+            {!q.isLoading && referrals.length === 0 && (
+              <tr>
+                <td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">
+                  No referrals yet.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
 function ReviewModeration() {
   const list = useServerFn(listPendingReviewsAdmin);
   const setApproval = useServerFn(setReviewApprovalAdmin);

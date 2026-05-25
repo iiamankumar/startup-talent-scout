@@ -28,6 +28,8 @@ export const Route = createFileRoute("/resume-review")({
 });
 
 function ResumeReviewPage() {
+  const { user } = useAuth();
+
   const fn = useServerFn(reviewResume);
   const [resumeText, setResumeText] = useState("");
   const [targetRole, setTargetRole] = useState("");
@@ -62,7 +64,7 @@ function ResumeReviewPage() {
   };
 
   const wordCount = useMemo(() => resumeText.trim().split(/\s+/).filter(Boolean).length, [resumeText]);
-  const canSubmit = resumeText.trim().length >= 100 && !mutation.isPending;
+  const canSubmit = !!user && resumeText.trim().length >= 100 && !mutation.isPending;
 
   return (
     <main className="min-h-screen bg-background text-foreground">

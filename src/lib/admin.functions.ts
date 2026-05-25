@@ -29,7 +29,7 @@ export const listAllEngineersAdmin = createServerFn({ method: "GET" })
 const updateSchema = z.object({
   user_id: z.string().uuid(),
   vetting: z.enum(["pending", "in_review", "vetted", "rejected"]),
-  klyro_score: z.number().int().min(0).max(100).optional().nullable(),
+  aveiq_score: z.number().int().min(0).max(100).optional().nullable(),
 });
 
 export const updateEngineerVetting = createServerFn({ method: "POST" })
@@ -41,7 +41,7 @@ export const updateEngineerVetting = createServerFn({ method: "POST" })
       .from("engineers")
       .update({
         vetting: data.vetting,
-        ...(data.klyro_score !== undefined ? { klyro_score: data.klyro_score } : {}),
+        ...(data.aveiq_score !== undefined ? { aveiq_score: data.aveiq_score } : {}),
       })
       .eq("user_id", data.user_id);
     if (error) throw new Error(error.message);

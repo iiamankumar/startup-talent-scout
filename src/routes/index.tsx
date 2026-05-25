@@ -209,9 +209,9 @@ function Index() {
                       <span className="text-muted-foreground/70">
                         {e.years_experience != null ? `${e.years_experience} yrs` : "—"}
                       </span>
-                      {e.klyro_score != null ? (
+                      {e.aveiq_score != null ? (
                         <span className="font-medium text-success">
-                          Aveiq Score {e.klyro_score}
+                          Aveiq Score {e.aveiq_score}
                         </span>
                       ) : (
                         <span className="text-muted-foreground/70">Newly vetted</span>

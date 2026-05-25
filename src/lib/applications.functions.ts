@@ -67,7 +67,7 @@ export const listApplicationsForRequest = createServerFn({ method: "GET" })
     const { data: apps, error } = await supabaseAdmin
       .from("applications")
       .select(
-        "id, status, note, created_at, engineer_id, engineers!inner(display_name, headline, location, skills, years_experience, klyro_score, github_url, linkedin_url, website_url)"
+        "id, status, note, created_at, engineer_id, engineers!inner(display_name, headline, location, skills, years_experience, aveiq_score, github_url, linkedin_url, website_url)"
       )
       .eq("hire_request_id", data.hire_request_id)
       .order("created_at", { ascending: false });

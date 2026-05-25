@@ -104,10 +104,10 @@ function EngineerProfilePage() {
                 </div>
               </div>
               <div className="flex flex-col items-end gap-2">
-                {e.klyro_score != null && (
+                {e.aveiq_score != null && (
                   <div className="rounded-lg bg-background px-3 py-2 text-right ring-1 ring-black/5">
                     <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Aveiq Score</p>
-                    <p className="text-2xl font-medium text-success">{e.klyro_score}</p>
+                    <p className="text-2xl font-medium text-success">{e.aveiq_score}</p>
                   </div>
                 )}
                 {avg != null && (

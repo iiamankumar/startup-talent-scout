@@ -100,8 +100,8 @@ function AdminPage() {
               <AdminRow
                 key={e.user_id}
                 engineer={e}
-                onUpdate={async (vetting, klyro_score) => {
-                  await update({ data: { user_id: e.user_id, vetting, klyro_score } });
+                onUpdate={async (vetting, aveiq_score) => {
+                  await update({ data: { user_id: e.user_id, vetting, aveiq_score } });
                   toast.success(`Updated ${e.display_name}`);
                   engineersQ.refetch();
                 }}
@@ -200,7 +200,7 @@ function AdminRow({
     display_name: string;
     headline: string | null;
     skills: string[];
-    klyro_score: number | null;
+    aveiq_score: number | null;
     vetting: string;
     resume_score?: number | null;
     resume_url?: string | null;
@@ -214,7 +214,7 @@ function AdminRow({
   };
   onUpdate: (vetting: "pending" | "in_review" | "vetted" | "rejected", score: number | null) => Promise<void>;
 }) {
-  const [score, setScore] = useState<string>(engineer.klyro_score?.toString() ?? "");
+  const [score, setScore] = useState<string>(engineer.aveiq_score?.toString() ?? "");
   const [busy, setBusy] = useState(false);
   const [open, setOpen] = useState(false);
   const [schedAt, setSchedAt] = useState("");

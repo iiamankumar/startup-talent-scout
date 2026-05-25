@@ -131,10 +131,10 @@ function NetworkPage() {
                     {e.linkedin_url && <Linkedin className="size-4" />}
                     {e.website_url && <Globe className="size-4" />}
                   </div>
-                  {e.klyro_score != null && (
+                  {e.aveiq_score != null && (
                     <span className="text-xs">
                       <span className="text-muted-foreground/70">Aveiq Score · </span>
-                      <span className="font-medium text-foreground">{e.klyro_score}</span>
+                      <span className="font-medium text-foreground">{e.aveiq_score}</span>
                     </span>
                   )}
                 </div>

@@ -30,7 +30,7 @@ const WORK_AUTH_OPTIONS = [
 ];
 
 function ApplyPage() {
-  const { user } = useAuth();
+  const { user, roles } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
   const get = useServerFn(getMyEngineerProfile);
@@ -38,7 +38,16 @@ function ApplyPage() {
   const screen = useServerFn(screenResume);
   const setWA = useServerFn(setWorkAuthorization);
 
-  const blocked = false;
+  const isFounderOnly = roles.includes("founder") && !roles.includes("engineer") && !roles.includes("admin");
+
+  useEffect(() => {
+    if (isFounderOnly) {
+      toast.error("Your account is a founder account. Applying is on engineer accounts only.");
+      navigate({ to: "/hire" });
+    }
+  }, [isFounderOnly, navigate]);
+
+  const blocked = isFounderOnly;
 
   const { data } = useQuery({
     queryKey: ["myEngineer", user?.id],

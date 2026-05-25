@@ -55,6 +55,46 @@ function Dashboard() {
           : "Post a brief and we'll match you with cracked engineers."}
       </p>
 
+      {!isAdmin && (
+        <section className="mt-8 flex flex-col gap-3 rounded-2xl border border-dashed border-foreground/20 bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3">
+            <ShieldCheck className="mt-0.5 size-5 text-foreground/70" />
+            <div>
+              <p className="text-sm font-medium">First-time setup: claim admin access</p>
+              <p className="text-xs text-muted-foreground">
+                Only works if no admin exists yet. Use this once to bootstrap your account.
+              </p>
+            </div>
+          </div>
+          <button
+            disabled={promoting}
+            onClick={async () => {
+              setPromoting(true);
+              try {
+                await promote();
+                await refreshRoles();
+                toast.success("You are now an admin.");
+              } catch (e) {
+                toast.error(e instanceof Error ? e.message : "Failed");
+              } finally {
+                setPromoting(false);
+              }
+            }}
+            className="inline-flex h-9 items-center rounded-md bg-foreground px-4 text-xs font-medium text-background disabled:opacity-50"
+          >
+            {promoting ? "Promoting…" : "Promote me to admin"}
+          </button>
+        </section>
+      )}
+      {isAdmin && (
+        <Link
+          to="/admin"
+          className="mt-8 inline-flex items-center gap-2 rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background"
+        >
+          <ShieldCheck className="size-4" /> Open admin console
+        </Link>
+      )}
+
       <div className={`mt-10 grid gap-6 ${showFounderPanel ? "md:grid-cols-2" : ""}`}>
 
         {/* Engineer profile card */}

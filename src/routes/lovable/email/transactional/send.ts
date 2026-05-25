@@ -115,6 +115,19 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
           )
         }
 
+        // Restrict caller-provided recipients to the authenticated user's own
+        // email. Templates with a fixed `to` are exempt (admin-only notifications).
+        if (
+          !template.to &&
+          effectiveRecipient.toLowerCase() !== (user.email ?? '').toLowerCase()
+        ) {
+          return Response.json(
+            { error: 'Forbidden: can only send to your own email address' },
+            { status: 403 }
+          )
+        }
+
+
         // 2. Check suppression list (fail-closed: if we can't verify, don't send)
         const { data: suppressed, error: suppressionError } = await supabase
           .from('suppressed_emails')

@@ -75,27 +75,28 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Aveiq — Elite engineers, hired in 72 hours" },
+      { title: "Aveiq — Hire India's Top AI Engineers in 72 Hours." },
       {
         name: "description",
         content:
           "Aveiq is a hand-curated talent network. The top 0.1% of Indian AI engineers, vetted and matched to startups in 72 hours.",
       },
-      { property: "og:title", content: "Aveiq — Elite engineers, hired in 72h" },
+      { property: "og:title", content: "Aveiq — Hire India's Top AI Engineers in 72 Hours." },
       {
         property: "og:description",
         content:
           "Hand-vetted AI engineers from India. No resume spam. No ghosting.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: "https://www.aveiq.app/aveiq-icon.png" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Aveiq — Hire India's Top AI Engineers in 72 Hours." },
+      { name: "description", content: "AVEIQ connects startups with pre-vetted AI and developer talent, accelerating hiring." },
+      { property: "og:description", content: "AVEIQ connects startups with pre-vetted AI and developer talent, accelerating hiring." },
+      { name: "twitter:description", content: "AVEIQ connects startups with pre-vetted AI and developer talent, accelerating hiring." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4bb054a8-8922-432f-98dd-cc0b0d48659d/id-preview-7af5a2cb--b8f547ce-344f-4096-b7c3-875bc468ac52.lovable.app-1779737188792.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4bb054a8-8922-432f-98dd-cc0b0d48659d/id-preview-7af5a2cb--b8f547ce-344f-4096-b7c3-875bc468ac52.lovable.app-1779737188792.png" },
     ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", type: "image/png", href: "/aveiq-icon.png" },
-      { rel: "apple-touch-icon", href: "/aveiq-icon.png" },
-    ],
+    links: [{ rel: "stylesheet", href: appCss }],
   }),
   shellComponent: RootShell,
   component: RootComponent,

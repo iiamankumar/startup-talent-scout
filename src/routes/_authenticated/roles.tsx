@@ -137,7 +137,7 @@ function RoleCard({
       </div>
       <div className="mt-4 flex items-center justify-between">
         <span className="text-xs text-muted-foreground">
-          {role.budget_monthly_usd ? `$${role.budget_monthly_usd.toLocaleString()}/mo` : "Budget on request"}
+          {role.budget_monthly_usd ? `₹${role.budget_monthly_usd.toLocaleString("en-IN")}/mo` : "Budget on request"}
         </span>
         {alreadyApplied ? (
           <span className="text-xs font-medium text-muted-foreground">✓ Applied</span>

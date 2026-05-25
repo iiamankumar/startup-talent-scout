@@ -243,7 +243,7 @@ function Dashboard() {
       </div>
 
       {/* Engineer-only: open roles feed */}
-      {isEngineer && (
+      {showEngineerPanel && (
         <section className="mt-10 rounded-2xl bg-card p-6 ring-1 ring-black/5">
           <div className="flex items-center justify-between border-b border-border pb-4">
             <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">

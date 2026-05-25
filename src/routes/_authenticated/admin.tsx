@@ -69,15 +69,27 @@ function AdminPage() {
     <main className="mx-auto max-w-7xl px-6 py-12">
       <div className="flex items-center justify-between border-b border-border pb-6">
         <div>
-          <h1 className="text-3xl font-medium tracking-tight">Vetting queue</h1>
+          <h1 className="text-3xl font-medium tracking-tight">Admin</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Approve, review, or reject engineer applications.
+            Real-time metrics, vetting queue, and review moderation.
           </p>
         </div>
         <Link to="/dashboard" className="text-sm text-muted-foreground underline">
           Dashboard
         </Link>
       </div>
+
+      <MetricsDashboard />
+
+      <div className="mt-12 flex items-center justify-between border-b border-border pb-4">
+        <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+          Vetting queue
+        </h2>
+        <span className="text-xs text-muted-foreground/70">
+          {engineersQ.data?.engineers.length ?? 0} total
+        </span>
+      </div>
+
 
       <div className="mt-8 overflow-hidden rounded-2xl bg-card ring-1 ring-black/5">
         <table className="w-full text-sm">

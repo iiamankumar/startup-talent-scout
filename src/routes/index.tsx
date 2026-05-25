@@ -168,7 +168,7 @@ function Index() {
                 Be one of the first profiles on the network — apply below.
               </p>
               <Link
-                to="/apply"
+                to="/open-roles"
                 className="mt-6 inline-flex h-10 items-center rounded-md bg-foreground px-4 text-sm font-medium text-background"
               >
                 Apply to the network <ArrowRight className="ml-2 size-4" />
@@ -330,7 +330,7 @@ function Index() {
               click. Collect verified reviews from every founder you work with.
             </p>
             <Link
-              to="/apply"
+              to="/open-roles"
               className="mt-8 inline-flex h-10 items-center rounded-md bg-foreground py-2 pl-4 pr-3 text-sm font-medium text-background"
             >
               Apply to the network

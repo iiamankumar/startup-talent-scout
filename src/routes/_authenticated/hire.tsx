@@ -53,6 +53,10 @@ function HirePage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (form.notes && form.notes.length > 5000) {
+      toast.error("Notes must be 5000 characters or fewer.");
+      return;
+    }
     setSubmitting(true);
     try {
       await submitFn({
@@ -72,18 +76,20 @@ function HirePage() {
         },
       });
       toast.success("Brief submitted. We'll send a shortlist within 72 hours.");
+      // Fire-and-forget email; never block navigation.
       if (user?.email) {
-        sendTransactionalEmail({
+        void sendTransactionalEmail({
           templateName: 'hire-request-submitted',
           recipientEmail: user.email,
           idempotencyKey: `hire-${user.id}-${Date.now()}`,
           templateData: { companyName: form.company_name, roleTitle: form.role_title },
-        }).catch(() => {});
+        }).catch((err) => console.warn("hire email failed", err));
       }
+      setSubmitting(false);
       navigate({ to: "/dashboard" });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not submit");
-    } finally {
+      console.error("createHireRequest failed", err);
+      toast.error(err instanceof Error ? err.message : "Could not submit. Please try again.");
       setSubmitting(false);
     }
   };
@@ -198,12 +204,16 @@ function HirePage() {
 
         <Field label="Notes">
           <textarea
-            rows={5}
+            rows={6}
+            maxLength={5000}
             placeholder="What are you building? What does this person need to be cracked at?"
             value={form.notes}
-            onChange={(e) => setForm({ ...form, notes: e.target.value })}
+            onChange={(e) => setForm({ ...form, notes: e.target.value.slice(0, 5000) })}
             className="w-full rounded-md border border-border bg-background p-3 text-sm"
           />
+          <p className="mt-1 text-right text-[11px] text-muted-foreground tabular-nums">
+            {form.notes.length}/5000
+          </p>
         </Field>
 
         <button

@@ -13,7 +13,7 @@ const hireSchema = z.object({
   stack: z.array(z.string().trim().min(1).max(40)).max(15).default([]),
   budget_monthly_usd: z.number().int().min(0).max(1_000_000).optional().nullable(),
   urgency: z.enum(["72h", "1w", "2w", "flex"]),
-  notes: z.string().trim().max(2000).optional().nullable(),
+  notes: z.string().trim().max(5000).optional().nullable(),
 });
 
 export const createHireRequest = createServerFn({ method: "POST" })

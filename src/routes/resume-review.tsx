@@ -18,7 +18,7 @@ export const Route = createFileRoute("/resume-review")({
       { property: "og:title", content: "AI Resume Review & ATS Score — Aveiq" },
       {
         property: "og:description",
-        content: "Paste your resume. Get an ATS score, missing keywords, and rewritten bullets in seconds. Free.",
+        content: "Upload your resume. Get an ATS score, missing keywords, and rewritten bullets in seconds. Free.",
       },
     ],
   }),
@@ -31,6 +31,7 @@ function ResumeReviewPage() {
   const [targetRole, setTargetRole] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [fileName, setFileName] = useState<string | null>(null);
+  const [dragActive, setDragActive] = useState(false);
 
   const mutation = useMutation({
     mutationFn: async () =>
@@ -87,7 +88,7 @@ function ResumeReviewPage() {
             Get your <span className="font-serif italic">ATS score</span> and AI resume review in seconds.
           </h1>
           <p className="mt-5 max-w-2xl text-pretty text-lg text-muted-foreground">
-            Paste your resume below. Our AI gives you an accurate ATS compatibility score, missing keywords,
+            Upload your resume below. Our AI gives you an accurate ATS compatibility score, missing keywords,
             and rewritten bullets — the same way top AI startups screen candidates.
           </p>
         </div>
@@ -97,35 +98,60 @@ function ResumeReviewPage() {
         <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1.1fr_1fr]">
           {/* Input panel */}
           <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Your resume</h2>
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-secondary px-3 py-1.5 text-xs font-medium ring-1 ring-black/5 hover:bg-muted">
-                <Upload className="size-3.5" />
-                Upload .txt / .md
-                <input
-                  type="file"
-                  accept=".txt,.md,text/plain,text/markdown"
-                  className="hidden"
-                  onChange={(e) => {
-                    const f = e.target.files?.[0];
-                    if (f) handleFile(f);
-                  }}
-                />
-              </label>
-            </div>
-            {fileName && (
-              <p className="mt-2 text-xs text-muted-foreground">Loaded: {fileName}</p>
-            )}
+            <h2 className="text-lg font-semibold">Upload your resume</h2>
 
-            <textarea
-              value={resumeText}
-              onChange={(e) => setResumeText(e.target.value.slice(0, 40000))}
-              placeholder="Paste your full resume text here (export from PDF as text, or copy from your doc)…"
-              className="mt-3 h-72 w-full resize-y rounded-md border border-border bg-background p-3 text-sm leading-relaxed outline-none focus:border-foreground"
-            />
+            <div
+              onDragEnter={() => setDragActive(true)}
+              onDragLeave={() => setDragActive(false)}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                setDragActive(false);
+                const f = e.dataTransfer.files?.[0];
+                if (f) handleFile(f);
+              }}
+              className={`mt-3 flex h-72 w-full flex-col items-center justify-center rounded-md border-2 border-dashed border-border bg-background p-6 text-center transition-colors ${dragActive ? "border-foreground bg-secondary" : ""}`}
+            >
+              <input
+                type="file"
+                accept=".txt,.md,text/plain,text/markdown"
+                className="hidden"
+                id="resume-upload"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) handleFile(f);
+                }}
+              />
+              {fileName ? (
+                <div className="space-y-2">
+                  <FileText className="mx-auto size-8 text-muted-foreground" />
+                  <p className="text-sm font-medium text-foreground">{fileName}</p>
+                  <p className="text-xs text-muted-foreground">{wordCount} words • {resumeText.length} chars</p>
+                  <label
+                    htmlFor="resume-upload"
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-secondary px-3 py-1.5 text-xs font-medium ring-1 ring-black/5 hover:bg-muted"
+                  >
+                    <Upload className="size-3.5" /> Replace file
+                  </label>
+                </div>
+              ) : (
+                <>
+                  <Upload className="mx-auto size-8 text-muted-foreground" />
+                  <p className="mt-3 text-sm font-medium text-foreground">Drag & drop your resume here</p>
+                  <p className="mt-1 text-xs text-muted-foreground">or</p>
+                  <label
+                    htmlFor="resume-upload"
+                    className="mt-2 inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-secondary px-3 py-1.5 text-xs font-medium ring-1 ring-black/5 hover:bg-muted"
+                  >
+                    <Upload className="size-3.5" /> Browse files
+                  </label>
+                  <p className="mt-3 text-[10px] text-muted-foreground">Supports .txt, .md</p>
+                </>
+              )}
+            </div>
             <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
-              <span>{wordCount} words • min 100 characters</span>
-              <span>{resumeText.length}/40000</span>
+              <span>{fileName ? "File loaded" : "No file selected"}</span>
+              <span>{resumeText.length > 1 ? `${resumeText.length}/40000` : ""}</span>
             </div>
 
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
@@ -143,7 +169,7 @@ function ResumeReviewPage() {
                 <textarea
                   value={jobDescription}
                   onChange={(e) => setJobDescription(e.target.value.slice(0, 8000))}
-                  placeholder="Paste the JD for keyword-targeted feedback"
+                  placeholder="Add the JD for keyword-targeted feedback"
                   className="mt-1 h-20 w-full resize-y rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:border-foreground"
                 />
               </div>
@@ -201,7 +227,7 @@ function EmptyState() {
       <FileText className="size-10 text-muted-foreground" />
       <h3 className="mt-4 text-lg font-medium">Your AI review will appear here</h3>
       <p className="mt-2 max-w-sm text-sm text-muted-foreground">
-        Paste your resume and click <span className="font-medium text-foreground">Get my ATS score</span> to
+        Upload your resume and click <span className="font-medium text-foreground">Get my ATS score</span> to
         see your score, missing keywords, and rewritten bullets.
       </p>
     </div>

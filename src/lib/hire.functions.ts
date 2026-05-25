@@ -1,6 +1,18 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
+
+export const listOpenRequestsPublic = createServerFn({ method: "GET" }).handler(async () => {
+  const { data, error } = await supabaseAdmin
+    .from("hire_requests")
+    .select("id, role_title, stack, urgency, budget_monthly_usd, created_at, companies(name, stage)")
+    .eq("status", "open")
+    .order("created_at", { ascending: false })
+    .limit(50);
+  if (error) return { requests: [], error: error.message };
+  return { requests: data ?? [], error: null };
+});
 
 const hireSchema = z.object({
   company_name: z.string().trim().min(2).max(120),

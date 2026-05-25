@@ -13,25 +13,17 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
 });
 
-export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard — Aveiq" }] }),
-  component: Dashboard,
-});
-
 function Dashboard() {
-  const { user, roles, refreshRoles } = useAuth();
+  const { user, roles } = useAuth();
   const isEngineer = roles.includes("engineer");
   const isFounder = roles.includes("founder");
-  const isAdmin = roles.includes("admin" as never);
-  const promote = useServerFn(promoteSelfToAdmin);
-  const [promoting, setPromoting] = useState(false);
-  // Treat as founder-only if no engineer profile yet AND has founder role
-  // Hide hire-request panel if the user is an engineer (applied) but not also explicitly running a company
+  const isAdmin = roles.includes("admin");
   const showFounderPanel = isFounder && !isEngineer;
 
   const getProfile = useServerFn(getMyEngineerProfile);
   const getMyRequests = useServerFn(listMyHireRequests);
   const getOpen = useServerFn(listOpenRequestsForEngineers);
+  const getRefs = useServerFn(getMyReferrals);
 
   const profileQ = useQuery({
     queryKey: ["myEngineer", user?.id],
@@ -47,6 +39,26 @@ function Dashboard() {
     queryFn: () => getOpen(),
     enabled: isEngineer,
   });
+  const referralsQ = useQuery({
+    queryKey: ["myReferrals", user?.id],
+    queryFn: () => getRefs(),
+  });
+
+  const referralCode = referralsQ.data?.code ?? "";
+  const referralLink =
+    typeof window !== "undefined" && referralCode
+      ? `${window.location.origin}/signup?ref=${referralCode}`
+      : "";
+  const referralCount = referralsQ.data?.referrals?.length ?? 0;
+
+  const copy = async (text: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success(`${label} copied`);
+    } catch {
+      toast.error("Couldn't copy");
+    }
+  };
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-12">
@@ -59,37 +71,6 @@ function Dashboard() {
           : "Post a brief and we'll match you with cracked engineers."}
       </p>
 
-      {!isAdmin && (
-        <section className="mt-8 flex flex-col gap-3 rounded-2xl border border-dashed border-foreground/20 bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-start gap-3">
-            <ShieldCheck className="mt-0.5 size-5 text-foreground/70" />
-            <div>
-              <p className="text-sm font-medium">First-time setup: claim admin access</p>
-              <p className="text-xs text-muted-foreground">
-                Only works if no admin exists yet. Use this once to bootstrap your account.
-              </p>
-            </div>
-          </div>
-          <button
-            disabled={promoting}
-            onClick={async () => {
-              setPromoting(true);
-              try {
-                await promote();
-                await refreshRoles();
-                toast.success("You are now an admin.");
-              } catch (e) {
-                toast.error(e instanceof Error ? e.message : "Failed");
-              } finally {
-                setPromoting(false);
-              }
-            }}
-            className="inline-flex h-9 items-center rounded-md bg-foreground px-4 text-xs font-medium text-background disabled:opacity-50"
-          >
-            {promoting ? "Promoting…" : "Promote me to admin"}
-          </button>
-        </section>
-      )}
       {isAdmin && (
         <Link
           to="/admin"
@@ -100,8 +81,8 @@ function Dashboard() {
       )}
 
       <div className={`mt-10 grid gap-6 ${showFounderPanel ? "md:grid-cols-2" : ""}`}>
-
         {/* Engineer profile card */}
+        {!showFounderPanel && (
         <section className="rounded-2xl bg-card p-6 ring-1 ring-black/5">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
             <UserCircle2 className="size-4" /> Engineer profile
@@ -145,8 +126,9 @@ function Dashboard() {
             </div>
           )}
         </section>
+        )}
 
-        {/* Founder hire requests - only for founders without engineer profile */}
+        {/* Founder hire requests */}
         {showFounderPanel && (
         <section className="rounded-2xl bg-card p-6 ring-1 ring-black/5">
           <div className="flex items-center justify-between">
@@ -190,6 +172,64 @@ function Dashboard() {
           )}
         </section>
         )}
+
+        {/* Referral card — shown to everyone */}
+        <section className="rounded-2xl bg-card p-6 ring-1 ring-black/5">
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            <Gift className="size-4" /> Refer & earn
+          </div>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Share your link or code. When someone signs up using it, you get credit toward a
+            referral reward.
+          </p>
+          {referralsQ.isLoading ? (
+            <p className="mt-4 text-sm text-muted-foreground">Loading your code…</p>
+          ) : (
+            <div className="mt-4 space-y-3">
+              <div>
+                <label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                  Your code
+                </label>
+                <div className="mt-1 flex items-center gap-2">
+                  <code className="flex-1 rounded-md bg-background px-3 py-2 text-sm font-mono ring-1 ring-black/5">
+                    {referralCode || "—"}
+                  </code>
+                  <button
+                    onClick={() => copy(referralCode, "Code")}
+                    disabled={!referralCode}
+                    className="inline-flex size-9 items-center justify-center rounded-md border border-border hover:bg-secondary disabled:opacity-50"
+                    aria-label="Copy code"
+                  >
+                    <Copy className="size-3.5" />
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                  Invite link
+                </label>
+                <div className="mt-1 flex items-center gap-2">
+                  <code className="flex-1 truncate rounded-md bg-background px-3 py-2 text-xs ring-1 ring-black/5">
+                    {referralLink || "—"}
+                  </code>
+                  <button
+                    onClick={() => copy(referralLink, "Link")}
+                    disabled={!referralLink}
+                    className="inline-flex size-9 items-center justify-center rounded-md border border-border hover:bg-secondary disabled:opacity-50"
+                    aria-label="Copy link"
+                  >
+                    <Copy className="size-3.5" />
+                  </button>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {referralCount === 0
+                  ? "No referrals yet."
+                  : `${referralCount} referral${referralCount === 1 ? "" : "s"} so far.`}
+              </p>
+            </div>
+          )}
+        </section>
       </div>
 
       {/* Engineer-only: open roles feed */}
@@ -225,7 +265,9 @@ function Dashboard() {
                   </div>
                   <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
                     <span>Urgency: {r.urgency}</span>
-                    {r.budget_monthly_usd && <span>${r.budget_monthly_usd.toLocaleString()}/mo</span>}
+                    {r.budget_monthly_usd && (
+                      <span>₹{r.budget_monthly_usd.toLocaleString("en-IN")}/mo</span>
+                    )}
                   </div>
                 </li>
               ))}

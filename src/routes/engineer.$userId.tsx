@@ -131,6 +131,24 @@ function EngineerProfilePage() {
               </div>
             )}
 
+            {(e.aveiq_score != null || e.resume_score != null || e.ai_interview_score != null) && (
+              <div className="mt-6 rounded-2xl bg-card p-6 ring-1 ring-black/5">
+                <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+                  Aveiq Score breakdown
+                </h2>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Every score is assigned by a human reviewer after AI screening,
+                  resume review, and a technical interview.
+                </p>
+                <div className="mt-5 grid grid-cols-3 gap-4">
+                  <ScoreBar label="Resume" value={e.resume_score} />
+                  <ScoreBar label="AI interview" value={e.ai_interview_score} />
+                  <ScoreBar label="Final" value={e.aveiq_score} highlight />
+                </div>
+              </div>
+            )}
+
+
             <div className="mt-6 rounded-2xl bg-card p-6 ring-1 ring-black/5">
               <div className="flex items-center justify-between">
                 <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">

@@ -351,9 +351,9 @@ function Index() {
             <div>
               <h4 className="text-sm font-semibold text-foreground">Contact</h4>
               <ul className="mt-5 space-y-3 text-sm text-muted-foreground">
-                <li><a href="mailto:support@aveiq.com" className="hover:text-foreground">Support</a></li>
-                <li><a href="mailto:press@aveiq.com" className="hover:text-foreground">Press</a></li>
-                <li><a href="mailto:sales@aveiq.com" className="hover:text-foreground">Sales</a></li>
+                <li><a href="mailto:care@aveiq.app" className="hover:text-foreground">Support</a></li>
+                <li><a href="mailto:care@aveiq.app" className="hover:text-foreground">Press</a></li>
+                <li><a href="mailto:care@aveiq.app" className="hover:text-foreground">Sales</a></li>
               </ul>
             </div>
             <div>

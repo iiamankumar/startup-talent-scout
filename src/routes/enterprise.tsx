@@ -31,7 +31,7 @@ function EnterprisePage() {
         more than 5 engineers a year.
       </InfoBlock>
       <InfoBlock title="Talk to us">
-        Email <a className="underline" href="mailto:enterprise@aveiq.com">enterprise@aveiq.com</a>{" "}
+        Email <a className="underline" href="mailto:care@aveiq.app">care@aveiq.app</a>{" "}
         with a sentence about your team and what you're hiring for, or post a brief and mention
         "Enterprise" in the notes.
       </InfoBlock>

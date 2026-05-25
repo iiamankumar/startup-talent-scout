@@ -33,7 +33,7 @@ function SecurityPage() {
       </InfoBlock>
       <InfoBlock title="Responsible disclosure">
         Found a vulnerability? Email{" "}
-        <a className="underline" href="mailto:security@aveiq.com">security@aveiq.com</a>. We
+        <a className="underline" href="mailto:care@aveiq.app">care@aveiq.app</a>. We
         respond within 48 hours and credit researchers who report in good faith.
       </InfoBlock>
     </InfoPage>

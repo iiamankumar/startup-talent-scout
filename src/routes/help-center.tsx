@@ -36,7 +36,7 @@ function HelpCenterPage() {
         AI engineering. We don't list low-effort gig work.
       </InfoBlock>
       <InfoBlock title="I still have a question">
-        Email <a className="underline" href="mailto:hello@aveiq.com">hello@aveiq.com</a> and a real
+        Email <a className="underline" href="mailto:care@aveiq.app">care@aveiq.app</a> and a real
         human will reply, usually within one business day.
       </InfoBlock>
       <div className="rounded-xl bg-surface p-6 ring-1 ring-black/5">

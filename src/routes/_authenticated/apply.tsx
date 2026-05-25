@@ -207,13 +207,14 @@ function ApplyPage() {
         <form onSubmit={profileSubmit} className="mt-4 space-y-6 rounded-2xl bg-card p-8 ring-1 ring-black/5">
           <div className="grid gap-6 md:grid-cols-2">
             <Input label="Display name *" required value={form.display_name} onChange={(v) => setForm({ ...form, display_name: v })} />
-            <Input label="Headline" placeholder="e.g. AI AI engineer · Ex-Razorpay" value={form.headline} onChange={(v) => setForm({ ...form, headline: v })} />
-            <Input label="Location" placeholder="e.g. Bangalore, IN" value={form.location} onChange={(v) => setForm({ ...form, location: v })} />
-            <Input label="Years of experience" type="number" value={form.years_experience} onChange={(v) => setForm({ ...form, years_experience: v })} />
-            <Input label="Hourly rate (USD)" type="number" value={form.hourly_rate_usd} onChange={(v) => setForm({ ...form, hourly_rate_usd: v })} />
+            <Input label="Headline" placeholder="e.g. AI engineer · Ex-Razorpay" value={form.headline} onChange={(v) => setForm({ ...form, headline: v })} />
+            <Input label="Location *" required placeholder="e.g. Bangalore, IN" value={form.location} onChange={(v) => setForm({ ...form, location: v })} />
+            <Input label="Years of experience *" required type="number" value={form.years_experience} onChange={(v) => setForm({ ...form, years_experience: v })} />
+            <Input label="Hourly rate (INR) *" required type="number" value={form.hourly_rate_usd} onChange={(v) => setForm({ ...form, hourly_rate_usd: v })} />
             <label className="block">
               <span className="mb-1 block text-xs font-medium text-muted-foreground">Work authorization *</span>
               <select
+                required
                 value={form.work_authorization}
                 onChange={(e) => setForm({ ...form, work_authorization: e.target.value })}
                 className="h-11 w-full rounded-md border border-border bg-background px-3 text-sm"
@@ -224,11 +225,11 @@ function ApplyPage() {
               </select>
             </label>
           </div>
-          <TextArea label="Bio" placeholder="What have you built? What are you cracked at?" value={form.bio} onChange={(v) => setForm({ ...form, bio: v })} />
-          <Input label="Skills (comma-separated)" placeholder="Next.js, PyTorch, Rust, LangChain" value={form.skills} onChange={(v) => setForm({ ...form, skills: v })} />
+          <TextArea label="Bio *" required placeholder="What have you built? What are you cracked at?" value={form.bio} onChange={(v) => setForm({ ...form, bio: v })} />
+          <Input label="Skills (comma-separated) *" required placeholder="Next.js, PyTorch, Rust, LangChain" value={form.skills} onChange={(v) => setForm({ ...form, skills: v })} />
           <div className="grid gap-6 md:grid-cols-3">
-            <Input label="GitHub URL" type="url" value={form.github_url} onChange={(v) => setForm({ ...form, github_url: v })} />
-            <Input label="LinkedIn URL" type="url" value={form.linkedin_url} onChange={(v) => setForm({ ...form, linkedin_url: v })} />
+            <Input label="GitHub URL *" required type="url" value={form.github_url} onChange={(v) => setForm({ ...form, github_url: v })} />
+            <Input label="LinkedIn URL *" required type="url" value={form.linkedin_url} onChange={(v) => setForm({ ...form, linkedin_url: v })} />
             <Input label="Website" type="url" value={form.website_url} onChange={(v) => setForm({ ...form, website_url: v })} />
           </div>
           <label className="flex items-center gap-3 text-sm">

@@ -4,7 +4,10 @@ import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/lib/auth-context";
 import { getMyEngineerProfile } from "@/lib/engineers.functions";
 import { listMyHireRequests, listOpenRequestsForEngineers } from "@/lib/hire.functions";
-import { ArrowRight, Briefcase, UserCircle2 } from "lucide-react";
+import { promoteSelfToAdmin } from "@/lib/admin.functions";
+import { ArrowRight, Briefcase, ShieldCheck, UserCircle2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Aveiq" }] }),
@@ -12,9 +15,12 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function Dashboard() {
-  const { user, roles } = useAuth();
+  const { user, roles, refreshRoles } = useAuth();
   const isEngineer = roles.includes("engineer");
   const isFounder = roles.includes("founder");
+  const isAdmin = roles.includes("admin" as never);
+  const promote = useServerFn(promoteSelfToAdmin);
+  const [promoting, setPromoting] = useState(false);
   // Treat as founder-only if no engineer profile yet AND has founder role
   // Hide hire-request panel if the user is an engineer (applied) but not also explicitly running a company
   const showFounderPanel = isFounder && !isEngineer;
@@ -48,6 +54,46 @@ function Dashboard() {
           ? "Manage your profile and browse open roles."
           : "Post a brief and we'll match you with cracked engineers."}
       </p>
+
+      {!isAdmin && (
+        <section className="mt-8 flex flex-col gap-3 rounded-2xl border border-dashed border-foreground/20 bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3">
+            <ShieldCheck className="mt-0.5 size-5 text-foreground/70" />
+            <div>
+              <p className="text-sm font-medium">First-time setup: claim admin access</p>
+              <p className="text-xs text-muted-foreground">
+                Only works if no admin exists yet. Use this once to bootstrap your account.
+              </p>
+            </div>
+          </div>
+          <button
+            disabled={promoting}
+            onClick={async () => {
+              setPromoting(true);
+              try {
+                await promote();
+                await refreshRoles();
+                toast.success("You are now an admin.");
+              } catch (e) {
+                toast.error(e instanceof Error ? e.message : "Failed");
+              } finally {
+                setPromoting(false);
+              }
+            }}
+            className="inline-flex h-9 items-center rounded-md bg-foreground px-4 text-xs font-medium text-background disabled:opacity-50"
+          >
+            {promoting ? "Promoting…" : "Promote me to admin"}
+          </button>
+        </section>
+      )}
+      {isAdmin && (
+        <Link
+          to="/admin"
+          className="mt-8 inline-flex items-center gap-2 rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background"
+        >
+          <ShieldCheck className="size-4" /> Open admin console
+        </Link>
+      )}
 
       <div className={`mt-10 grid gap-6 ${showFounderPanel ? "md:grid-cols-2" : ""}`}>
 

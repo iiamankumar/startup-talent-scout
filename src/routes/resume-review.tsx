@@ -185,10 +185,26 @@ function ResumeReviewPage() {
               </div>
             </div>
 
+            {!user && (
+              <div className="mt-5 flex items-center gap-2 rounded-md border border-border bg-secondary/50 px-3 py-2.5 text-xs text-muted-foreground">
+                <Lock className="size-3.5 shrink-0" />
+                <span>
+                  <Link to="/signup" className="font-medium text-foreground underline underline-offset-2">
+                    Create a free account
+                  </Link>{" "}
+                  or{" "}
+                  <Link to="/login" className="font-medium text-foreground underline underline-offset-2">
+                    sign in
+                  </Link>{" "}
+                  to run your review.
+                </span>
+              </div>
+            )}
+
             <button
               onClick={() => mutation.mutate()}
               disabled={!canSubmit}
-              className="mt-5 inline-flex h-11 w-full items-center justify-center rounded-md bg-foreground text-sm font-medium text-background transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50"
+              className="mt-3 inline-flex h-11 w-full items-center justify-center rounded-md bg-foreground text-sm font-medium text-background transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {mutation.isPending ? (
                 <>

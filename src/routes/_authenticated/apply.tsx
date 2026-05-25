@@ -183,7 +183,7 @@ function ApplyPage() {
         <form onSubmit={profileSubmit} className="mt-4 space-y-6 rounded-2xl bg-card p-8 ring-1 ring-black/5">
           <div className="grid gap-6 md:grid-cols-2">
             <Input label="Display name *" required value={form.display_name} onChange={(v) => setForm({ ...form, display_name: v })} />
-            <Input label="Headline" placeholder="e.g. Full-stack AI engineer · Ex-Razorpay" value={form.headline} onChange={(v) => setForm({ ...form, headline: v })} />
+            <Input label="Headline" placeholder="e.g. AI AI engineer · Ex-Razorpay" value={form.headline} onChange={(v) => setForm({ ...form, headline: v })} />
             <Input label="Location" placeholder="e.g. Bangalore, IN" value={form.location} onChange={(v) => setForm({ ...form, location: v })} />
             <Input label="Years of experience" type="number" value={form.years_experience} onChange={(v) => setForm({ ...form, years_experience: v })} />
             <Input label="Hourly rate (USD)" type="number" value={form.hourly_rate_usd} onChange={(v) => setForm({ ...form, hourly_rate_usd: v })} />

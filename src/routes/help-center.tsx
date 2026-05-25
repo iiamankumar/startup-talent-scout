@@ -33,7 +33,7 @@ function HelpCenterPage() {
       </InfoBlock>
       <InfoBlock title="What kind of roles are on Aveiq?">
         Mostly full-time and long-term contract roles at funded startups, focused on AI/ML and
-        full-stack engineering. We don't list low-effort gig work.
+        AI engineering. We don't list low-effort gig work.
       </InfoBlock>
       <InfoBlock title="I still have a question">
         Email <a className="underline" href="mailto:hello@aveiq.com">hello@aveiq.com</a> and a real

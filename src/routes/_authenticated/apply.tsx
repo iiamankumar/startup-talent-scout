@@ -30,7 +30,7 @@ const WORK_AUTH_OPTIONS = [
 ];
 
 function ApplyPage() {
-  const { user } = useAuth();
+  const { user, roles } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
   const get = useServerFn(getMyEngineerProfile);
@@ -38,9 +38,16 @@ function ApplyPage() {
   const screen = useServerFn(screenResume);
   const setWA = useServerFn(setWorkAuthorization);
 
+  const isFounder = roles.includes("founder");
+  const isEngineer = roles.includes("engineer");
+  const isAdmin = roles.includes("admin");
+  // Account is locked to hiring — block applying.
+  const blocked = isFounder && !isEngineer && !isAdmin;
+
   const { data } = useQuery({
     queryKey: ["myEngineer", user?.id],
     queryFn: () => get(),
+    enabled: !blocked,
   });
 
   const [form, setForm] = useState({

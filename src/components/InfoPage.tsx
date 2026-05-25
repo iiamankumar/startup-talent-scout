@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ReactNode } from "react";
-import { KlyroLogo } from "@/components/KlyroLogo";
+import { AveiqLogo } from "@/components/AveiqLogo";
 
 export function InfoPage({
   eyebrow,
@@ -17,7 +17,7 @@ export function InfoPage({
     <main className="min-h-screen bg-background text-foreground">
       <header className="mx-auto flex max-w-7xl items-center justify-between px-6 py-8">
         <Link to="/" className="flex items-center gap-2">
-          <KlyroLogo />
+          <AveiqLogo />
         </Link>
         <nav className="flex items-center gap-6 text-sm">
           <Link to="/network" className="text-muted-foreground hover:text-foreground">
@@ -41,7 +41,7 @@ export function InfoPage({
 
         <div className="mt-20 border-t border-border pt-8 text-sm text-muted-foreground">
           <Link to="/" className="hover:text-foreground">
-            ← Back to Klyro
+            ← Back to Aveiq
           </Link>
         </div>
       </section>

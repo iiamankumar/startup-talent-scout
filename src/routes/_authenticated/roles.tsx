@@ -5,7 +5,7 @@ import { listOpenRequestsForEngineers } from "@/lib/hire.functions";
 import { listMyApplications } from "@/lib/applications.functions";
 
 export const Route = createFileRoute("/_authenticated/roles")({
-  head: () => ({ meta: [{ title: "Open roles — Klyro" }] }),
+  head: () => ({ meta: [{ title: "Open roles — Aveiq" }] }),
   component: RolesPage,
 });
 
@@ -28,7 +28,7 @@ function RolesPage() {
         <div>
           <h1 className="text-3xl font-medium tracking-tight">Open roles</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Hand-curated briefs from Klyro founders. Apply with a short note.
+            Hand-curated briefs from Aveiq founders. Apply with a short note.
           </p>
         </div>
         <Link to="/dashboard" className="text-sm text-muted-foreground underline">

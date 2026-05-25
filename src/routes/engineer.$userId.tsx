@@ -7,10 +7,10 @@ import { getEngineerPublicProfile } from "@/lib/engineers.functions";
 import { listEngineerReviews, submitEngineerReview } from "@/lib/reviews.functions";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
-import { KlyroLogo } from "@/components/KlyroLogo";
+import { AveiqLogo } from "@/components/AveiqLogo";
 
 export const Route = createFileRoute("/engineer/$userId")({
-  head: () => ({ meta: [{ title: "Engineer profile — Klyro" }] }),
+  head: () => ({ meta: [{ title: "Engineer profile — Aveiq" }] }),
   component: EngineerProfilePage,
 });
 
@@ -41,7 +41,7 @@ function EngineerProfilePage() {
     <main className="min-h-screen bg-background">
       <header className="mx-auto flex max-w-5xl items-center justify-between px-6 py-8">
         <Link to="/" className="flex items-center gap-2">
-          <KlyroLogo />
+          <AveiqLogo />
         </Link>
         <Link to="/network" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="mr-1 size-4" /> Network
@@ -106,7 +106,7 @@ function EngineerProfilePage() {
               <div className="flex flex-col items-end gap-2">
                 {e.klyro_score != null && (
                   <div className="rounded-lg bg-background px-3 py-2 text-right ring-1 ring-black/5">
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Klyro Score</p>
+                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Aveiq Score</p>
                     <p className="text-2xl font-medium text-success">{e.klyro_score}</p>
                   </div>
                 )}
@@ -142,7 +142,7 @@ function EngineerProfilePage() {
               )}
               {!reviewsQ.isLoading && reviews.length === 0 && (
                 <p className="mt-4 text-sm text-muted-foreground">
-                  No reviews yet. Founders who hire {e.display_name.split(" ")[0]} through Klyro can
+                  No reviews yet. Founders who hire {e.display_name.split(" ")[0]} through Aveiq can
                   leave a verified review.
                 </p>
               )}

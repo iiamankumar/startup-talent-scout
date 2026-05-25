@@ -1,34 +1,34 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Klyro wordmark — simple uppercase text mark.
- * Renders "KLYRO" in a clean, bold typeface. Uses `currentColor` for inheritance.
+ * Aveiq wordmark — simple uppercase text mark.
+ * Renders "AVEIQ" in a clean, bold typeface. Uses `currentColor` for inheritance.
  */
-export function KlyroMark({
+export function AveiqMark({
   className,
 }: {
   className?: string;
 }) {
   return (
     <span
-      aria-label="Klyro"
+      aria-label="Aveiq"
       className={cn(
         "inline-flex items-center justify-center font-semibold tracking-widest text-foreground select-none",
         className
       )}
     >
-      KLYRO
+      AVEIQ
     </span>
   );
 }
 
-/** Primary logo export — uppercase KLYRO text mark. */
-export function KlyroLogo({
+/** Primary logo export — uppercase AVEIQ text mark. */
+export function AveiqLogo({
   className,
 }: {
   className?: string;
 }) {
-  return <KlyroMark className={className} />;
+  return <AveiqMark className={className} />;
 }
 
-export default KlyroLogo;
+export default AveiqLogo;

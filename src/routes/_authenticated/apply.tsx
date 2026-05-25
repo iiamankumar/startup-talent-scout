@@ -10,7 +10,7 @@ import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/apply")({
-  head: () => ({ meta: [{ title: "Apply to the network — Klyro" }] }),
+  head: () => ({ meta: [{ title: "Apply to the network — Aveiq" }] }),
   component: ApplyPage,
 });
 
@@ -234,7 +234,7 @@ function ApplyPage() {
                   {resumeUrl ? "Resume on file" : "Upload your resume (PDF, DOCX, TXT)"}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Stored privately. Visible only to you and Klyro reviewers.
+                  Stored privately. Visible only to you and Aveiq reviewers.
                 </p>
               </div>
             </div>
@@ -302,7 +302,7 @@ function ApplyPage() {
           ) : (
             <>
               <p className="text-sm text-muted-foreground">
-                A 10-minute on-the-record conversation with Kai, our AI interviewer. The transcript is reviewed by a senior Klyro engineer before your final round.
+                A 10-minute on-the-record conversation with Kai, our AI interviewer. The transcript is reviewed by a senior Aveiq engineer before your final round.
               </p>
               <button
                 onClick={() => navigate({ to: "/interview" })}
@@ -329,7 +329,7 @@ function ApplyPage() {
             </p>
           ) : aiDone ? (
             <p className="text-sm text-muted-foreground">
-              Kai has logged your AI interview. A senior Klyro engineer will email you within 48 hours to schedule the final round.
+              Kai has logged your AI interview. A senior Aveiq engineer will email you within 48 hours to schedule the final round.
             </p>
           ) : (
             <p className="text-sm text-muted-foreground">Unlocks after the AI interview.</p>

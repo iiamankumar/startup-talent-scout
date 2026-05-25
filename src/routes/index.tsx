@@ -3,18 +3,18 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Plus, FileText, Github, Twitter, Linkedin, ArrowRight, Star } from "lucide-react";
 import { getFeaturedEngineers, getLandingStats } from "@/lib/reviews.functions";
-import { KlyroLogo } from "@/components/KlyroLogo";
+import { AveiqLogo } from "@/components/AveiqLogo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Klyro — India's hand-vetted engineer network" },
+      { title: "Aveiq — India's hand-vetted engineer network" },
       {
         name: "description",
         content:
-          "Klyro is a curated talent network. We manually vet Indian AI and full-stack engineers and match them to startups — no resume spam, no agency fluff.",
+          "Aveiq is a curated talent network. We manually vet Indian AI and full-stack engineers and match them to startups — no resume spam, no agency fluff.",
       },
-      { property: "og:title", content: "Klyro — Hand-vetted engineers for startups" },
+      { property: "og:title", content: "Aveiq — Hand-vetted engineers for startups" },
       {
         property: "og:description",
         content: "Hand-vetted AI and full-stack engineers from India. Real profiles, real reviews.",
@@ -46,7 +46,7 @@ function Index() {
     <main className="min-h-screen bg-background text-foreground selection:bg-secondary">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-8">
         <Link to="/" className="flex items-center gap-2">
-          <KlyroLogo />
+          <AveiqLogo />
         </Link>
         <div className="flex items-center gap-6 md:gap-8">
           <Link
@@ -89,7 +89,7 @@ function Index() {
           <div className="mt-8 flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
             <p className="max-w-[56ch] text-pretty text-lg text-muted-foreground lg:text-xl">
               We manually vet Indian AI and full-stack engineers and match them with startups.
-              Every profile on Klyro is reviewed by a human — no scraped lists, no inflated claims.
+              Every profile on Aveiq is reviewed by a human — no scraped lists, no inflated claims.
             </p>
             <div className="flex gap-3">
               <Link
@@ -137,7 +137,7 @@ function Index() {
             <div className="mt-12 rounded-xl bg-card p-10 ring-1 ring-black/5">
               <h3 className="text-lg font-medium">The network is just opening up.</h3>
               <p className="mt-2 max-w-[60ch] text-sm text-muted-foreground">
-                No engineers have been vetted onto Klyro yet. We're reviewing applications by hand.
+                No engineers have been vetted onto Aveiq yet. We're reviewing applications by hand.
                 Be one of the first profiles on the network — apply below.
               </p>
               <Link
@@ -210,7 +210,7 @@ function Index() {
                       </span>
                       {e.klyro_score != null ? (
                         <span className="font-medium text-success">
-                          Klyro Score {e.klyro_score}
+                          Aveiq Score {e.klyro_score}
                         </span>
                       ) : (
                         <span className="text-muted-foreground/70">Newly vetted</span>
@@ -242,7 +242,7 @@ function Index() {
                 {
                   n: "01",
                   t: "Engineers apply, we review by hand",
-                  d: "Every applicant submits their GitHub, LinkedIn, and projects. A reviewer goes through them and assigns a Klyro Score before anyone goes live on the network.",
+                  d: "Every applicant submits their GitHub, LinkedIn, and projects. A reviewer goes through them and assigns a Aveiq Score before anyone goes live on the network.",
                 },
                 {
                   n: "02",
@@ -252,7 +252,7 @@ function Index() {
                 {
                   n: "03",
                   t: "You shortlist and hire",
-                  d: "See real applications, real GitHubs, and real reviews from past founders. Move them through shortlist → hired right inside Klyro.",
+                  d: "See real applications, real GitHubs, and real reviews from past founders. Move them through shortlist → hired right inside Aveiq.",
                 },
               ].map((s) => (
                 <div key={s.n} className="flex gap-6">
@@ -344,13 +344,13 @@ function Index() {
             <div>
               <h4 className="text-sm font-semibold text-foreground">Contact</h4>
               <ul className="mt-5 space-y-3 text-sm text-muted-foreground">
-                <li><a href="mailto:support@klyro.dev" className="hover:text-foreground">Support</a></li>
-                <li><a href="mailto:press@klyro.dev" className="hover:text-foreground">Press</a></li>
-                <li><a href="mailto:sales@klyro.dev" className="hover:text-foreground">Sales</a></li>
+                <li><a href="mailto:support@aveiq.com" className="hover:text-foreground">Support</a></li>
+                <li><a href="mailto:press@aveiq.com" className="hover:text-foreground">Press</a></li>
+                <li><a href="mailto:sales@aveiq.com" className="hover:text-foreground">Sales</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-sm font-semibold text-foreground">Klyro</h4>
+              <h4 className="text-sm font-semibold text-foreground">Aveiq</h4>
               <ul className="mt-5 space-y-3 text-sm text-muted-foreground">
                 <li><Link to="/careers" className="hover:text-foreground">Careers</Link></li>
                 <li><Link to="/security" className="hover:text-foreground">Security</Link></li>
@@ -361,7 +361,7 @@ function Index() {
 
           <div className="mt-16 flex flex-col gap-6 border-t border-border pt-8 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-6 text-sm text-muted-foreground">
-              <span>© 2026 Klyro</span>
+              <span>© 2026 Aveiq</span>
               <span className="text-muted-foreground/70">Bengaluru, India</span>
             </div>
             <div className="flex items-center gap-5">

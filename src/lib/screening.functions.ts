@@ -38,7 +38,7 @@ export const screenResume = createServerFn({ method: "POST" })
       .eq("user_id", userId)
       .maybeSingle();
 
-    const system = `You are Klyro's senior engineering recruiter. Score resumes 0-100 on signal: real shipped products, technical depth, ownership, top-tier companies/projects, evidence of impact. Penalize buzzword stuffing, fabricated dates, and shallow experience. Return ONLY valid JSON.`;
+    const system = `You are Aveiq's senior engineering recruiter. Score resumes 0-100 on signal: real shipped products, technical depth, ownership, top-tier companies/projects, evidence of impact. Penalize buzzword stuffing, fabricated dates, and shallow experience. Return ONLY valid JSON.`;
 
     const user = `Engineer self-declared:
 Name: ${eng?.display_name ?? "?"}

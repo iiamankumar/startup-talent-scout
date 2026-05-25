@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { KlyroLogo } from "@/components/KlyroLogo";
+import { AveiqLogo } from "@/components/AveiqLogo";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthLayout,
@@ -28,7 +28,7 @@ function AuthLayout() {
       <header className="border-b border-border bg-background">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <Link to="/" className="flex items-center gap-2">
-            <KlyroLogo />
+            <AveiqLogo />
           </Link>
           <nav className="flex items-center gap-6 text-sm">
             <Link

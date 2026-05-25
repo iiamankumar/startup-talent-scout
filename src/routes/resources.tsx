@@ -4,7 +4,7 @@ import { InfoPage, InfoBlock } from "@/components/InfoPage";
 export const Route = createFileRoute("/resources")({
   head: () => ({
     meta: [
-      { title: "Resources — Klyro" },
+      { title: "Resources — Aveiq" },
       { name: "description", content: "Guides, templates, and playbooks for engineers and founders." },
     ],
   }),
@@ -23,7 +23,7 @@ function ResourcesPage() {
           <li>Building a GitHub that actually impresses reviewers</li>
           <li>How to write a project README a hiring manager will read</li>
           <li>Negotiating your first remote role with a US startup</li>
-          <li>What we look for in a Klyro Score interview</li>
+          <li>What we look for in a Aveiq Score interview</li>
         </ul>
       </InfoBlock>
       <InfoBlock title="For founders">
@@ -37,7 +37,7 @@ function ResourcesPage() {
       <InfoBlock title="Templates">
         <p>
           Free templates: job brief, offer letter, technical take-home, weekly 1:1 doc. Email{" "}
-          <a className="underline" href="mailto:hello@klyro.dev">hello@klyro.dev</a> and we'll send
+          <a className="underline" href="mailto:hello@aveiq.com">hello@aveiq.com</a> and we'll send
           the bundle.
         </p>
       </InfoBlock>

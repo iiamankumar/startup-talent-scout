@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import { ChevronDown, ShieldCheck, Star } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  head: () => ({ meta: [{ title: "Admin — Klyro" }] }),
+  head: () => ({ meta: [{ title: "Admin — Aveiq" }] }),
   component: AdminPage,
 });
 
@@ -39,14 +39,14 @@ function AdminPage() {
           <ShieldCheck className="size-6 text-muted-foreground" />
           <h1 className="mt-4 text-2xl font-medium tracking-tight">Admin access required</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            If no admin has been set up for this Klyro instance yet, you can claim it.
+            If no admin has been set up for this Aveiq instance yet, you can claim it.
           </p>
           <button
             onClick={async () => {
               try {
                 await promote();
                 await refreshRoles();
-                toast.success("You are now the Klyro admin.");
+                toast.success("You are now the Aveiq admin.");
               } catch (e) {
                 toast.error((e as Error).message);
               }

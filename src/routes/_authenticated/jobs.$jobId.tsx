@@ -19,6 +19,7 @@ type StepState = "done" | "in_progress" | "todo";
 function JobDetailPage() {
   const { jobId } = Route.useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const getJob = useServerFn(getJobDetail);
   const getOpen = useServerFn(listOpenRequestsForEngineers);
   const apply = useServerFn(applyToHireRequest);

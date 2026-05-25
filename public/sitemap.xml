@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- TODO: set BASE_URL once a custom domain is connected -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>/</loc></url>
+  <url><loc>/network</loc></url>
+  <url><loc>/enterprise</loc></url>
+  <url><loc>/resume-review</loc></url>
+  <url><loc>/blog</loc></url>
+  <url><loc>/stories</loc></url>
+  <url><loc>/careers</loc></url>
+  <url><loc>/security</loc></url>
+  <url><loc>/help-center</loc></url>
+  <url><loc>/resources</loc></url>
+  <url><loc>/data-partnerships</loc></url>
+  <url><loc>/privacy</loc></url>
+  <url><loc>/terms</loc></url>
+  <url><loc>/login</loc></url>
+  <url><loc>/signup</loc></url>
+</urlset>

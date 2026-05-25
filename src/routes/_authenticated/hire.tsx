@@ -65,6 +65,14 @@ function HirePage() {
         },
       });
       toast.success("Brief submitted. We'll send a shortlist within 72 hours.");
+      if (user?.email) {
+        sendTransactionalEmail({
+          templateName: 'hire-request-submitted',
+          recipientEmail: user.email,
+          idempotencyKey: `hire-${user.id}-${Date.now()}`,
+          templateData: { companyName: form.company_name, roleTitle: form.role_title },
+        }).catch(() => {});
+      }
       navigate({ to: "/dashboard" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not submit");

@@ -76,7 +76,7 @@ function EngineerProfilePage() {
                 <p className="mt-0.5 text-sm text-muted-foreground/70">
                   {e.location ?? "Remote"}
                   {e.years_experience != null ? ` · ${e.years_experience} yrs experience` : ""}
-                  {e.hourly_rate_usd != null ? ` · $${e.hourly_rate_usd}/hr` : ""}
+                  {e.hourly_rate_usd != null ? ` · ₹${e.hourly_rate_usd.toLocaleString("en-IN")}/hr` : ""}
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {(e.skills ?? []).map((s) => (

@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 import { FileText, Sparkles, Upload, CheckCircle2, AlertTriangle, Loader2, ArrowRight } from "lucide-react";
 import { reviewResume, type ResumeReviewResult } from "@/lib/resume-review.functions";
+import { extractTextFromFile } from "@/lib/pdf-extract";
 import { AveiqLogo } from "@/components/AveiqLogo";
 
 export const Route = createFileRoute("/resume-review")({
@@ -48,9 +49,15 @@ function ResumeReviewPage() {
   const apiError = mutation.data?.error ?? null;
 
   const handleFile = async (file: File) => {
-    setFileName(file.name);
-    const text = await file.text();
-    setResumeText(text.slice(0, 40000));
+    try {
+      setFileName(file.name);
+      const text = await extractTextFromFile(file);
+      setResumeText(text.slice(0, 40000));
+    } catch (e) {
+      setFileName(null);
+      setResumeText("");
+      alert((e as Error).message);
+    }
   };
 
   const wordCount = useMemo(() => resumeText.trim().split(/\s+/).filter(Boolean).length, [resumeText]);
@@ -114,7 +121,7 @@ function ResumeReviewPage() {
             >
               <input
                 type="file"
-                accept=".txt,.md,text/plain,text/markdown"
+                accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown"
                 className="hidden"
                 id="resume-upload"
                 onChange={(e) => {
@@ -145,7 +152,7 @@ function ResumeReviewPage() {
                   >
                     <Upload className="size-3.5" /> Browse files
                   </label>
-                  <p className="mt-3 text-[10px] text-muted-foreground">Supports .txt, .md</p>
+                  <p className="mt-3 text-[10px] text-muted-foreground">Supports PDF, .txt, .md</p>
                 </>
               )}
             </div>

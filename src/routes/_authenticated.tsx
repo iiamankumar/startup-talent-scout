@@ -8,17 +8,31 @@ export const Route = createFileRoute("/_authenticated")({
   component: AuthLayout,
 });
 
-const NAV_LINKS = [
-  { to: "/dashboard", label: "Dashboard" },
-  { to: "/network", label: "Network" },
-  { to: "/hire", label: "Hire" },
-  { to: "/apply", label: "Apply" },
-] as const;
-
 function AuthLayout() {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, roles, signOut } = useAuth();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+
+  const isEngineer = roles.includes("engineer");
+  const isFounder = roles.includes("founder");
+  const isAdmin = roles.includes("admin");
+
+  // Build nav based on account type. One account = one path (apply OR hire).
+  // Admins are back-office and see admin link.
+  const NAV_LINKS: { to: "/dashboard" | "/admin" | "/roles" | "/apply" | "/hire"; label: string }[] = [
+    { to: "/dashboard", label: "Dashboard" },
+  ];
+  if (isEngineer) {
+    NAV_LINKS.push({ to: "/roles", label: "Open roles" });
+    NAV_LINKS.push({ to: "/apply", label: "My profile" });
+  } else if (isFounder) {
+    NAV_LINKS.push({ to: "/hire", label: "Post a role" });
+  } else {
+    // No role chosen yet — let them pick a path.
+    NAV_LINKS.push({ to: "/apply", label: "Apply as engineer" });
+    NAV_LINKS.push({ to: "/hire", label: "Hire talent" });
+  }
+  if (isAdmin) NAV_LINKS.push({ to: "/admin", label: "Admin" });
 
   useEffect(() => {
     if (!loading && !user) {

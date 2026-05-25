@@ -146,7 +146,7 @@ function HirePage() {
               className="h-11 w-full rounded-md border border-border bg-background px-3 text-sm"
             />
           </Field>
-          <Field label="Monthly budget (USD)">
+          <Field label="Monthly budget (INR)">
             <input
               type="number"
               value={form.budget_monthly_usd}

@@ -2,10 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
-import { FileText, Sparkles, Upload, CheckCircle2, AlertTriangle, Loader2, ArrowRight } from "lucide-react";
+import { FileText, Sparkles, Upload, CheckCircle2, AlertTriangle, Loader2, ArrowRight, Lock } from "lucide-react";
 import { reviewResume, type ResumeReviewResult } from "@/lib/resume-review.functions";
 import { extractTextFromFile } from "@/lib/pdf-extract";
 import { AveiqLogo } from "@/components/AveiqLogo";
+import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/resume-review")({
   head: () => ({

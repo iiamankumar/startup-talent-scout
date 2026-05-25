@@ -80,19 +80,24 @@ function Index() {
 
       <section className="px-6 py-16 lg:py-24">
         <div className="mx-auto max-w-7xl">
-          <div className="max-w-[40ch]">
+          <div className="max-w-[48ch]">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-foreground ring-1 ring-black/5">
+              <span className="size-1.5 rounded-full bg-success" />
+              For AI startups hiring in India
+            </div>
             <h1 className="text-balance text-5xl font-medium leading-tight tracking-tight lg:text-7xl">
-              The talent engine for India's{" "}
-              <span className="font-serif italic">cracked</span> engineers.
+              Hire India's top{" "}
+              <span className="font-serif italic">AI engineers</span> in 72 hours.
             </h1>
           </div>
 
           <div className="mt-8 flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
             <p className="max-w-[56ch] text-pretty text-lg text-muted-foreground lg:text-xl">
-              The top 0.1% of India's AI engineers — screened on real
-              shipped work, technical depth, and ownership. Matched to ambitious
-              startups in under 72 hours.
+              RAG, agents, fine-tuning, evals, inference. The top 0.1% of India's
+              AI engineers — hand-vetted on shipped work, technical depth, and
+              ownership. No resume spam, no agency fluff.
             </p>
+
             <div className="flex gap-3">
               <Link
                 to="/network"

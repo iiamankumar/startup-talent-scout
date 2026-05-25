@@ -57,7 +57,7 @@ function TermsPage() {
           </section>
           <section>
             <h2 className="text-xl font-semibold text-foreground">8. Contact</h2>
-            <p>Questions? <a href="mailto:legal@aveiq.app" className="text-foreground underline">legal@aveiq.app</a></p>
+            <p>Questions? <a href="mailto:care@aveiq.app" className="text-foreground underline">care@aveiq.app</a></p>
           </section>
         </div>
       </div>

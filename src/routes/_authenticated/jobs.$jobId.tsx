@@ -190,7 +190,7 @@ function JobDetailPage() {
                       </p>
                       <p className="mt-2 text-xs text-muted-foreground">
                         {r.budget_monthly_usd
-                          ? `$${r.budget_monthly_usd.toLocaleString()}/mo`
+                          ? `₹${r.budget_monthly_usd.toLocaleString("en-IN")}/mo`
                           : "Budget on request"}
                       </p>
                     </Link>

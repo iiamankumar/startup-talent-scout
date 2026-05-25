@@ -72,6 +72,20 @@ export const listMyHireRequests = createServerFn({ method: "GET" })
     return { requests: data ?? [] };
   });
 
+export const getMyLatestCompany = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    const { data } = await supabase
+      .from("companies")
+      .select("name, website, stage")
+      .eq("owner_id", userId)
+      .order("updated_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    return { company: data ?? null };
+  });
+
 export const listOpenRequestsForEngineers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {

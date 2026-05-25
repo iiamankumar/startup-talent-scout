@@ -2,10 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
-import { FileText, Sparkles, Upload, CheckCircle2, AlertTriangle, Loader2, ArrowRight } from "lucide-react";
+import { FileText, Sparkles, Upload, CheckCircle2, AlertTriangle, Loader2, ArrowRight, Lock } from "lucide-react";
 import { reviewResume, type ResumeReviewResult } from "@/lib/resume-review.functions";
 import { extractTextFromFile } from "@/lib/pdf-extract";
 import { AveiqLogo } from "@/components/AveiqLogo";
+import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/resume-review")({
   head: () => ({
@@ -27,6 +28,8 @@ export const Route = createFileRoute("/resume-review")({
 });
 
 function ResumeReviewPage() {
+  const { user } = useAuth();
+
   const fn = useServerFn(reviewResume);
   const [resumeText, setResumeText] = useState("");
   const [targetRole, setTargetRole] = useState("");
@@ -61,7 +64,7 @@ function ResumeReviewPage() {
   };
 
   const wordCount = useMemo(() => resumeText.trim().split(/\s+/).filter(Boolean).length, [resumeText]);
-  const canSubmit = resumeText.trim().length >= 100 && !mutation.isPending;
+  const canSubmit = !!user && resumeText.trim().length >= 100 && !mutation.isPending;
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -182,10 +185,26 @@ function ResumeReviewPage() {
               </div>
             </div>
 
+            {!user && (
+              <div className="mt-5 flex items-center gap-2 rounded-md border border-border bg-secondary/50 px-3 py-2.5 text-xs text-muted-foreground">
+                <Lock className="size-3.5 shrink-0" />
+                <span>
+                  <Link to="/signup" className="font-medium text-foreground underline underline-offset-2">
+                    Create a free account
+                  </Link>{" "}
+                  or{" "}
+                  <Link to="/login" className="font-medium text-foreground underline underline-offset-2">
+                    sign in
+                  </Link>{" "}
+                  to run your review.
+                </span>
+              </div>
+            )}
+
             <button
               onClick={() => mutation.mutate()}
               disabled={!canSubmit}
-              className="mt-5 inline-flex h-11 w-full items-center justify-center rounded-md bg-foreground text-sm font-medium text-background transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50"
+              className="mt-3 inline-flex h-11 w-full items-center justify-center rounded-md bg-foreground text-sm font-medium text-background transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {mutation.isPending ? (
                 <>

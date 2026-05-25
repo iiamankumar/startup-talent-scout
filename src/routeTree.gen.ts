@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as StoriesRouteImport } from './routes/stories'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SecurityRouteImport } from './routes/security'
+import { Route as ResumeReviewRouteImport } from './routes/resume-review'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as NetworkRouteImport } from './routes/network'
 import { Route as LoginRouteImport } from './routes/login'
@@ -45,6 +46,11 @@ const SignupRoute = SignupRouteImport.update({
 const SecurityRoute = SecurityRouteImport.update({
   id: '/security',
   path: '/security',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResumeReviewRoute = ResumeReviewRouteImport.update({
+  id: '/resume-review',
+  path: '/resume-review',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResourcesRoute = ResourcesRouteImport.update({
@@ -153,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/network': typeof NetworkRoute
   '/resources': typeof ResourcesRoute
+  '/resume-review': typeof ResumeReviewRoute
   '/security': typeof SecurityRoute
   '/signup': typeof SignupRoute
   '/stories': typeof StoriesRoute
@@ -176,6 +183,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/network': typeof NetworkRoute
   '/resources': typeof ResourcesRoute
+  '/resume-review': typeof ResumeReviewRoute
   '/security': typeof SecurityRoute
   '/signup': typeof SignupRoute
   '/stories': typeof StoriesRoute
@@ -201,6 +209,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/network': typeof NetworkRoute
   '/resources': typeof ResourcesRoute
+  '/resume-review': typeof ResumeReviewRoute
   '/security': typeof SecurityRoute
   '/signup': typeof SignupRoute
   '/stories': typeof StoriesRoute
@@ -226,6 +235,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/network'
     | '/resources'
+    | '/resume-review'
     | '/security'
     | '/signup'
     | '/stories'
@@ -249,6 +259,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/network'
     | '/resources'
+    | '/resume-review'
     | '/security'
     | '/signup'
     | '/stories'
@@ -273,6 +284,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/network'
     | '/resources'
+    | '/resume-review'
     | '/security'
     | '/signup'
     | '/stories'
@@ -298,6 +310,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   NetworkRoute: typeof NetworkRoute
   ResourcesRoute: typeof ResourcesRoute
+  ResumeReviewRoute: typeof ResumeReviewRoute
   SecurityRoute: typeof SecurityRoute
   SignupRoute: typeof SignupRoute
   StoriesRoute: typeof StoriesRoute
@@ -325,6 +338,13 @@ declare module '@tanstack/react-router' {
       path: '/security'
       fullPath: '/security'
       preLoaderRoute: typeof SecurityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resume-review': {
+      id: '/resume-review'
+      path: '/resume-review'
+      fullPath: '/resume-review'
+      preLoaderRoute: typeof ResumeReviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/resources': {
@@ -500,6 +520,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   NetworkRoute: NetworkRoute,
   ResourcesRoute: ResourcesRoute,
+  ResumeReviewRoute: ResumeReviewRoute,
   SecurityRoute: SecurityRoute,
   SignupRoute: SignupRoute,
   StoriesRoute: StoriesRoute,

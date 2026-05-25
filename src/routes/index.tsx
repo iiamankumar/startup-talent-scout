@@ -63,6 +63,12 @@ function Index() {
             How it works
           </a>
           <Link
+            to="/resume-review"
+            className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-foreground sm:inline"
+          >
+            Free ATS check
+          </Link>
+          <Link
             to="/login"
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >

@@ -37,6 +37,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   const fetchStats = useServerFn(getLandingStats);
   const fetchEngineers = useServerFn(getFeaturedEngineers);
+  const { user } = useAuth();
 
   const statsQ = useQuery({ queryKey: ["landingStats"], queryFn: () => fetchStats() });
   const engineersQ = useQuery({ queryKey: ["featuredEngineers"], queryFn: () => fetchEngineers() });

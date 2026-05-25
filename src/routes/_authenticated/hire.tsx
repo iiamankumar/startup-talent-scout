@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { createHireRequest, getMyLatestCompany } from "@/lib/hire.functions";
+import { sendTransactionalEmail } from "@/lib/email/send";
+import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/_authenticated/hire")({
   head: () => ({ meta: [{ title: "Hire talent — Aveiq" }] }),

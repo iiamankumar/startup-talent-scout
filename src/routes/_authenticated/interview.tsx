@@ -22,6 +22,9 @@ function InterviewPage() {
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [finished, setFinished] = useState(false);
+  const [pasteWarning, setPasteWarning] = useState<string | null>(null);
+  const typingStartRef = useRef<number | null>(null);
+  const pastedRef = useRef(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -38,8 +41,11 @@ function InterviewPage() {
   const startOrSend = async (msg?: string) => {
     setSending(true);
     try {
-      const res = await send({ data: { message: msg } });
+      const typingMs = typingStartRef.current ? Date.now() - typingStartRef.current : 0;
+      const res = await send({ data: { message: msg, pasted: pastedRef.current, typing_ms: typingMs } });
       setTranscript(res.transcript);
+      pastedRef.current = false;
+      typingStartRef.current = null;
       if (res.finished) {
         setFinished(true);
         toast.success("Interview complete. Kai is reviewing your responses.");

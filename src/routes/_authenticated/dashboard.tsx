@@ -14,6 +14,10 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 function Dashboard() {
   const { user, roles } = useAuth();
   const isEngineer = roles.includes("engineer");
+  const isFounder = roles.includes("founder");
+  // Treat as founder-only if no engineer profile yet AND has founder role
+  // Hide hire-request panel if the user is an engineer (applied) but not also explicitly running a company
+  const showFounderPanel = isFounder && !isEngineer;
 
   const getProfile = useServerFn(getMyEngineerProfile);
   const getMyRequests = useServerFn(listMyHireRequests);
@@ -26,6 +30,7 @@ function Dashboard() {
   const requestsQ = useQuery({
     queryKey: ["myHireRequests", user?.id],
     queryFn: () => getMyRequests(),
+    enabled: showFounderPanel,
   });
   const openQ = useQuery({
     queryKey: ["openRequests"],
@@ -44,7 +49,8 @@ function Dashboard() {
           : "Post a brief and we'll match you with cracked engineers."}
       </p>
 
-      <div className="mt-10 grid gap-6 md:grid-cols-2">
+      <div className={`mt-10 grid gap-6 ${showFounderPanel ? "md:grid-cols-2" : ""}`}>
+
         {/* Engineer profile card */}
         <section className="rounded-2xl bg-card p-6 ring-1 ring-black/5">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">

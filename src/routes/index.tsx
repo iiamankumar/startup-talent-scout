@@ -8,18 +8,19 @@ import { AveiqLogo } from "@/components/AveiqLogo";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Aveiq — India's hand-vetted engineer network" },
+      { title: "Aveiq — Hire India's top AI engineers in 72 hours" },
       {
         name: "description",
         content:
-          "Aveiq is a curated talent network. We manually vet Indian AI engineers and match them to startups — no resume spam, no agency fluff.",
+          "Aveiq is a curated network of India's top AI engineers — RAG, agents, fine-tuning, evals, inference. Hand-vetted on shipped work. Matched to startups in under 72 hours.",
       },
-      { property: "og:title", content: "Aveiq — Hand-vetted engineers for startups" },
+      { property: "og:title", content: "Aveiq — India's top AI engineers, hand-vetted" },
       {
         property: "og:description",
-        content: "Hand-vetted AI engineers from India. Real profiles, real reviews.",
+        content: "RAG, agents, fine-tuning, inference. The top 0.1% of India's AI engineers, matched to startups in 72 hours.",
       },
     ],
+
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "" },

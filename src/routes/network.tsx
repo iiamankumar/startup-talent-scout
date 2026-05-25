@@ -47,7 +47,8 @@ function NetworkPage() {
                 Sign in
               </Link>
               <Link
-                to="/hire"
+                to="/signup"
+                search={{ intent: "founder", redirect: "/hire" }}
                 className="rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background"
               >
                 Hire talent

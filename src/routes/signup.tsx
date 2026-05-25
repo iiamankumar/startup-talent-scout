@@ -44,7 +44,7 @@ function SignupPage() {
     e.preventDefault();
     if (fullName.trim().length < 2) return toast.error("Enter your full name");
     setSubmitting(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -54,6 +54,10 @@ function SignupPage() {
     });
     setSubmitting(false);
     if (error) return toast.error(error.message);
+    if (!data.session) {
+      toast.success(`Account created. We sent a confirmation email to ${email} — please verify to continue.`, { duration: 8000 });
+      return;
+    }
     toast.success("Account created. Welcome to Aveiq.");
     navigate({ to: target });
   };

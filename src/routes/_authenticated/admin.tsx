@@ -155,8 +155,8 @@ function AdminPage() {
         )}
       </div>
 
-      <div className="mt-4 overflow-hidden rounded-2xl bg-card ring-1 ring-black/5">
-        <table className="w-full text-sm">
+      <div className="mt-4 overflow-x-auto rounded-2xl bg-card ring-1 ring-black/5">
+        <table className="w-full min-w-[720px] text-sm">
           <thead className="bg-secondary/50 text-xs uppercase tracking-widest text-muted-foreground">
             <tr>
               <th className="px-3 py-3 text-left">

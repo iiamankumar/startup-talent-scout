@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { createHireRequest, getMyLatestCompany } from "@/lib/hire.functions";
+import { sendTransactionalEmail } from "@/lib/email/send";
+import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/_authenticated/hire")({
   head: () => ({ meta: [{ title: "Hire talent — Aveiq" }] }),
@@ -12,6 +14,7 @@ export const Route = createFileRoute("/_authenticated/hire")({
 
 function HirePage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const submitFn = useServerFn(createHireRequest);
   const getCompany = useServerFn(getMyLatestCompany);
   const { data: companyData } = useQuery({
@@ -62,6 +65,14 @@ function HirePage() {
         },
       });
       toast.success("Brief submitted. We'll send a shortlist within 72 hours.");
+      if (user?.email) {
+        sendTransactionalEmail({
+          templateName: 'hire-request-submitted',
+          recipientEmail: user.email,
+          idempotencyKey: `hire-${user.id}-${Date.now()}`,
+          templateData: { companyName: form.company_name, roleTitle: form.role_title },
+        }).catch(() => {});
+      }
       navigate({ to: "/dashboard" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not submit");

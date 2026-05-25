@@ -9,6 +9,7 @@ import { screenResume, setWorkAuthorization } from "@/lib/screening.functions";
 import { extractTextFromFile } from "@/lib/pdf-extract";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
+import { sendTransactionalEmail } from "@/lib/email/send";
 
 export const Route = createFileRoute("/_authenticated/apply")({
   head: () => ({ meta: [{ title: "Apply to the network — Aveiq" }] }),
@@ -111,6 +112,17 @@ function ApplyPage() {
       await setWA({ data: { work_authorization: form.work_authorization as never } });
       toast.success("Profile saved.");
       qc.invalidateQueries({ queryKey: ["myEngineer"] });
+
+      // Send confirmation email on first save
+      const isFirstSave = !data?.engineer?.display_name;
+      if (isFirstSave && user?.email) {
+        sendTransactionalEmail({
+          templateName: 'application-submitted',
+          recipientEmail: user.email,
+          idempotencyKey: `app-submitted-${user.id}`,
+          templateData: { displayName: form.display_name, name: form.display_name },
+        }).catch(() => {});
+      }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not save profile");
     } finally {

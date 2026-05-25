@@ -142,13 +142,13 @@ export type Database = {
           ai_interview_summary: string | null
           ai_interview_transcript: Json
           available: boolean
+          aveiq_score: number | null
           bio: string | null
           created_at: string
           display_name: string
           github_url: string | null
           headline: string | null
           hourly_rate_usd: number | null
-          klyro_score: number | null
           linkedin_url: string | null
           location: string | null
           main_interview_notes: string | null
@@ -175,13 +175,13 @@ export type Database = {
           ai_interview_summary?: string | null
           ai_interview_transcript?: Json
           available?: boolean
+          aveiq_score?: number | null
           bio?: string | null
           created_at?: string
           display_name: string
           github_url?: string | null
           headline?: string | null
           hourly_rate_usd?: number | null
-          klyro_score?: number | null
           linkedin_url?: string | null
           location?: string | null
           main_interview_notes?: string | null
@@ -208,13 +208,13 @@ export type Database = {
           ai_interview_summary?: string | null
           ai_interview_transcript?: Json
           available?: boolean
+          aveiq_score?: number | null
           bio?: string | null
           created_at?: string
           display_name?: string
           github_url?: string | null
           headline?: string | null
           hourly_rate_usd?: number | null
-          klyro_score?: number | null
           linkedin_url?: string | null
           location?: string | null
           main_interview_notes?: string | null

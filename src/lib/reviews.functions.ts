@@ -36,11 +36,11 @@ export const getFeaturedEngineers = createServerFn({ method: "GET" }).handler(as
   const { data: engineers, error } = await supabaseAdmin
     .from("engineers")
     .select(
-      "user_id, display_name, headline, location, years_experience, skills, github_url, linkedin_url, website_url, klyro_score"
+      "user_id, display_name, headline, location, years_experience, skills, github_url, linkedin_url, website_url, aveiq_score"
     )
     .eq("vetting", "vetted")
     .eq("available", true)
-    .order("klyro_score", { ascending: false, nullsFirst: false })
+    .order("aveiq_score", { ascending: false, nullsFirst: false })
     .limit(6);
   if (error) return { engineers: [] as const };
   if (!engineers || engineers.length === 0) return { engineers: [] as const };

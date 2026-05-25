@@ -8,18 +8,19 @@ import { AveiqLogo } from "@/components/AveiqLogo";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Aveiq — India's hand-vetted engineer network" },
+      { title: "Aveiq — Hire India's top AI engineers in 72 hours" },
       {
         name: "description",
         content:
-          "Aveiq is a curated talent network. We manually vet Indian AI and full-stack engineers and match them to startups — no resume spam, no agency fluff.",
+          "Aveiq is a curated network of India's top AI engineers — RAG, agents, fine-tuning, evals, inference. Hand-vetted on shipped work. Matched to startups in under 72 hours.",
       },
-      { property: "og:title", content: "Aveiq — Hand-vetted engineers for startups" },
+      { property: "og:title", content: "Aveiq — India's top AI engineers, hand-vetted" },
       {
         property: "og:description",
-        content: "Hand-vetted AI and full-stack engineers from India. Real profiles, real reviews.",
+        content: "RAG, agents, fine-tuning, inference. The top 0.1% of India's AI engineers, matched to startups in 72 hours.",
       },
     ],
+
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "" },
@@ -79,19 +80,24 @@ function Index() {
 
       <section className="px-6 py-16 lg:py-24">
         <div className="mx-auto max-w-7xl">
-          <div className="max-w-[40ch]">
+          <div className="max-w-[48ch]">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-foreground ring-1 ring-black/5">
+              <span className="size-1.5 rounded-full bg-success" />
+              For AI startups hiring in India
+            </div>
             <h1 className="text-balance text-5xl font-medium leading-tight tracking-tight lg:text-7xl">
-              The talent engine for India's{" "}
-              <span className="font-serif italic">cracked</span> engineers.
+              Hire India's top{" "}
+              <span className="font-serif italic">AI engineers</span> in 72 hours.
             </h1>
           </div>
 
           <div className="mt-8 flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
             <p className="max-w-[56ch] text-pretty text-lg text-muted-foreground lg:text-xl">
-              The top 0.1% of India's AI and full-stack engineers — screened on real
-              shipped work, technical depth, and ownership. Matched to ambitious
-              startups in under 72 hours.
+              RAG, agents, fine-tuning, evals, inference. The top 0.1% of India's
+              AI engineers — hand-vetted on shipped work, technical depth, and
+              ownership. No resume spam, no agency fluff.
             </p>
+
             <div className="flex gap-3">
               <Link
                 to="/network"
@@ -209,9 +215,9 @@ function Index() {
                       <span className="text-muted-foreground/70">
                         {e.years_experience != null ? `${e.years_experience} yrs` : "—"}
                       </span>
-                      {e.klyro_score != null ? (
+                      {e.aveiq_score != null ? (
                         <span className="font-medium text-success">
-                          Aveiq Score {e.klyro_score}
+                          Aveiq Score {e.aveiq_score}
                         </span>
                       ) : (
                         <span className="text-muted-foreground/70">Newly vetted</span>

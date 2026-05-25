@@ -20,7 +20,7 @@ function CareersPage() {
     >
       <InfoBlock title="Open roles">
         <ul className="list-disc space-y-2 pl-5">
-          <li>Founding Engineer — Full-stack (Bengaluru / Remote)</li>
+          <li>Founding Engineer — AI (Bengaluru / Remote)</li>
           <li>Talent Reviewer — Engineering (Remote)</li>
           <li>Growth Lead — B2B (Bengaluru)</li>
         </ul>

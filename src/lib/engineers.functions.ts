@@ -9,11 +9,11 @@ export const listVettedEngineers = createServerFn({ method: "GET" }).handler(asy
   const { data, error } = await supabaseAdmin
     .from("engineers")
     .select(
-      "user_id, display_name, headline, location, years_experience, skills, github_url, linkedin_url, website_url, available, klyro_score, vetting"
+      "user_id, display_name, headline, location, years_experience, skills, github_url, linkedin_url, website_url, available, aveiq_score, vetting"
     )
     .eq("vetting", "vetted")
     .eq("available", true)
-    .order("klyro_score", { ascending: false, nullsFirst: false })
+    .order("aveiq_score", { ascending: false, nullsFirst: false })
     .limit(60);
   if (error) return { engineers: [], error: error.message };
   return { engineers: data ?? [], error: null };
@@ -80,8 +80,9 @@ export const getEngineerPublicProfile = createServerFn({ method: "GET" })
     const { data: e, error } = await supabaseAdmin
       .from("engineers")
       .select(
-        "user_id, display_name, headline, bio, location, years_experience, hourly_rate_usd, skills, github_url, linkedin_url, website_url, available, klyro_score, vetting"
+        "user_id, display_name, headline, bio, location, years_experience, hourly_rate_usd, skills, github_url, linkedin_url, website_url, available, aveiq_score, vetting, resume_score, ai_interview_score"
       )
+
       .eq("user_id", data.user_id)
       .eq("vetting", "vetted")
       .maybeSingle();

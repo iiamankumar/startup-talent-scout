@@ -29,7 +29,7 @@ export const listAllEngineersAdmin = createServerFn({ method: "GET" })
 const updateSchema = z.object({
   user_id: z.string().uuid(),
   vetting: z.enum(["pending", "in_review", "vetted", "rejected"]),
-  klyro_score: z.number().int().min(0).max(100).optional().nullable(),
+  aveiq_score: z.number().int().min(0).max(100).optional().nullable(),
 });
 
 export const updateEngineerVetting = createServerFn({ method: "POST" })
@@ -41,7 +41,7 @@ export const updateEngineerVetting = createServerFn({ method: "POST" })
       .from("engineers")
       .update({
         vetting: data.vetting,
-        ...(data.klyro_score !== undefined ? { klyro_score: data.klyro_score } : {}),
+        ...(data.aveiq_score !== undefined ? { aveiq_score: data.aveiq_score } : {}),
       })
       .eq("user_id", data.user_id);
     if (error) throw new Error(error.message);
@@ -64,3 +64,71 @@ export const promoteSelfToAdmin = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+// ADMIN: real-data metrics dashboard.
+export const getAdminMetrics = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.userId);
+
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+    const [
+      totalEng,
+      vetted,
+      pending,
+      inReview,
+      rejected,
+      appsLast7,
+      appsLast30,
+      openBriefs,
+      totalBriefs,
+      apps,
+      reviews,
+      pendingReviews,
+      scoreAgg,
+    ] = await Promise.all([
+      supabaseAdmin.from("engineers").select("*", { count: "exact", head: true }),
+      supabaseAdmin.from("engineers").select("*", { count: "exact", head: true }).eq("vetting", "vetted"),
+      supabaseAdmin.from("engineers").select("*", { count: "exact", head: true }).eq("vetting", "pending"),
+      supabaseAdmin.from("engineers").select("*", { count: "exact", head: true }).eq("vetting", "in_review"),
+      supabaseAdmin.from("engineers").select("*", { count: "exact", head: true }).eq("vetting", "rejected"),
+      supabaseAdmin.from("engineers").select("*", { count: "exact", head: true }).gte("created_at", sevenDaysAgo),
+      supabaseAdmin.from("engineers").select("*", { count: "exact", head: true }).gte("created_at", thirtyDaysAgo),
+      supabaseAdmin.from("hire_requests").select("*", { count: "exact", head: true }).eq("status", "open"),
+      supabaseAdmin.from("hire_requests").select("*", { count: "exact", head: true }),
+      supabaseAdmin.from("applications").select("*", { count: "exact", head: true }),
+      supabaseAdmin.from("engineer_reviews").select("*", { count: "exact", head: true }).eq("approved", true),
+      supabaseAdmin.from("engineer_reviews").select("*", { count: "exact", head: true }).eq("approved", false),
+      supabaseAdmin.from("engineers").select("aveiq_score").eq("vetting", "vetted").not("aveiq_score", "is", null),
+    ]);
+
+    const scores = (scoreAgg.data ?? []).map((r) => r.aveiq_score as number).filter((n) => typeof n === "number");
+    const avgScore = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
+
+    return {
+      engineers: {
+        total: totalEng.count ?? 0,
+        vetted: vetted.count ?? 0,
+        pending: pending.count ?? 0,
+        inReview: inReview.count ?? 0,
+        rejected: rejected.count ?? 0,
+        newLast7: appsLast7.count ?? 0,
+        newLast30: appsLast30.count ?? 0,
+        avgScore,
+      },
+      briefs: {
+        open: openBriefs.count ?? 0,
+        total: totalBriefs.count ?? 0,
+      },
+      applications: {
+        total: apps.count ?? 0,
+      },
+      reviews: {
+        approved: reviews.count ?? 0,
+        pending: pendingReviews.count ?? 0,
+      },
+    };
+  });
+

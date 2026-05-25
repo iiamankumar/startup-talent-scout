@@ -16,7 +16,7 @@ function DataPartnershipsPage() {
     <InfoPage
       eyebrow="For researchers & platforms"
       title="Data Partnerships"
-      intro="Aveiq has one of the cleanest datasets on Indian AI and full-stack engineering talent — vetted, structured, and consent-based."
+      intro="Aveiq has one of the cleanest datasets on Indian AI engineering talent — vetted, structured, and consent-based."
     >
       <InfoBlock title="What we share">
         <ul className="list-disc space-y-2 pl-5">

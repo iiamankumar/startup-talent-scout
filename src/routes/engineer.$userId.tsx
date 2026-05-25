@@ -104,10 +104,10 @@ function EngineerProfilePage() {
                 </div>
               </div>
               <div className="flex flex-col items-end gap-2">
-                {e.klyro_score != null && (
+                {e.aveiq_score != null && (
                   <div className="rounded-lg bg-background px-3 py-2 text-right ring-1 ring-black/5">
                     <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Aveiq Score</p>
-                    <p className="text-2xl font-medium text-success">{e.klyro_score}</p>
+                    <p className="text-2xl font-medium text-success">{e.aveiq_score}</p>
                   </div>
                 )}
                 {avg != null && (
@@ -130,6 +130,24 @@ function EngineerProfilePage() {
                 </p>
               </div>
             )}
+
+            {(e.aveiq_score != null || e.resume_score != null || e.ai_interview_score != null) && (
+              <div className="mt-6 rounded-2xl bg-card p-6 ring-1 ring-black/5">
+                <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+                  Aveiq Score breakdown
+                </h2>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Every score is assigned by a human reviewer after AI screening,
+                  resume review, and a technical interview.
+                </p>
+                <div className="mt-5 grid grid-cols-3 gap-4">
+                  <ScoreBar label="Resume" value={e.resume_score} />
+                  <ScoreBar label="AI interview" value={e.ai_interview_score} />
+                  <ScoreBar label="Final" value={e.aveiq_score} highlight />
+                </div>
+              </div>
+            )}
+
 
             <div className="mt-6 rounded-2xl bg-card p-6 ring-1 ring-black/5">
               <div className="flex items-center justify-between">
@@ -290,3 +308,24 @@ function ReviewForm({
     </form>
   );
 }
+
+function ScoreBar({ label, value, highlight }: { label: string; value: number | null | undefined; highlight?: boolean }) {
+  const pct = typeof value === "number" ? Math.max(0, Math.min(100, value)) : 0;
+  return (
+    <div>
+      <div className="flex items-baseline justify-between">
+        <p className="text-xs text-muted-foreground">{label}</p>
+        <p className={`text-sm font-medium tabular-nums ${highlight ? "text-success" : "text-foreground"}`}>
+          {value ?? "—"}
+        </p>
+      </div>
+      <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+        <div
+          className={`h-full rounded-full transition-all ${highlight ? "bg-success" : "bg-foreground/60"}`}
+          style={{ width: typeof value === "number" ? `${pct}%` : "0%" }}
+        />
+      </div>
+    </div>
+  );
+}
+

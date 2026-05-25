@@ -79,13 +79,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Aveiq is a hand-curated talent network. The top 0.1% of Indian AI and full-stack engineers, vetted and matched to startups in 72 hours.",
+          "Aveiq is a hand-curated talent network. The top 0.1% of Indian AI engineers, vetted and matched to startups in 72 hours.",
       },
       { property: "og:title", content: "Aveiq — Elite engineers, hired in 72h" },
       {
         property: "og:description",
         content:
-          "Hand-vetted AI and full-stack engineers from India. No resume spam. No ghosting.",
+          "Hand-vetted AI engineers from India. No resume spam. No ghosting.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

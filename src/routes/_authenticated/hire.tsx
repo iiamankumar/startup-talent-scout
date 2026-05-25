@@ -14,6 +14,7 @@ export const Route = createFileRoute("/_authenticated/hire")({
 
 function HirePage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const submitFn = useServerFn(createHireRequest);
   const getCompany = useServerFn(getMyLatestCompany);
   const { data: companyData } = useQuery({

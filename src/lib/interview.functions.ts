@@ -179,8 +179,105 @@ export const scheduleMainInterview = createServerFn({ method: "POST" })
       })
       .eq("user_id", data.user_id);
     if (error) throw new Error(error.message);
+
+    // Notify candidate + interviewer (Google Calendar deep-link, no attachment)
+    try {
+      await sendInterviewScheduledEmails({
+        candidateUserId: data.user_id,
+        interviewerUserId: context.userId,
+        scheduledAt: data.scheduled_at,
+        notes: data.notes,
+      });
+    } catch (err) {
+      // Don't fail the scheduling if email fails
+      console.error("Failed to send interview emails", err);
+    }
+
     return { ok: true };
   });
+
+async function sendInterviewScheduledEmails(opts: {
+  candidateUserId: string;
+  interviewerUserId: string;
+  scheduledAt: string;
+  notes?: string;
+}) {
+  const start = new Date(opts.scheduledAt);
+  if (isNaN(start.getTime())) return;
+  const end = new Date(start.getTime() + 60 * 60 * 1000); // 1h block
+  const fmt = (d: Date) => d.toISOString().replace(/[-:]|\.\d{3}/g, "");
+  const calendarUrl = new URL("https://calendar.google.com/calendar/render");
+  calendarUrl.searchParams.set("action", "TEMPLATE");
+  calendarUrl.searchParams.set("text", "Aveiq — Final Interview");
+  calendarUrl.searchParams.set("dates", `${fmt(start)}/${fmt(end)}`);
+  calendarUrl.searchParams.set(
+    "details",
+    `Final interview${opts.notes ? `\n\nNotes: ${opts.notes}` : ""}`,
+  );
+
+  const scheduledAtPretty = start.toLocaleString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZoneName: "short",
+  });
+
+  // Resolve candidate
+  const { data: candidate } = await supabaseAdmin
+    .from("engineers")
+    .select("display_name, user_id")
+    .eq("user_id", opts.candidateUserId)
+    .maybeSingle();
+  const { data: candidateAuth } = await supabaseAdmin.auth.admin.getUserById(
+    opts.candidateUserId,
+  );
+  const candidateEmail = candidateAuth?.user?.email;
+
+  // Resolve interviewer
+  const { data: interviewerAuth } = await supabaseAdmin.auth.admin.getUserById(
+    opts.interviewerUserId,
+  );
+  const interviewerEmail = interviewerAuth?.user?.email;
+
+  const baseUrl = process.env.VITE_PUBLIC_APP_URL || "";
+
+  const sendOne = async (
+    templateName: string,
+    recipientEmail: string,
+    templateData: Record<string, unknown>,
+  ) => {
+    await supabaseAdmin.rpc("enqueue_email", {
+      queue_name: "transactional_emails",
+      payload: {
+        templateName,
+        recipientEmail,
+        templateData: templateData as never,
+        idempotencyKey: `interview-${templateName}-${opts.candidateUserId}-${start.getTime()}`,
+      } as never,
+    });
+  };
+
+  if (candidateEmail) {
+    await sendOne("interview-scheduled-engineer", candidateEmail, {
+      candidateName: candidate?.display_name,
+      scheduledAt: scheduledAtPretty,
+      notes: opts.notes,
+      calendarUrl: calendarUrl.toString(),
+    });
+  }
+  if (interviewerEmail) {
+    await sendOne("interview-scheduled-admin", interviewerEmail, {
+      candidateName: candidate?.display_name,
+      candidateEmail,
+      scheduledAt: scheduledAtPretty,
+      notes: opts.notes,
+      calendarUrl: calendarUrl.toString(),
+      adminUrl: baseUrl ? `${baseUrl}/admin` : undefined,
+    });
+  }
+}
 
 // Admin: record main interview verdict
 export const setMainInterviewVerdict = createServerFn({ method: "POST" })

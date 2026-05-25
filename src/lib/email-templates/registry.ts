@@ -12,9 +12,13 @@ export interface TemplateEntry {
 import { template as applicationSubmitted } from './application-submitted'
 import { template as hireRequestSubmitted } from './hire-request-submitted'
 import { template as welcome } from './welcome'
+import { template as interviewScheduledEngineer } from './interview-scheduled-engineer'
+import { template as interviewScheduledAdmin } from './interview-scheduled-admin'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'application-submitted': applicationSubmitted,
   'hire-request-submitted': hireRequestSubmitted,
   'welcome': welcome,
+  'interview-scheduled-engineer': interviewScheduledEngineer,
+  'interview-scheduled-admin': interviewScheduledAdmin,
 }

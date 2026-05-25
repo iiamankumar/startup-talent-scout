@@ -70,19 +70,31 @@ function Index() {
           >
             Free ATS check
           </Link>
-          <Link
-            to="/login"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Sign in
-          </Link>
-          <Link
-            to="/hire"
-            className="inline-flex items-center rounded-full bg-foreground py-2 pl-3 pr-4 text-sm font-medium text-background ring-1 ring-foreground transition-transform hover:scale-[1.02]"
-          >
-            <Plus className="mr-1.5 size-4" />
-            Hire Talent
-          </Link>
+          {user ? (
+            <Link
+              to="/dashboard"
+              className="inline-flex items-center rounded-full bg-foreground py-2 pl-3 pr-4 text-sm font-medium text-background ring-1 ring-foreground transition-transform hover:scale-[1.02]"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Sign in
+              </Link>
+              <Link
+                to="/signup"
+                search={{ intent: "founder", redirect: "/hire" }}
+                className="inline-flex items-center rounded-full bg-foreground py-2 pl-3 pr-4 text-sm font-medium text-background ring-1 ring-foreground transition-transform hover:scale-[1.02]"
+              >
+                <Plus className="mr-1.5 size-4" />
+                Hire Talent
+              </Link>
+            </>
+          )}
         </div>
       </nav>
 

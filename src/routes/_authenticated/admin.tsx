@@ -323,6 +323,9 @@ function AdminRow({
   return (
     <>
       <tr>
+        <td className="px-3 py-4">
+          <input type="checkbox" checked={!!selected} onChange={onToggleSelect} />
+        </td>
         <td className="px-4 py-4">
           <button onClick={() => setOpen(!open)} className="flex items-center gap-2 text-left">
             <ChevronDown className={`size-3 transition ${open ? "rotate-0" : "-rotate-90"}`} />

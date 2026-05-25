@@ -242,17 +242,12 @@ async function sendInterviewScheduledEmails(opts: {
   const interviewerEmail = interviewerAuth?.user?.email;
 
   const baseUrl = process.env.VITE_PUBLIC_APP_URL || "";
-  const sendUrl = `${baseUrl || ""}/lovable/email/transactional/send`;
 
   const sendOne = async (
     templateName: string,
     recipientEmail: string,
     templateData: Record<string, unknown>,
   ) => {
-    // Server-to-server invocation: hit our own send route with service role key
-    const supabaseUrl = process.env.SUPABASE_URL!;
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-    // Insert directly into queue using enqueue_email instead of HTTP self-call
     await supabaseAdmin.rpc("enqueue_email", {
       queue_name: "transactional_emails",
       payload: {

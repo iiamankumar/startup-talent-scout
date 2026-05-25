@@ -4,7 +4,10 @@ import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/lib/auth-context";
 import { getMyEngineerProfile } from "@/lib/engineers.functions";
 import { listMyHireRequests, listOpenRequestsForEngineers } from "@/lib/hire.functions";
-import { ArrowRight, Briefcase, UserCircle2 } from "lucide-react";
+import { promoteSelfToAdmin } from "@/lib/admin.functions";
+import { ArrowRight, Briefcase, ShieldCheck, UserCircle2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Aveiq" }] }),

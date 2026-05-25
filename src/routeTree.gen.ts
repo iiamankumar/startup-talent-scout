@@ -9,11 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as StoriesRouteImport } from './routes/stories'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SecurityRouteImport } from './routes/security'
 import { Route as ResumeReviewRouteImport } from './routes/resume-review'
 import { Route as ResourcesRouteImport } from './routes/resources'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as NetworkRouteImport } from './routes/network'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HelpCenterRouteImport } from './routes/help-center'
@@ -33,6 +35,11 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedRequestsRequestIdRouteImport } from './routes/_authenticated/requests.$requestId'
 import { Route as AuthenticatedJobsJobIdRouteImport } from './routes/_authenticated/jobs.$jobId'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StoriesRoute = StoriesRouteImport.update({
   id: '/stories',
   path: '/stories',
@@ -56,6 +63,11 @@ const ResumeReviewRoute = ResumeReviewRouteImport.update({
 const ResourcesRoute = ResourcesRouteImport.update({
   id: '/resources',
   path: '/resources',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NetworkRoute = NetworkRouteImport.update({
@@ -158,11 +170,13 @@ export interface FileRoutesByFullPath {
   '/help-center': typeof HelpCenterRoute
   '/login': typeof LoginRoute
   '/network': typeof NetworkRoute
+  '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
   '/resume-review': typeof ResumeReviewRoute
   '/security': typeof SecurityRoute
   '/signup': typeof SignupRoute
   '/stories': typeof StoriesRoute
+  '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/apply': typeof AuthenticatedApplyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -182,11 +196,13 @@ export interface FileRoutesByTo {
   '/help-center': typeof HelpCenterRoute
   '/login': typeof LoginRoute
   '/network': typeof NetworkRoute
+  '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
   '/resume-review': typeof ResumeReviewRoute
   '/security': typeof SecurityRoute
   '/signup': typeof SignupRoute
   '/stories': typeof StoriesRoute
+  '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/apply': typeof AuthenticatedApplyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -208,11 +224,13 @@ export interface FileRoutesById {
   '/help-center': typeof HelpCenterRoute
   '/login': typeof LoginRoute
   '/network': typeof NetworkRoute
+  '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
   '/resume-review': typeof ResumeReviewRoute
   '/security': typeof SecurityRoute
   '/signup': typeof SignupRoute
   '/stories': typeof StoriesRoute
+  '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/apply': typeof AuthenticatedApplyRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -234,11 +252,13 @@ export interface FileRouteTypes {
     | '/help-center'
     | '/login'
     | '/network'
+    | '/privacy'
     | '/resources'
     | '/resume-review'
     | '/security'
     | '/signup'
     | '/stories'
+    | '/terms'
     | '/admin'
     | '/apply'
     | '/dashboard'
@@ -258,11 +278,13 @@ export interface FileRouteTypes {
     | '/help-center'
     | '/login'
     | '/network'
+    | '/privacy'
     | '/resources'
     | '/resume-review'
     | '/security'
     | '/signup'
     | '/stories'
+    | '/terms'
     | '/admin'
     | '/apply'
     | '/dashboard'
@@ -283,11 +305,13 @@ export interface FileRouteTypes {
     | '/help-center'
     | '/login'
     | '/network'
+    | '/privacy'
     | '/resources'
     | '/resume-review'
     | '/security'
     | '/signup'
     | '/stories'
+    | '/terms'
     | '/_authenticated/admin'
     | '/_authenticated/apply'
     | '/_authenticated/dashboard'
@@ -309,16 +333,25 @@ export interface RootRouteChildren {
   HelpCenterRoute: typeof HelpCenterRoute
   LoginRoute: typeof LoginRoute
   NetworkRoute: typeof NetworkRoute
+  PrivacyRoute: typeof PrivacyRoute
   ResourcesRoute: typeof ResourcesRoute
   ResumeReviewRoute: typeof ResumeReviewRoute
   SecurityRoute: typeof SecurityRoute
   SignupRoute: typeof SignupRoute
   StoriesRoute: typeof StoriesRoute
+  TermsRoute: typeof TermsRoute
   EngineerUserIdRoute: typeof EngineerUserIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/stories': {
       id: '/stories'
       path: '/stories'
@@ -352,6 +385,13 @@ declare module '@tanstack/react-router' {
       path: '/resources'
       fullPath: '/resources'
       preLoaderRoute: typeof ResourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/network': {
@@ -519,11 +559,13 @@ const rootRouteChildren: RootRouteChildren = {
   HelpCenterRoute: HelpCenterRoute,
   LoginRoute: LoginRoute,
   NetworkRoute: NetworkRoute,
+  PrivacyRoute: PrivacyRoute,
   ResourcesRoute: ResourcesRoute,
   ResumeReviewRoute: ResumeReviewRoute,
   SecurityRoute: SecurityRoute,
   SignupRoute: SignupRoute,
   StoriesRoute: StoriesRoute,
+  TermsRoute: TermsRoute,
   EngineerUserIdRoute: EngineerUserIdRoute,
 }
 export const routeTree = rootRouteImport

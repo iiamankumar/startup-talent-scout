@@ -3,16 +3,16 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Github, Linkedin, Globe } from "lucide-react";
 import { listVettedEngineers } from "@/lib/engineers.functions";
-import { KlyroLogo } from "@/components/KlyroLogo";
+import { AveiqLogo } from "@/components/AveiqLogo";
 
 export const Route = createFileRoute("/network")({
   head: () => ({
     meta: [
-      { title: "The Klyro Network — Vetted engineers" },
+      { title: "The Aveiq Network — Vetted engineers" },
       {
         name: "description",
         content:
-          "Browse Klyro's curated network of hand-vetted, available engineers — the top 0.1% of Indian developer talent.",
+          "Browse Aveiq's curated network of hand-vetted, available engineers — the top 0.1% of Indian developer talent.",
       },
     ],
   }),
@@ -32,7 +32,7 @@ function NetworkPage() {
     <main className="min-h-screen bg-background">
       <header className="mx-auto flex max-w-7xl items-center justify-between px-6 py-8">
         <Link to="/" className="flex items-center gap-2">
-          <KlyroLogo />
+          <AveiqLogo />
         </Link>
         <nav className="flex items-center gap-6 text-sm">
           <Link to="/login" className="text-muted-foreground hover:text-foreground">
@@ -49,7 +49,7 @@ function NetworkPage() {
 
       <section className="mx-auto max-w-7xl px-6 py-12">
         <div className="max-w-2xl">
-          <h1 className="text-4xl font-medium tracking-tight lg:text-5xl">The Klyro Network</h1>
+          <h1 className="text-4xl font-medium tracking-tight lg:text-5xl">The Aveiq Network</h1>
           <p className="mt-3 text-pretty text-muted-foreground">
             Hand-vetted engineers available right now. Every profile passed a live technical
             interview with a senior engineer.
@@ -133,7 +133,7 @@ function NetworkPage() {
                   </div>
                   {e.klyro_score != null && (
                     <span className="text-xs">
-                      <span className="text-muted-foreground/70">Klyro Score · </span>
+                      <span className="text-muted-foreground/70">Aveiq Score · </span>
                       <span className="font-medium text-foreground">{e.klyro_score}</span>
                     </span>
                   )}

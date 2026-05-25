@@ -7,7 +7,7 @@ import { getJobDetail, listOpenRequestsForEngineers } from "@/lib/hire.functions
 import { applyToHireRequest } from "@/lib/applications.functions";
 
 export const Route = createFileRoute("/_authenticated/jobs/$jobId")({
-  head: () => ({ meta: [{ title: "Role — Klyro" }] }),
+  head: () => ({ meta: [{ title: "Role — Aveiq" }] }),
   component: JobDetailPage,
 });
 
@@ -164,7 +164,7 @@ function JobDetailPage() {
               <li>· Engaged as an independent contractor.</li>
               <li>· Fully remote, work on your own schedule.</li>
               <li>· Weekly payouts via Stripe.</li>
-              <li>· Work at Klyro never requires confidential or proprietary information from any current employer.</li>
+              <li>· Work at Aveiq never requires confidential or proprietary information from any current employer.</li>
             </ul>
           </section>
 

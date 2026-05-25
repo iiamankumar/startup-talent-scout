@@ -8,7 +8,7 @@ import {
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/requests/$requestId")({
-  head: () => ({ meta: [{ title: "Applications — Klyro" }] }),
+  head: () => ({ meta: [{ title: "Applications — Aveiq" }] }),
   component: RequestApplicationsPage,
 });
 
@@ -53,7 +53,7 @@ function RequestApplicationsPage() {
                   <p className="text-sm text-muted-foreground">{eng?.headline ?? "—"}</p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     {eng?.location ?? "Remote"} · {eng?.years_experience ?? "?"} yrs
-                    {eng?.klyro_score != null && ` · Klyro Score ${eng.klyro_score}`}
+                    {eng?.klyro_score != null && ` · Aveiq Score ${eng.klyro_score}`}
                   </p>
                 </div>
                 <span className="rounded-full bg-background px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ring-black/5">

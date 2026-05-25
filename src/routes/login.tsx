@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/lib/auth-context";
-import { KlyroLogo } from "@/components/KlyroLogo";
+import { AveiqLogo } from "@/components/AveiqLogo";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -39,7 +39,7 @@ function LoginPage() {
   };
 
   return (
-    <AuthShell title="Sign in to Klyro" subtitle="Welcome back to the network.">
+    <AuthShell title="Sign in to Aveiq" subtitle="Welcome back to the network.">
       <button
         onClick={handleGoogle}
         className="flex h-11 w-full items-center justify-center gap-2 rounded-md border border-border bg-card text-sm font-medium hover:bg-secondary"
@@ -103,7 +103,7 @@ export function AuthShell({
     <div className="min-h-screen bg-surface">
       <div className="mx-auto flex max-w-md flex-col px-6 py-12">
         <Link to="/" className="mb-10 flex items-center gap-2">
-          <KlyroLogo />
+          <AveiqLogo />
         </Link>
         <h1 className="text-2xl font-medium tracking-tight">{title}</h1>
         <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>

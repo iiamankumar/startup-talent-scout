@@ -23,7 +23,7 @@ async function callAI(messages: Array<{ role: string; content: string }>, tools?
   return r.json();
 }
 
-const INTERVIEWER_SYSTEM = `You are "Kai", Klyro's senior AI technical interviewer. You conduct a focused 6-8 question screening interview to verify the candidate's depth and signal.
+const INTERVIEWER_SYSTEM = `You are "Kai", Aveiq's senior AI technical interviewer. You conduct a focused 6-8 question screening interview to verify the candidate's depth and signal.
 
 Rules:
 - Open with a friendly intro stating your name (Kai) and that this is a verified screening on the record.
@@ -112,7 +112,7 @@ async function gradeInterview(userId: string, transcript: Turn[]) {
     [
       {
         role: "system",
-        content: `You are Klyro's grading panel. Score the candidate 0-100 on technical depth, ownership, communication, and authenticity. Be strict. Return ONLY via the tool.`,
+        content: `You are Aveiq's grading panel. Score the candidate 0-100 on technical depth, ownership, communication, and authenticity. Be strict. Return ONLY via the tool.`,
       },
       { role: "user", content: `TRANSCRIPT:\n\n${convo}` },
     ],

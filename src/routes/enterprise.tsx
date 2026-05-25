@@ -4,8 +4,8 @@ import { InfoPage, InfoBlock } from "@/components/InfoPage";
 export const Route = createFileRoute("/enterprise")({
   head: () => ({
     meta: [
-      { title: "Enterprise — Klyro" },
-      { name: "description", content: "Build entire engineering pods with Klyro — dedicated sourcing, vetting, and account management for larger teams." },
+      { title: "Enterprise — Aveiq" },
+      { name: "description", content: "Build entire engineering pods with Aveiq — dedicated sourcing, vetting, and account management for larger teams." },
     ],
   }),
   component: EnterprisePage,
@@ -31,7 +31,7 @@ function EnterprisePage() {
         more than 5 engineers a year.
       </InfoBlock>
       <InfoBlock title="Talk to us">
-        Email <a className="underline" href="mailto:enterprise@klyro.dev">enterprise@klyro.dev</a>{" "}
+        Email <a className="underline" href="mailto:enterprise@aveiq.com">enterprise@aveiq.com</a>{" "}
         with a sentence about your team and what you're hiring for, or post a brief and mention
         "Enterprise" in the notes.
       </InfoBlock>

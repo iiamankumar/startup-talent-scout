@@ -7,7 +7,7 @@ import { CheckCircle2, Loader2, Send, Sparkles } from "lucide-react";
 import { getMyInterviewState, sendInterviewMessage } from "@/lib/interview.functions";
 
 export const Route = createFileRoute("/_authenticated/interview")({
-  head: () => ({ meta: [{ title: "AI Interview with Kai — Klyro" }] }),
+  head: () => ({ meta: [{ title: "AI Interview with Kai — Aveiq" }] }),
   component: InterviewPage,
 });
 
@@ -109,7 +109,7 @@ function InterviewPage() {
           </div>
           <h1 className="mt-3 text-2xl font-medium tracking-tight">Verified on the record</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Everything you say is logged. A senior Klyro engineer reviews it before the final interview.
+            Everything you say is logged. A senior Aveiq engineer reviews it before the final interview.
           </p>
         </div>
         {state.ai_interview_score != null && (
@@ -179,7 +179,7 @@ function InterviewPage() {
             <p className="mt-2 text-muted-foreground">{state.ai_interview_summary}</p>
           )}
           <p className="mt-3 text-xs text-muted-foreground">
-            A senior Klyro engineer will reach out within 48 hours to schedule the final interview.
+            A senior Aveiq engineer will reach out within 48 hours to schedule the final interview.
           </p>
         </div>
       ) : (

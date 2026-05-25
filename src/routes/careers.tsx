@@ -4,8 +4,8 @@ import { InfoPage, InfoBlock } from "@/components/InfoPage";
 export const Route = createFileRoute("/careers")({
   head: () => ({
     meta: [
-      { title: "Careers — Klyro" },
-      { name: "description", content: "Open roles at Klyro. We're a small team building the talent engine for India's best engineers." },
+      { title: "Careers — Aveiq" },
+      { name: "description", content: "Open roles at Aveiq. We're a small team building the talent engine for India's best engineers." },
     ],
   }),
   component: CareersPage,
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/careers")({
 function CareersPage() {
   return (
     <InfoPage
-      eyebrow="Join Klyro"
+      eyebrow="Join Aveiq"
       title="Careers"
       intro="We're a small, opinionated team building the talent engine for India's best engineers. We hire people who care about craft, write clearly, and ship."
     >
@@ -31,7 +31,7 @@ function CareersPage() {
       </InfoBlock>
       <InfoBlock title="Apply">
         Send a short note about you and a link or two that shows your work to{" "}
-        <a className="underline" href="mailto:careers@klyro.dev">careers@klyro.dev</a>. No cover
+        <a className="underline" href="mailto:careers@aveiq.com">careers@aveiq.com</a>. No cover
         letters, please.
       </InfoBlock>
     </InfoPage>

@@ -4,8 +4,8 @@ import { InfoPage, InfoBlock } from "@/components/InfoPage";
 export const Route = createFileRoute("/security")({
   head: () => ({
     meta: [
-      { title: "Security — Klyro" },
-      { name: "description", content: "How Klyro protects engineer and founder data — infrastructure, access controls, and disclosure policy." },
+      { title: "Security — Aveiq" },
+      { name: "description", content: "How Aveiq protects engineer and founder data — infrastructure, access controls, and disclosure policy." },
     ],
   }),
   component: SecurityPage,
@@ -15,11 +15,11 @@ function SecurityPage() {
   return (
     <InfoPage
       eyebrow="Trust"
-      title="Security at Klyro"
+      title="Security at Aveiq"
       intro="Engineers trust us with their resumes, GitHub history, and salary expectations. Founders trust us with hiring plans and budgets. We take that seriously."
     >
       <InfoBlock title="Infrastructure">
-        Klyro runs on managed cloud infrastructure with encryption in transit (TLS 1.2+) and at
+        Aveiq runs on managed cloud infrastructure with encryption in transit (TLS 1.2+) and at
         rest. Database access is restricted to a small set of engineers and is audit-logged.
       </InfoBlock>
       <InfoBlock title="Authentication & access">
@@ -33,7 +33,7 @@ function SecurityPage() {
       </InfoBlock>
       <InfoBlock title="Responsible disclosure">
         Found a vulnerability? Email{" "}
-        <a className="underline" href="mailto:security@klyro.dev">security@klyro.dev</a>. We
+        <a className="underline" href="mailto:security@aveiq.com">security@aveiq.com</a>. We
         respond within 48 hours and credit researchers who report in good faith.
       </InfoBlock>
     </InfoPage>

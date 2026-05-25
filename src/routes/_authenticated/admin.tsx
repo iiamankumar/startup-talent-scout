@@ -278,6 +278,8 @@ function ReviewModeration() {
 function AdminRow({
   engineer,
   onUpdate,
+  selected,
+  onToggleSelect,
 }: {
   engineer: {
     user_id: string;
@@ -297,6 +299,8 @@ function AdminRow({
     main_interview_scheduled_at?: string | null;
   };
   onUpdate: (vetting: "pending" | "in_review" | "vetted" | "rejected", score: number | null) => Promise<void>;
+  selected?: boolean;
+  onToggleSelect?: () => void;
 }) {
   const [score, setScore] = useState<string>(engineer.aveiq_score?.toString() ?? "");
   const [busy, setBusy] = useState(false);

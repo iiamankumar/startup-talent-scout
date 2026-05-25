@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const inputSchema = z.object({
   resumeText: z.string().min(100, "Resume is too short").max(40000, "Resume is too long"),
@@ -97,6 +98,7 @@ const reviewTool = {
 };
 
 export const reviewResume = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => inputSchema.parse(data))
   .handler(async ({ data }): Promise<{ result: ResumeReviewResult | null; error: string | null }> => {
     const apiKey = process.env.LOVABLE_API_KEY;

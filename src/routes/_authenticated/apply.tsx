@@ -236,48 +236,38 @@ function ApplyPage() {
       <section className="mt-10">
         <SectionHeader index={2} title="Resume + AI screening" />
         <div className="mt-4 space-y-5 rounded-2xl bg-card p-8 ring-1 ring-black/5">
-          <label className="flex cursor-pointer items-center justify-between rounded-xl border border-dashed border-border bg-background/50 p-5 hover:bg-background">
+          <label className={`flex cursor-pointer items-center justify-between rounded-xl border border-dashed border-border bg-background/50 p-5 hover:bg-background ${!profileSaved ? "pointer-events-none opacity-50" : ""}`}>
             <div className="flex items-center gap-3">
               {resumeUrl ? <FileText className="size-5 text-success" /> : <Upload className="size-5 text-muted-foreground" />}
               <div>
                 <p className="text-sm font-medium">
-                  {resumeUrl ? "Resume on file" : "Upload your resume (PDF, DOCX, TXT)"}
+                  {resumeUrl ? "Resume on file" : "Upload your resume (PDF or TXT)"}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Stored privately. Visible only to you and Aveiq reviewers.
+                  We'll read the text from your file and AI-screen it automatically. Stored privately.
                 </p>
               </div>
             </div>
             <input
               type="file"
-              accept=".pdf,.doc,.docx,.txt,.md"
+              accept=".pdf,.txt,.md,application/pdf,text/plain"
               className="hidden"
-              disabled={uploading}
+              disabled={uploading || screening || !profileSaved}
               onChange={(e) => {
                 const f = e.target.files?.[0];
                 if (f) onFile(f);
+                e.target.value = "";
               }}
             />
-            <span className="text-xs text-muted-foreground underline">
-              {uploading ? "Uploading…" : "Choose file"}
+            <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground underline">
+              <Sparkles className="size-3.5" />
+              {uploading ? "Reading file…" : screening ? "AI screening…" : resumeUrl ? "Replace & re-screen" : "Choose file"}
             </span>
           </label>
 
-          <TextArea
-            label="Paste resume text (so AI can read it accurately)"
-            value={resumeText}
-            onChange={setResumeText}
-            placeholder="Paste the full plain-text contents of your resume here…"
-          />
-
-          <button
-            onClick={runScreen}
-            disabled={screening || !profileSaved}
-            className="inline-flex h-11 items-center gap-2 rounded-md bg-foreground px-5 text-sm font-medium text-background disabled:opacity-50"
-          >
-            <Sparkles className="size-4" />
-            {screening ? "Screening…" : screened ? "Re-run AI screening" : "Run AI screening"}
-          </button>
+          {!profileSaved && (
+            <p className="text-xs text-muted-foreground">Save your profile in Step 1 to unlock resume upload.</p>
+          )}
 
           {eng?.resume_score != null && (
             <div className="rounded-xl bg-secondary p-5">

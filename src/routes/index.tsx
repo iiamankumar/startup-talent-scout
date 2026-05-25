@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Plus, FileText, Instagram, Linkedin, ArrowRight, Star } from "lucide-react";
 import { getFeaturedEngineers, getLandingStats } from "@/lib/reviews.functions";
 import { AveiqLogo } from "@/components/AveiqLogo";
+import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/")({
   head: () => ({

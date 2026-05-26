@@ -589,7 +589,7 @@ function WorkspacePage() {
                             await deleteAcc();
                             toast.success("Account deleted");
                             await signOut();
-                            navigate({ to: "/" });
+                            window.location.assign("/");
                           } catch (err) {
                             toast.error(
                               err instanceof Error ? err.message : "Could not delete account",

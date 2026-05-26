@@ -74,7 +74,10 @@ function AuthLayout() {
               </Link>
             ))}
             <button
-              onClick={() => signOut()}
+              onClick={async () => {
+                await signOut();
+                window.location.assign("/");
+              }}
               className="whitespace-nowrap rounded-md border border-border px-3 py-1.5 text-xs font-medium transition-colors hover:bg-secondary"
             >
               Sign out
@@ -108,9 +111,10 @@ function AuthLayout() {
                 </Link>
               ))}
               <button
-                onClick={() => {
+                onClick={async () => {
                   setOpen(false);
-                  signOut();
+                  await signOut();
+                  window.location.assign("/");
                 }}
                 className="mt-1 rounded-md border border-border px-3 py-2 text-left text-sm font-medium hover:bg-secondary"
               >

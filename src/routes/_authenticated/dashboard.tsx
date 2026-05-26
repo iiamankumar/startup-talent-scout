@@ -4,8 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/lib/auth-context";
 import { getMyEngineerProfile } from "@/lib/engineers.functions";
 import { listMyHireRequests, listOpenRequestsForEngineers } from "@/lib/hire.functions";
-import { getMyReferrals } from "@/lib/referrals.functions";
-import { ArrowRight, Briefcase, Copy, Gift, ShieldCheck, UserCircle2 } from "lucide-react";
+import { peekMyReferrals } from "@/lib/referrals.functions";
+import { ArrowRight, Briefcase, Copy, Gift, ShieldCheck, Sparkles, UserCircle2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -20,7 +20,7 @@ function Dashboard() {
   const getProfile = useServerFn(getMyEngineerProfile);
   const getMyRequests = useServerFn(listMyHireRequests);
   const getOpen = useServerFn(listOpenRequestsForEngineers);
-  const getRefs = useServerFn(getMyReferrals);
+  const getRefs = useServerFn(peekMyReferrals);
 
   const profileQ = useQuery({
     queryKey: ["myEngineer", user?.id],
@@ -193,7 +193,21 @@ function Dashboard() {
             referral reward.
           </p>
           {referralsQ.isLoading ? (
-            <p className="mt-4 text-sm text-muted-foreground">Loading your code…</p>
+            <p className="mt-4 text-sm text-muted-foreground">Loading…</p>
+          ) : !referralCode ? (
+            <div className="mt-4">
+              <p className="text-sm text-muted-foreground">
+                You haven't generated your referral link yet. Create a unique link tied to your
+                account in seconds.
+              </p>
+              <Link
+                to="/refer"
+                className="mt-5 inline-flex h-10 items-center gap-2 rounded-md bg-foreground px-4 text-sm font-medium text-background hover:bg-foreground/90"
+              >
+                <Sparkles className="size-4" />
+                Generate your referral link
+              </Link>
+            </div>
           ) : (
             <div className="mt-4 space-y-3">
               <div>
@@ -202,12 +216,11 @@ function Dashboard() {
                 </label>
                 <div className="mt-1 flex items-center gap-2">
                   <code className="flex-1 rounded-md bg-background px-3 py-2 text-sm font-mono ring-1 ring-black/5">
-                    {referralCode || "—"}
+                    {referralCode}
                   </code>
                   <button
                     onClick={() => copy(referralCode, "Code")}
-                    disabled={!referralCode}
-                    className="inline-flex size-9 items-center justify-center rounded-md border border-border hover:bg-secondary disabled:opacity-50"
+                    className="inline-flex size-9 items-center justify-center rounded-md border border-border hover:bg-secondary"
                     aria-label="Copy code"
                   >
                     <Copy className="size-3.5" />
@@ -232,11 +245,16 @@ function Dashboard() {
                   </button>
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground">
-                {referralCount === 0
-                  ? "No referrals yet."
-                  : `${referralCount} referral${referralCount === 1 ? "" : "s"} so far.`}
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="text-xs text-muted-foreground">
+                  {referralCount === 0
+                    ? "No referrals yet."
+                    : `${referralCount} referral${referralCount === 1 ? "" : "s"} so far.`}
+                </p>
+                <Link to="/refer" className="text-xs font-medium underline">
+                  Manage
+                </Link>
+              </div>
             </div>
           )}
         </section>

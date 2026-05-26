@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/lib/auth-context";
 import { getMyEngineerProfile } from "@/lib/engineers.functions";
-import { listMyHireRequests, listOpenRequestsForEngineers } from "@/lib/hire.functions";
+import { listMyHireRequests, listOpenRequestsForEngineers, setHireRequestStatus } from "@/lib/hire.functions";
 import { peekMyReferrals } from "@/lib/referrals.functions";
 import { Archive, ArrowRight, Briefcase, Copy, Gift, RotateCcw, ShieldCheck, Sparkles, UserCircle2 } from "lucide-react";
 import { toast } from "sonner";

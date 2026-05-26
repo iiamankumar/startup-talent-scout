@@ -52,14 +52,42 @@ function SignupPage() {
         data: { full_name: fullName.trim(), intent },
       },
     });
+    if (error) {
+      setSubmitting(false);
+      return toast.error(error.message);
+    }
+    // Detect "repeated signup" — Supabase returns a user with no identities
+    // when the email is already registered. No new verification email is sent in that case.
+    const isRepeated = data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0;
+    if (isRepeated) {
+      const { error: resendError } = await supabase.auth.resend({
+        type: "signup",
+        email,
+        options: { emailRedirectTo: window.location.origin + target },
+      });
+      setSubmitting(false);
+      if (resendError) return toast.error(resendError.message);
+      toast.success(`This email is already registered. We've resent the verification email to ${email}.`, { duration: 8000 });
+      return;
+    }
     setSubmitting(false);
-    if (error) return toast.error(error.message);
     if (!data.session) {
       toast.success(`Account created. We sent a confirmation email to ${email} — please verify to continue.`, { duration: 8000 });
       return;
     }
     toast.success("Account created. Welcome to Aveiq.");
     navigate({ to: target });
+  };
+
+  const handleResend = async () => {
+    if (!email) return toast.error("Enter your email above first");
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+      options: { emailRedirectTo: window.location.origin + target },
+    });
+    if (error) return toast.error(error.message);
+    toast.success(`Verification email resent to ${email}.`);
   };
 
   const handleGoogle = async () => {

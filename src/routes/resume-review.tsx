@@ -194,11 +194,11 @@ function ResumeReviewPage() {
               <div className="mt-5 flex items-center gap-2 rounded-md border border-border bg-secondary/50 px-3 py-2.5 text-xs text-muted-foreground">
                 <Lock className="size-3.5 shrink-0" />
                 <span>
-                  <Link to="/signup" className="font-medium text-foreground underline underline-offset-2">
+                  <Link to="/signup" search={{ redirect: "/resume-review" }} className="font-medium text-foreground underline underline-offset-2">
                     Create a free account
                   </Link>{" "}
                   or{" "}
-                  <Link to="/login" className="font-medium text-foreground underline underline-offset-2">
+                  <Link to="/login" search={{ redirect: "/resume-review" }} className="font-medium text-foreground underline underline-offset-2">
                     sign in
                   </Link>{" "}
                   to run your review.

@@ -73,6 +73,11 @@ function ResumeReviewPage() {
           <AveiqLogo />
         </Link>
         <div className="flex items-center gap-6">
+          {user && (
+            <Link to="/dashboard" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+              Dashboard
+            </Link>
+          )}
           <Link to="/network" className="hidden text-sm font-medium text-muted-foreground hover:text-foreground sm:inline">
             Network
           </Link>

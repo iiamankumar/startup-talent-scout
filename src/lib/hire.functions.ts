@@ -100,9 +100,10 @@ export const getMyLatestCompany = createServerFn({ method: "GET" })
 
 export const listOpenRequestsForEngineers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const { supabase } = context;
-    const { data, error } = await supabase
+  .handler(async () => {
+    // Use admin client so any authenticated engineer (vetted or not) can browse
+    // open roles. Apply action is still gated server-side in applyToHireRequest.
+    const { data, error } = await supabaseAdmin
       .from("hire_requests")
       .select("id, role_title, stack, urgency, budget_monthly_usd, created_at, companies(name, stage)")
       .eq("status", "open")
@@ -118,9 +119,10 @@ export const getJobDetail = createServerFn({ method: "GET" })
     z.object({ job_id: z.string().uuid() }).parse(input)
   )
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
+    const { userId } = context;
 
-    const { data: job, error } = await supabase
+    // Read the job via admin so unvetted/pending engineers can browse it.
+    const { data: job, error } = await supabaseAdmin
       .from("hire_requests")
       .select(
         "id, role_title, stack, urgency, budget_monthly_usd, notes, status, created_at, owner_id, companies(name, stage, website, logo_url)"
@@ -130,19 +132,19 @@ export const getJobDetail = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     if (!job) throw new Error("Job not found");
 
-    const { count: applicantCount } = await supabase
+    const { count: applicantCount } = await supabaseAdmin
       .from("applications")
       .select("id", { count: "exact", head: true })
       .eq("hire_request_id", data.job_id);
 
-    const { data: existingApp } = await supabase
+    const { data: existingApp } = await supabaseAdmin
       .from("applications")
       .select("id, status, created_at")
       .eq("hire_request_id", data.job_id)
       .eq("engineer_id", userId)
       .maybeSingle();
 
-    const { data: eng } = await supabase
+    const { data: eng } = await supabaseAdmin
       .from("engineers")
       .select(
         "vetting, resume_url, resume_score, ai_interview_status, main_interview_status, work_authorization"

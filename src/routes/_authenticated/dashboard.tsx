@@ -7,6 +7,7 @@ import { listMyHireRequests, listOpenRequestsForEngineers } from "@/lib/hire.fun
 import { peekMyReferrals } from "@/lib/referrals.functions";
 import { ArrowRight, Briefcase, Copy, Gift, ShieldCheck, Sparkles, UserCircle2 } from "lucide-react";
 import { toast } from "sonner";
+import { useRealtimeInvalidate } from "@/hooks/use-realtime-invalidate";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Aveiq" }] }),

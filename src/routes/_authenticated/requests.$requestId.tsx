@@ -8,6 +8,7 @@ import {
 } from "@/lib/applications.functions";
 import { updateHireRequest, setHireRequestStatus } from "@/lib/hire.functions";
 import { toast } from "sonner";
+import { useRealtimeInvalidate } from "@/hooks/use-realtime-invalidate";
 
 export const Route = createFileRoute("/_authenticated/requests/$requestId")({
   head: () => ({ meta: [{ title: "Applications — Aveiq" }] }),

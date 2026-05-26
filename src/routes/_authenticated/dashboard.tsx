@@ -73,6 +73,22 @@ function Dashboard() {
       : "";
   const referralCount = referralsQ.data?.referrals?.length ?? 0;
 
+  const [closingId, setClosingId] = useState<string | null>(null);
+
+  const toggleRequestStatus = async (id: string, current: string) => {
+    const next = current === "open" ? "closed" : "open";
+    setClosingId(id);
+    try {
+      await setStatus({ data: { hire_request_id: id, status: next } });
+      toast.success(next === "closed" ? "Role closed" : "Role reopened");
+      requestsQ.refetch();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setClosingId(null);
+    }
+  };
+
   const copy = async (text: string, label: string) => {
     try {
       await navigator.clipboard.writeText(text);

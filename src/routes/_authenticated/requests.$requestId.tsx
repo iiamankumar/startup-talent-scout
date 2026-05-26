@@ -1,10 +1,12 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useEffect, useState } from "react";
 import {
   listApplicationsForRequest,
   updateApplicationStatus,
 } from "@/lib/applications.functions";
+import { updateHireRequest, setHireRequestStatus } from "@/lib/hire.functions";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/requests/$requestId")({
@@ -16,20 +18,187 @@ function RequestApplicationsPage() {
   const { requestId } = useParams({ from: "/_authenticated/requests/$requestId" });
   const list = useServerFn(listApplicationsForRequest);
   const update = useServerFn(updateApplicationStatus);
+  const editFn = useServerFn(updateHireRequest);
+  const setStatusFn = useServerFn(setHireRequestStatus);
 
   const appsQ = useQuery({
     queryKey: ["requestApps", requestId],
     queryFn: () => list({ data: { hire_request_id: requestId } }),
   });
 
+  const hr = appsQ.data?.hire_request as
+    | {
+        role_title?: string;
+        stack?: string[];
+        budget_monthly_usd?: number | null;
+        urgency?: string | null;
+        notes?: string | null;
+        status?: string;
+      }
+    | undefined;
+
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({
+    role_title: "",
+    stack: "",
+    budget_monthly_usd: "",
+    urgency: "1w" as "72h" | "1w" | "2w" | "flex",
+    notes: "",
+  });
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (!hr) return;
+    setForm({
+      role_title: hr.role_title ?? "",
+      stack: (hr.stack ?? []).join(", "),
+      budget_monthly_usd: hr.budget_monthly_usd != null ? String(hr.budget_monthly_usd) : "",
+      urgency: (hr.urgency as typeof form.urgency) || "1w",
+      notes: hr.notes ?? "",
+    });
+  }, [hr?.role_title, hr?.urgency]);
+
+  const saveEdits = async () => {
+    setBusy(true);
+    try {
+      await editFn({
+        data: {
+          hire_request_id: requestId,
+          role_title: form.role_title,
+          stack: form.stack.split(",").map((s) => s.trim()).filter(Boolean).slice(0, 15),
+          budget_monthly_usd: form.budget_monthly_usd ? Number(form.budget_monthly_usd) : null,
+          urgency: form.urgency,
+          notes: form.notes || null,
+        },
+      });
+      toast.success("Role updated");
+      setEditing(false);
+      appsQ.refetch();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const toggleStatus = async () => {
+    const next = hr?.status === "open" ? "closed" : "open";
+    setBusy(true);
+    try {
+      await setStatusFn({ data: { hire_request_id: requestId, status: next } });
+      toast.success(next === "closed" ? "Role closed" : "Role reopened");
+      appsQ.refetch();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <main className="mx-auto max-w-5xl px-6 py-12">
       <Link to="/dashboard" className="text-sm text-muted-foreground underline">
         ← Back to dashboard
       </Link>
-      <h1 className="mt-4 text-3xl font-medium tracking-tight">
-        Applications for {appsQ.data?.hire_request?.role_title ?? "your role"}
-      </h1>
+
+      <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-medium tracking-tight">
+            Applications for {hr?.role_title ?? "your role"}
+          </h1>
+          {hr?.status && (
+            <p className="mt-1 text-xs uppercase tracking-widest text-muted-foreground">
+              Status: {hr.status}
+            </p>
+          )}
+        </div>
+        {hr && (
+          <div className="flex gap-2">
+            <button
+              onClick={() => setEditing((v) => !v)}
+              className="rounded-md border border-border px-3 py-1.5 text-xs font-medium"
+            >
+              {editing ? "Cancel" : "Edit role"}
+            </button>
+            <button
+              onClick={toggleStatus}
+              disabled={busy}
+              className="rounded-md bg-foreground px-3 py-1.5 text-xs font-medium text-background disabled:opacity-60"
+            >
+              {hr.status === "open" ? "Close role (fulfilled)" : "Reopen role"}
+            </button>
+          </div>
+        )}
+      </div>
+
+      {editing && (
+        <section className="mt-6 rounded-2xl bg-card p-6 ring-1 ring-black/5">
+          <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+            Edit role
+          </h2>
+          <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <label className="block">
+              <span className="mb-1 block text-xs font-medium text-muted-foreground">Role title</span>
+              <input
+                value={form.role_title}
+                onChange={(e) => setForm({ ...form, role_title: e.target.value })}
+                className="h-11 w-full rounded-md border border-border bg-background px-3 text-sm"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-medium text-muted-foreground">Urgency</span>
+              <select
+                value={form.urgency}
+                onChange={(e) =>
+                  setForm({ ...form, urgency: e.target.value as typeof form.urgency })
+                }
+                className="h-11 w-full rounded-md border border-border bg-background px-3 text-sm"
+              >
+                <option value="72h">Within 72 hours</option>
+                <option value="1w">Within a week</option>
+                <option value="2w">Within two weeks</option>
+                <option value="flex">Flexible</option>
+              </select>
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-medium text-muted-foreground">Monthly budget (INR)</span>
+              <input
+                type="number"
+                value={form.budget_monthly_usd}
+                onChange={(e) => setForm({ ...form, budget_monthly_usd: e.target.value })}
+                className="h-11 w-full rounded-md border border-border bg-background px-3 text-sm"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-medium text-muted-foreground">Stack (comma-separated)</span>
+              <input
+                value={form.stack}
+                onChange={(e) => setForm({ ...form, stack: e.target.value })}
+                className="h-11 w-full rounded-md border border-border bg-background px-3 text-sm"
+              />
+            </label>
+          </div>
+          <label className="mt-4 block">
+            <span className="mb-1 block text-xs font-medium text-muted-foreground">Notes</span>
+            <textarea
+              rows={5}
+              maxLength={5000}
+              value={form.notes}
+              onChange={(e) => setForm({ ...form, notes: e.target.value.slice(0, 5000) })}
+              className="w-full rounded-md border border-border bg-background p-3 text-sm"
+            />
+          </label>
+          <div className="mt-4">
+            <button
+              onClick={saveEdits}
+              disabled={busy}
+              className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-60"
+            >
+              {busy ? "Saving…" : "Save changes"}
+            </button>
+          </div>
+        </section>
+      )}
 
       <div className="mt-8 space-y-4">
         {appsQ.isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}

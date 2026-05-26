@@ -84,6 +84,62 @@ export const listMyHireRequests = createServerFn({ method: "GET" })
     return { requests: data ?? [] };
   });
 
+const updateSchema = z.object({
+  hire_request_id: z.string().uuid(),
+  role_title: z.string().trim().min(2).max(120).optional(),
+  stack: z.array(z.string().trim().min(1).max(40)).max(15).optional(),
+  budget_monthly_usd: z.number().int().min(0).max(1_000_000).nullable().optional(),
+  urgency: z.enum(["72h", "1w", "2w", "flex"]).optional(),
+  notes: z.string().trim().max(5000).nullable().optional(),
+});
+
+export const updateHireRequest = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => updateSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { hire_request_id, ...patch } = data;
+    const clean: Partial<{
+      role_title: string;
+      stack: string[];
+      budget_monthly_usd: number | null;
+      urgency: string;
+      notes: string | null;
+    }> = {};
+    for (const [k, v] of Object.entries(patch)) {
+      if (v !== undefined) (clean as Record<string, unknown>)[k] = v;
+    }
+    if (Object.keys(clean).length === 0) return { ok: true };
+    const { error } = await supabase
+      .from("hire_requests")
+      .update(clean)
+      .eq("id", hire_request_id)
+      .eq("owner_id", userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const setHireRequestStatus = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z
+      .object({
+        hire_request_id: z.string().uuid(),
+        status: z.enum(["open", "closed"]),
+      })
+      .parse(input)
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { error } = await supabase
+      .from("hire_requests")
+      .update({ status: data.status })
+      .eq("id", data.hire_request_id)
+      .eq("owner_id", userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const getMyLatestCompany = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {

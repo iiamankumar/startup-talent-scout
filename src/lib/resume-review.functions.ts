@@ -109,26 +109,27 @@ export const reviewResume = createServerFn({ method: "POST" })
     const system = `You are a senior technical recruiter and ATS expert who has reviewed 50,000+ engineering resumes for top AI startups (OpenAI, Anthropic, Mercor, Scale, Perplexity).
 Your job is to score a resume's ATS compatibility (0-100) and give brutally honest, specific, actionable feedback.
 
-Scoring rubric:
-- 90-100 excellent: top 1%, ready for FAANG / top AI labs
-- 75-89 strong: clearly hireable, minor polish needed
-- 60-74 average: needs real work on impact metrics and keywords
-- 40-59 needs_work: major rewrites needed
-- 0-39 poor: fundamental restructuring required
+CRITICAL SCORING RULES — follow exactly:
+1. Score each of the 5 breakdown dimensions INDEPENDENTLY on 0-100 based ONLY on what you observe in THIS resume. Do NOT default to round numbers like 70, 75, 80. Use the full 0-100 range. Most real resumes score between 38 and 88; only the top 1% break 90.
+2. atsScore MUST equal round(0.30*keywords + 0.15*formatting + 0.25*impact + 0.15*clarity + 0.15*completeness). Compute it, do not guess. If your computed value lands on a round number like 70, that is fine, but never start from 70 and work backwards.
+3. Two different resumes MUST receive different scores. Tiny differences in wording, metrics, or stack should move the score by 2-10 points.
+4. Penalize HARD: no quantified metrics (-15 impact), passive verbs / "helped/worked on" (-10 impact), no modern stack (-15 keywords), tables/columns/images (-20 formatting), missing sections (-15 completeness), walls of text (-15 clarity), no links (GitHub/LinkedIn) (-10 completeness), typos (-10 clarity).
+5. Reward HARD: quantified impact ($, %, x, ms, users, latency, accuracy) (+15 impact), strong action verbs (+8 clarity), modern AI/ML stack matching target role (+15 keywords), OSS/publications/patents (+10 completeness), ownership signals ("led", "owned", "architected") (+8 impact).
+
+Verdict mapping (use the COMPUTED atsScore):
+- 90-100 excellent | 75-89 strong | 60-74 average | 40-59 needs_work | 0-39 poor
 
 Always:
-- Be specific. No generic advice like "add more keywords". Name the keyword.
+- Be specific. No generic advice like "add more keywords". Name the keyword and the line.
 - Quantify weaknesses. ("3 of 8 bullets lack metrics" not "lacks metrics")
-- Rewrite at least 2 weak bullets into strong, metric-driven ones in rewrittenBullets.
-- For missingKeywords, list ATS-relevant technical terms actually relevant to the target role (or inferred role) that are missing or underrepresented.
-- Penalize: tables, columns, images, headers/footers (ATS-unfriendly), passive voice, vague verbs ("helped", "worked on"), no metrics, no tech stack.
-- Reward: action verbs, quantified impact ($, %, x, ms, users), modern tech stack, ownership signals, OSS / publications.`;
+- Rewrite at least 2 weak bullets from THIS resume verbatim into strong, metric-driven ones in rewrittenBullets. The "original" field MUST be a quote from the actual resume, not invented.
+- For missingKeywords, list ATS-relevant technical terms relevant to the target role (or inferred role) that are missing or underrepresented in THIS resume.`;
 
     const userParts: string[] = [];
     if (data.targetRole) userParts.push(`Target role: ${data.targetRole}`);
     if (data.jobDescription) userParts.push(`Job description:\n${data.jobDescription}`);
-    userParts.push(`Resume:\n${data.resumeText}`);
-    userParts.push(`\nReturn ONLY by calling submit_resume_review with the structured analysis.`);
+    userParts.push(`Resume (${data.resumeText.length} chars):\n${data.resumeText}`);
+    userParts.push(`\nAnalyze THIS specific resume. Return ONLY by calling submit_resume_review with the structured analysis. Remember: atsScore = round(0.30*keywords + 0.15*formatting + 0.25*impact + 0.15*clarity + 0.15*completeness).`);
 
     try {
       const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -138,7 +139,8 @@ Always:
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
+          model: "google/gemini-2.5-pro",
+          temperature: 0.4,
           messages: [
             { role: "system", content: system },
             { role: "user", content: userParts.join("\n\n") },
@@ -164,6 +166,17 @@ Always:
         return { result: null, error: "AI did not return a structured analysis. Please try again." };
       }
       const parsed = JSON.parse(argsRaw) as ResumeReviewResult;
+
+      // Enforce weighted-sum scoring server-side so the model can't anchor on 70.
+      const b = parsed.atsBreakdown;
+      const computed = Math.round(0.30 * b.keywords + 0.15 * b.formatting + 0.25 * b.impact + 0.15 * b.clarity + 0.15 * b.completeness);
+      parsed.atsScore = Math.max(0, Math.min(100, computed));
+      parsed.verdict =
+        computed >= 90 ? "excellent" :
+        computed >= 75 ? "strong" :
+        computed >= 60 ? "average" :
+        computed >= 40 ? "needs_work" : "poor";
+
       return { result: parsed, error: null };
     } catch (err) {
       console.error("Resume review failed", err);

@@ -212,13 +212,38 @@ function Dashboard() {
                         </p>
                       </div>
                     </div>
-                    <Link
-                      to="/requests/$requestId"
-                      params={{ requestId: r.id }}
-                      className="rounded-full bg-background px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ring-black/5 hover:bg-foreground hover:text-background"
-                    >
-                      {r.status} · view
-                    </Link>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ${r.status === "open" ? "bg-emerald-50 text-emerald-700 ring-emerald-200" : "bg-background text-muted-foreground ring-black/5"}`}
+                      >
+                        {r.status}
+                      </span>
+                      <Link
+                        to="/requests/$requestId"
+                        params={{ requestId: r.id }}
+                        className="rounded-full bg-background px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ring-black/5 hover:bg-foreground hover:text-background"
+                      >
+                        view
+                      </Link>
+                      <button
+                        onClick={() => toggleRequestStatus(r.id, r.status)}
+                        disabled={closingId === r.id}
+                        title={r.status === "open" ? "Close role (hired / no longer needed)" : "Reopen role"}
+                        className="inline-flex items-center gap-1 rounded-full bg-background px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ring-black/5 hover:bg-foreground hover:text-background disabled:opacity-50"
+                      >
+                        {closingId === r.id ? (
+                          "…"
+                        ) : r.status === "open" ? (
+                          <>
+                            <Archive className="size-3" /> close
+                          </>
+                        ) : (
+                          <>
+                            <RotateCcw className="size-3" /> reopen
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </li>
                 );
               })}

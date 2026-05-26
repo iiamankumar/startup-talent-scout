@@ -19,19 +19,20 @@ function AuthLayout() {
 
   // Build nav based on account type. One account = one path (apply OR hire).
   // Admins are back-office and see admin link.
-  const NAV_LINKS: { to: "/dashboard" | "/admin" | "/roles" | "/apply" | "/hire"; label: string }[] = [
+  const NAV_LINKS: { to: "/dashboard" | "/admin" | "/roles" | "/apply" | "/hire" | "/workspace" | "/refer"; label: string }[] = [
     { to: "/dashboard", label: "Dashboard" },
   ];
   if (isEngineer) {
     NAV_LINKS.push({ to: "/roles", label: "Open roles" });
+    NAV_LINKS.push({ to: "/workspace", label: "Workspace" });
     NAV_LINKS.push({ to: "/apply", label: "My profile" });
   } else if (isFounder) {
     NAV_LINKS.push({ to: "/hire", label: "Post a role" });
   } else {
-    // No role chosen yet — let them pick a path.
     NAV_LINKS.push({ to: "/apply", label: "Apply as engineer" });
     NAV_LINKS.push({ to: "/hire", label: "Hire talent" });
   }
+  NAV_LINKS.push({ to: "/refer", label: "Refer & earn" });
   if (isAdmin) NAV_LINKS.push({ to: "/admin", label: "Admin" });
 
   useEffect(() => {

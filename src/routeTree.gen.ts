@@ -29,7 +29,9 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EngineerUserIdRouteImport } from './routes/engineer.$userId'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
+import { Route as AuthenticatedWorkspaceRouteImport } from './routes/_authenticated/workspace'
 import { Route as AuthenticatedRolesRouteImport } from './routes/_authenticated/roles'
+import { Route as AuthenticatedReferRouteImport } from './routes/_authenticated/refer'
 import { Route as AuthenticatedInterviewRouteImport } from './routes/_authenticated/interview'
 import { Route as AuthenticatedHireRouteImport } from './routes/_authenticated/hire'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -143,9 +145,19 @@ const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
   path: '/email/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedWorkspaceRoute = AuthenticatedWorkspaceRouteImport.update({
+  id: '/workspace',
+  path: '/workspace',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedRolesRoute = AuthenticatedRolesRouteImport.update({
   id: '/roles',
   path: '/roles',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedReferRoute = AuthenticatedReferRouteImport.update({
+  id: '/refer',
+  path: '/refer',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedInterviewRoute = AuthenticatedInterviewRouteImport.update({
@@ -241,7 +253,9 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/hire': typeof AuthenticatedHireRoute
   '/interview': typeof AuthenticatedInterviewRoute
+  '/refer': typeof AuthenticatedReferRoute
   '/roles': typeof AuthenticatedRolesRoute
+  '/workspace': typeof AuthenticatedWorkspaceRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/engineer/$userId': typeof EngineerUserIdRoute
   '/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
@@ -276,7 +290,9 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/hire': typeof AuthenticatedHireRoute
   '/interview': typeof AuthenticatedInterviewRoute
+  '/refer': typeof AuthenticatedReferRoute
   '/roles': typeof AuthenticatedRolesRoute
+  '/workspace': typeof AuthenticatedWorkspaceRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/engineer/$userId': typeof EngineerUserIdRoute
   '/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
@@ -313,7 +329,9 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/hire': typeof AuthenticatedHireRoute
   '/_authenticated/interview': typeof AuthenticatedInterviewRoute
+  '/_authenticated/refer': typeof AuthenticatedReferRoute
   '/_authenticated/roles': typeof AuthenticatedRolesRoute
+  '/_authenticated/workspace': typeof AuthenticatedWorkspaceRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/engineer/$userId': typeof EngineerUserIdRoute
   '/_authenticated/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
@@ -350,7 +368,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/hire'
     | '/interview'
+    | '/refer'
     | '/roles'
+    | '/workspace'
     | '/email/unsubscribe'
     | '/engineer/$userId'
     | '/jobs/$jobId'
@@ -385,7 +405,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/hire'
     | '/interview'
+    | '/refer'
     | '/roles'
+    | '/workspace'
     | '/email/unsubscribe'
     | '/engineer/$userId'
     | '/jobs/$jobId'
@@ -421,7 +443,9 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/hire'
     | '/_authenticated/interview'
+    | '/_authenticated/refer'
     | '/_authenticated/roles'
+    | '/_authenticated/workspace'
     | '/email/unsubscribe'
     | '/engineer/$userId'
     | '/_authenticated/jobs/$jobId'
@@ -605,11 +629,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmailUnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/workspace': {
+      id: '/_authenticated/workspace'
+      path: '/workspace'
+      fullPath: '/workspace'
+      preLoaderRoute: typeof AuthenticatedWorkspaceRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/roles': {
       id: '/_authenticated/roles'
       path: '/roles'
       fullPath: '/roles'
       preLoaderRoute: typeof AuthenticatedRolesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/refer': {
+      id: '/_authenticated/refer'
+      path: '/refer'
+      fullPath: '/refer'
+      preLoaderRoute: typeof AuthenticatedReferRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/interview': {
@@ -712,7 +750,9 @@ interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedHireRoute: typeof AuthenticatedHireRoute
   AuthenticatedInterviewRoute: typeof AuthenticatedInterviewRoute
+  AuthenticatedReferRoute: typeof AuthenticatedReferRoute
   AuthenticatedRolesRoute: typeof AuthenticatedRolesRoute
+  AuthenticatedWorkspaceRoute: typeof AuthenticatedWorkspaceRoute
   AuthenticatedJobsJobIdRoute: typeof AuthenticatedJobsJobIdRoute
   AuthenticatedRequestsRequestIdRoute: typeof AuthenticatedRequestsRequestIdRoute
 }
@@ -723,7 +763,9 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedHireRoute: AuthenticatedHireRoute,
   AuthenticatedInterviewRoute: AuthenticatedInterviewRoute,
+  AuthenticatedReferRoute: AuthenticatedReferRoute,
   AuthenticatedRolesRoute: AuthenticatedRolesRoute,
+  AuthenticatedWorkspaceRoute: AuthenticatedWorkspaceRoute,
   AuthenticatedJobsJobIdRoute: AuthenticatedJobsJobIdRoute,
   AuthenticatedRequestsRequestIdRoute: AuthenticatedRequestsRequestIdRoute,
 }

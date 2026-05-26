@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { AveiqLogo } from "@/components/AveiqLogo";
+import { Linkedin, Twitter, Instagram } from "lucide-react";
 
 export function SiteFooter() {
   return (
@@ -18,6 +19,35 @@ export function SiteFooter() {
           <Link to="/terms" className="hover:text-foreground">Terms</Link>
           <Link to="/security" className="hover:text-foreground">Security</Link>
         </nav>
+        <div className="flex items-center gap-4">
+          <a
+            href="https://www.linkedin.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-foreground"
+            aria-label="LinkedIn"
+          >
+            <Linkedin className="h-4 w-4" />
+          </a>
+          <a
+            href="https://twitter.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-foreground"
+            aria-label="Twitter"
+          >
+            <Twitter className="h-4 w-4" />
+          </a>
+          <a
+            href="https://www.instagram.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-foreground"
+            aria-label="Instagram"
+          >
+            <Instagram className="h-4 w-4" />
+          </a>
+        </div>
       </div>
     </footer>
   );

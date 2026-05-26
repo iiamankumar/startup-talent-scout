@@ -22,6 +22,7 @@ function Dashboard() {
   const getMyRequests = useServerFn(listMyHireRequests);
   const getOpen = useServerFn(listOpenRequestsForEngineers);
   const getRefs = useServerFn(peekMyReferrals);
+  const setStatus = useServerFn(setHireRequestStatus);
 
   const profileQ = useQuery({
     queryKey: ["myEngineer", user?.id],

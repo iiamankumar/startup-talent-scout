@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/lib/auth-context";
 import { getMyEngineerProfile } from "@/lib/engineers.functions";
-import { listMyHireRequests, listOpenRequestsForEngineers } from "@/lib/hire.functions";
+import { listMyHireRequests, listOpenRequestsForEngineers, setHireRequestStatus } from "@/lib/hire.functions";
 import { peekMyReferrals } from "@/lib/referrals.functions";
-import { ArrowRight, Briefcase, Copy, Gift, ShieldCheck, Sparkles, UserCircle2 } from "lucide-react";
+import { Archive, ArrowRight, Briefcase, Copy, Gift, RotateCcw, ShieldCheck, Sparkles, UserCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRealtimeInvalidate } from "@/hooks/use-realtime-invalidate";
 
@@ -22,6 +23,7 @@ function Dashboard() {
   const getMyRequests = useServerFn(listMyHireRequests);
   const getOpen = useServerFn(listOpenRequestsForEngineers);
   const getRefs = useServerFn(peekMyReferrals);
+  const setStatus = useServerFn(setHireRequestStatus);
 
   const profileQ = useQuery({
     queryKey: ["myEngineer", user?.id],
@@ -71,6 +73,22 @@ function Dashboard() {
       ? `${window.location.origin}/signup?ref=${referralCode}`
       : "";
   const referralCount = referralsQ.data?.referrals?.length ?? 0;
+
+  const [closingId, setClosingId] = useState<string | null>(null);
+
+  const toggleRequestStatus = async (id: string, current: string) => {
+    const next = current === "open" ? "closed" : "open";
+    setClosingId(id);
+    try {
+      await setStatus({ data: { hire_request_id: id, status: next } });
+      toast.success(next === "closed" ? "Role closed" : "Role reopened");
+      requestsQ.refetch();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setClosingId(null);
+    }
+  };
 
   const copy = async (text: string, label: string) => {
     try {
@@ -194,13 +212,38 @@ function Dashboard() {
                         </p>
                       </div>
                     </div>
-                    <Link
-                      to="/requests/$requestId"
-                      params={{ requestId: r.id }}
-                      className="rounded-full bg-background px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ring-black/5 hover:bg-foreground hover:text-background"
-                    >
-                      {r.status} · view
-                    </Link>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ${r.status === "open" ? "bg-emerald-50 text-emerald-700 ring-emerald-200" : "bg-background text-muted-foreground ring-black/5"}`}
+                      >
+                        {r.status}
+                      </span>
+                      <Link
+                        to="/requests/$requestId"
+                        params={{ requestId: r.id }}
+                        className="rounded-full bg-background px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ring-black/5 hover:bg-foreground hover:text-background"
+                      >
+                        view
+                      </Link>
+                      <button
+                        onClick={() => toggleRequestStatus(r.id, r.status)}
+                        disabled={closingId === r.id}
+                        title={r.status === "open" ? "Close role (hired / no longer needed)" : "Reopen role"}
+                        className="inline-flex items-center gap-1 rounded-full bg-background px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ring-black/5 hover:bg-foreground hover:text-background disabled:opacity-50"
+                      >
+                        {closingId === r.id ? (
+                          "…"
+                        ) : r.status === "open" ? (
+                          <>
+                            <Archive className="size-3" /> close
+                          </>
+                        ) : (
+                          <>
+                            <RotateCcw className="size-3" /> reopen
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </li>
                 );
               })}

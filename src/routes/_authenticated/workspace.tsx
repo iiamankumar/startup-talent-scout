@@ -1,18 +1,21 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { z } from "zod";
 import {
   Bell,
   Briefcase,
   CalendarClock,
   CheckCircle2,
+  Clock,
   FileText,
   Globe2,
   Mail,
   MapPin,
   ShieldCheck,
+  Trash2,
   Upload,
   UserCog,
 } from "lucide-react";
@@ -23,11 +26,31 @@ import { extractTextFromFile } from "@/lib/pdf-extract";
 import { screenResume } from "@/lib/screening.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { COUNTRIES } from "@/lib/countries";
+import { deleteMyAccount } from "@/lib/account.functions";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+const tabSchema = z.object({
+  tab: z
+    .enum(["resume", "location", "availability", "preferences", "communications", "account"])
+    .optional(),
+});
 
 export const Route = createFileRoute("/_authenticated/workspace")({
   head: () => ({ meta: [{ title: "Workspace — Aveiq" }] }),
+  validateSearch: tabSchema,
   component: WorkspacePage,
 });
+
 
 type TabKey =
   | "resume"

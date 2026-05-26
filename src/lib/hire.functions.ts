@@ -99,8 +99,16 @@ export const updateHireRequest = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { hire_request_id, ...patch } = data;
-    const clean: Record<string, unknown> = {};
-    for (const [k, v] of Object.entries(patch)) if (v !== undefined) clean[k] = v;
+    const clean: Partial<{
+      role_title: string;
+      stack: string[];
+      budget_monthly_usd: number | null;
+      urgency: string;
+      notes: string | null;
+    }> = {};
+    for (const [k, v] of Object.entries(patch)) {
+      if (v !== undefined) (clean as Record<string, unknown>)[k] = v;
+    }
     if (Object.keys(clean).length === 0) return { ok: true };
     const { error } = await supabase
       .from("hire_requests")
@@ -117,7 +125,7 @@ export const setHireRequestStatus = createServerFn({ method: "POST" })
     z
       .object({
         hire_request_id: z.string().uuid(),
-        status: z.enum(["open", "filled", "closed"]),
+        status: z.enum(["open", "closed"]),
       })
       .parse(input)
   )

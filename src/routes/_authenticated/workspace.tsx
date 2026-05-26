@@ -83,14 +83,28 @@ const WORK_AUTH_OPTIONS = [
 ];
 
 function WorkspacePage() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const qc = useQueryClient();
+  const navigate = useNavigate({ from: "/workspace" });
+  const search = useSearch({ from: "/_authenticated/workspace" });
   const get = useServerFn(getMyEngineerProfile);
   const upsert = useServerFn(upsertMyEngineerProfile);
   const setWA = useServerFn(setWorkAuthorization);
   const screen = useServerFn(screenResume);
+  const deleteAcc = useServerFn(deleteMyAccount);
 
-  const [tab, setTab] = useState<TabKey>("resume");
+  const [tab, setTab] = useState<TabKey>((search.tab as TabKey) ?? "resume");
+
+  useEffect(() => {
+    if (search.tab && search.tab !== tab) setTab(search.tab as TabKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search.tab]);
+
+  const changeTab = (k: TabKey) => {
+    setTab(k);
+    navigate({ search: { tab: k }, replace: true });
+  };
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["myEngineer", user?.id],

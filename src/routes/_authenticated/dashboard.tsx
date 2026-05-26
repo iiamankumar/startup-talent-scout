@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/auth-context";
 import { getMyEngineerProfile } from "@/lib/engineers.functions";
 import { listMyHireRequests, listOpenRequestsForEngineers } from "@/lib/hire.functions";
 import { peekMyReferrals } from "@/lib/referrals.functions";
-import { ArrowRight, Briefcase, Copy, Gift, ShieldCheck, Sparkles, UserCircle2 } from "lucide-react";
+import { Archive, ArrowRight, Briefcase, Copy, Gift, RotateCcw, ShieldCheck, Sparkles, UserCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRealtimeInvalidate } from "@/hooks/use-realtime-invalidate";
 

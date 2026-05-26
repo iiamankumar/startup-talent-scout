@@ -1,18 +1,21 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { z } from "zod";
 import {
   Bell,
   Briefcase,
   CalendarClock,
   CheckCircle2,
+  Clock,
   FileText,
   Globe2,
   Mail,
   MapPin,
   ShieldCheck,
+  Trash2,
   Upload,
   UserCog,
 } from "lucide-react";
@@ -23,11 +26,31 @@ import { extractTextFromFile } from "@/lib/pdf-extract";
 import { screenResume } from "@/lib/screening.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { COUNTRIES } from "@/lib/countries";
+import { deleteMyAccount } from "@/lib/account.functions";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+const tabSchema = z.object({
+  tab: z
+    .enum(["resume", "location", "availability", "preferences", "communications", "account"])
+    .optional(),
+});
 
 export const Route = createFileRoute("/_authenticated/workspace")({
   head: () => ({ meta: [{ title: "Workspace — Aveiq" }] }),
+  validateSearch: tabSchema,
   component: WorkspacePage,
 });
+
 
 type TabKey =
   | "resume"
@@ -60,14 +83,28 @@ const WORK_AUTH_OPTIONS = [
 ];
 
 function WorkspacePage() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const qc = useQueryClient();
+  const navigate = useNavigate({ from: "/workspace" });
+  const search = useSearch({ from: "/_authenticated/workspace" });
   const get = useServerFn(getMyEngineerProfile);
   const upsert = useServerFn(upsertMyEngineerProfile);
   const setWA = useServerFn(setWorkAuthorization);
   const screen = useServerFn(screenResume);
+  const deleteAcc = useServerFn(deleteMyAccount);
 
-  const [tab, setTab] = useState<TabKey>("resume");
+  const [tab, setTab] = useState<TabKey>((search.tab as TabKey) ?? "resume");
+
+  useEffect(() => {
+    if (search.tab && search.tab !== tab) setTab(search.tab as TabKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search.tab]);
+
+  const changeTab = (k: TabKey) => {
+    setTab(k);
+    navigate({ search: { tab: k }, replace: true });
+  };
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["myEngineer", user?.id],
@@ -230,7 +267,7 @@ function WorkspacePage() {
             return (
               <button
                 key={t.key}
-                onClick={() => setTab(t.key)}
+                onClick={() => changeTab(t.key)}
                 className={`group inline-flex items-center gap-2 whitespace-nowrap rounded-md px-3 py-2 text-sm transition-colors ${
                   active
                     ? "bg-foreground text-background"
@@ -342,41 +379,84 @@ function WorkspacePage() {
               </Field>
             </div>
           ) : tab === "location" ? (
-            <div className="space-y-6">
+            <div className="space-y-8">
               <Heading
                 title="Location & Work authorization"
                 subtitle="Helps us match you to roles in your timezone and that fit your legal status."
               />
-              <div className="grid gap-5 md:grid-cols-2">
-                <Field label="Country *">
-                  <select
-                    className={input}
-                    value={form.location}
-                    onChange={(ev) => setForm({ ...form, location: ev.target.value })}
-                  >
-                    <option value="">Select your country…</option>
-                    {COUNTRIES.map((c) => (
-                      <option key={c.code} value={c.name}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                </Field>
-                <Field label="Work authorization *">
-                  <select
-                    className={input}
-                    value={form.work_authorization}
-                    onChange={(ev) => setForm({ ...form, work_authorization: ev.target.value })}
-                  >
-                    {WORK_AUTH_OPTIONS.map((o) => (
-                      <option key={o.v} value={o.v}>
-                        {o.l}
-                      </option>
-                    ))}
-                  </select>
-                </Field>
+
+              {/* Location section */}
+              <div className="rounded-xl border border-border bg-background p-5">
+                <div className="flex items-center gap-2 text-sm font-semibold">
+                  <MapPin className="size-4 text-muted-foreground" />
+                  Location
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Where you're based. Used to surface roles in your timezone.
+                </p>
+                <div className="mt-4 grid gap-5 md:grid-cols-2">
+                  <Field label="Country *">
+                    <select
+                      className={input}
+                      value={form.location}
+                      onChange={(ev) => setForm({ ...form, location: ev.target.value })}
+                    >
+                      <option value="">Select your country…</option>
+                      {COUNTRIES.map((c) => (
+                        <option key={c.code} value={c.name}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                  </Field>
+                  <Field label="Timezone (auto-detected)">
+                    <div className={`${input} flex items-center gap-2 text-muted-foreground`}>
+                      <Clock className="size-3.5" />
+                      {typeof Intl !== "undefined"
+                        ? Intl.DateTimeFormat().resolvedOptions().timeZone
+                        : "—"}
+                    </div>
+                  </Field>
+                </div>
+              </div>
+
+              {/* Work authorization section */}
+              <div className="rounded-xl border border-border bg-background p-5">
+                <div className="flex items-center gap-2 text-sm font-semibold">
+                  <ShieldCheck className="size-4 text-muted-foreground" />
+                  Work authorization
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Your legal right to work. Companies use this to filter for roles you qualify for.
+                </p>
+                <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                  {WORK_AUTH_OPTIONS.map((o) => {
+                    const active = form.work_authorization === o.v;
+                    return (
+                      <label
+                        key={o.v}
+                        className={`flex cursor-pointer items-center gap-3 rounded-lg border p-3 text-sm transition-colors ${
+                          active
+                            ? "border-foreground bg-foreground/5"
+                            : "border-border hover:bg-secondary"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="work_auth"
+                          value={o.v}
+                          checked={active}
+                          onChange={() => setForm({ ...form, work_authorization: o.v })}
+                          className="size-4"
+                        />
+                        <span className="font-medium">{o.l}</span>
+                      </label>
+                    );
+                  })}
+                </div>
               </div>
             </div>
+
           ) : tab === "availability" ? (
             <div className="space-y-6">
               <Heading
@@ -474,8 +554,58 @@ function WorkspacePage() {
                   Back to dashboard
                 </Link>
               </div>
+
+              {/* Danger zone */}
+              <div className="mt-8 rounded-xl border border-destructive/30 bg-destructive/5 p-5">
+                <div className="flex items-center gap-2 text-sm font-semibold text-destructive">
+                  <Trash2 className="size-4" />
+                  Delete account
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Permanently delete your account, profile, applications, and referrals. This cannot
+                  be undone.
+                </p>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <button className="mt-4 inline-flex h-10 items-center gap-2 rounded-md bg-destructive px-4 text-sm font-medium text-destructive-foreground hover:bg-destructive/90">
+                      <Trash2 className="size-3.5" />
+                      Delete my account
+                    </button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete your account?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This permanently deletes your account, profile, applications, and referral
+                        data. You won't be able to recover it.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        onClick={async () => {
+                          try {
+                            await deleteAcc();
+                            toast.success("Account deleted");
+                            await signOut();
+                            navigate({ to: "/" });
+                          } catch (err) {
+                            toast.error(
+                              err instanceof Error ? err.message : "Could not delete account",
+                            );
+                          }
+                        }}
+                      >
+                        Yes, delete forever
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </div>
           )}
+
 
           <div className="mt-8 flex items-center justify-end gap-3 border-t border-border pt-6">
             <button

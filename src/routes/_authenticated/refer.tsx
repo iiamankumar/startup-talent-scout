@@ -92,7 +92,11 @@ function ReferPage() {
         first engagement, you both get paid.
       </p>
 
-      {!generated ? (
+      {peekQ.isLoading && !generated ? (
+        <section className="mt-10 rounded-2xl bg-card p-12 text-center ring-1 ring-black/5">
+          <p className="text-sm text-muted-foreground">Loading your referral details…</p>
+        </section>
+      ) : !generated ? (
         <section className="mt-10 overflow-hidden rounded-2xl bg-gradient-to-br from-foreground to-foreground/80 p-8 text-background sm:p-12">
           <div className="mx-auto max-w-xl text-center">
             <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-background/10 ring-1 ring-background/20">

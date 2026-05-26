@@ -27,6 +27,20 @@ function RequestApplicationsPage() {
     queryFn: () => list({ data: { hire_request_id: requestId } }),
   });
 
+  // Live updates: refresh when new applications come in or this request is edited.
+  useRealtimeInvalidate([
+    {
+      table: "applications",
+      filter: `hire_request_id=eq.${requestId}`,
+      invalidate: [["requestApps", requestId]],
+    },
+    {
+      table: "hire_requests",
+      filter: `id=eq.${requestId}`,
+      invalidate: [["requestApps", requestId]],
+    },
+  ]);
+
   const hr = appsQ.data?.hire_request as
     | {
         role_title?: string;

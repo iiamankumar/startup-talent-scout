@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Check, Copy, Gift, Mail, Share2, Sparkles, Users } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
-import { getMyReferrals } from "@/lib/referrals.functions";
+import { getMyReferrals, peekMyReferrals } from "@/lib/referrals.functions";
 
 export const Route = createFileRoute("/_authenticated/refer")({
   head: () => ({ meta: [{ title: "Refer & earn — Aveiq" }] }),
@@ -16,16 +16,27 @@ function ReferPage() {
   const { user } = useAuth();
   const qc = useQueryClient();
   const getRefs = useServerFn(getMyReferrals);
+  const peek = useServerFn(peekMyReferrals);
 
-  // Track whether the user has explicitly "generated" their link in this session.
+  // Track whether the user has explicitly "generated" their link (or already had one).
   const [generated, setGenerated] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [copied, setCopied] = useState<"code" | "link" | null>(null);
 
+  // Auto-detect existing code so returning users skip the generate step.
+  const peekQ = useQuery({
+    queryKey: ["peekReferrals", user?.id],
+    queryFn: () => peek(),
+  });
+  useEffect(() => {
+    if (peekQ.data?.code) setGenerated(true);
+  }, [peekQ.data?.code]);
+
   const q = useQuery({
     queryKey: ["myReferrals", user?.id],
     queryFn: () => getRefs(),
-    enabled: generated, // Only fetch when user clicks "Generate"
+    enabled: generated, // Only fetch/create when generated
+    initialData: peekQ.data?.code ? { code: peekQ.data.code, referrals: peekQ.data.referrals } : undefined,
   });
 
   const code = q.data?.code ?? "";

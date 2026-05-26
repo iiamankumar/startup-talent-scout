@@ -379,41 +379,84 @@ function WorkspacePage() {
               </Field>
             </div>
           ) : tab === "location" ? (
-            <div className="space-y-6">
+            <div className="space-y-8">
               <Heading
                 title="Location & Work authorization"
                 subtitle="Helps us match you to roles in your timezone and that fit your legal status."
               />
-              <div className="grid gap-5 md:grid-cols-2">
-                <Field label="Country *">
-                  <select
-                    className={input}
-                    value={form.location}
-                    onChange={(ev) => setForm({ ...form, location: ev.target.value })}
-                  >
-                    <option value="">Select your country…</option>
-                    {COUNTRIES.map((c) => (
-                      <option key={c.code} value={c.name}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                </Field>
-                <Field label="Work authorization *">
-                  <select
-                    className={input}
-                    value={form.work_authorization}
-                    onChange={(ev) => setForm({ ...form, work_authorization: ev.target.value })}
-                  >
-                    {WORK_AUTH_OPTIONS.map((o) => (
-                      <option key={o.v} value={o.v}>
-                        {o.l}
-                      </option>
-                    ))}
-                  </select>
-                </Field>
+
+              {/* Location section */}
+              <div className="rounded-xl border border-border bg-background p-5">
+                <div className="flex items-center gap-2 text-sm font-semibold">
+                  <MapPin className="size-4 text-muted-foreground" />
+                  Location
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Where you're based. Used to surface roles in your timezone.
+                </p>
+                <div className="mt-4 grid gap-5 md:grid-cols-2">
+                  <Field label="Country *">
+                    <select
+                      className={input}
+                      value={form.location}
+                      onChange={(ev) => setForm({ ...form, location: ev.target.value })}
+                    >
+                      <option value="">Select your country…</option>
+                      {COUNTRIES.map((c) => (
+                        <option key={c.code} value={c.name}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                  </Field>
+                  <Field label="Timezone (auto-detected)">
+                    <div className={`${input} flex items-center gap-2 text-muted-foreground`}>
+                      <Clock className="size-3.5" />
+                      {typeof Intl !== "undefined"
+                        ? Intl.DateTimeFormat().resolvedOptions().timeZone
+                        : "—"}
+                    </div>
+                  </Field>
+                </div>
+              </div>
+
+              {/* Work authorization section */}
+              <div className="rounded-xl border border-border bg-background p-5">
+                <div className="flex items-center gap-2 text-sm font-semibold">
+                  <ShieldCheck className="size-4 text-muted-foreground" />
+                  Work authorization
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Your legal right to work. Companies use this to filter for roles you qualify for.
+                </p>
+                <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                  {WORK_AUTH_OPTIONS.map((o) => {
+                    const active = form.work_authorization === o.v;
+                    return (
+                      <label
+                        key={o.v}
+                        className={`flex cursor-pointer items-center gap-3 rounded-lg border p-3 text-sm transition-colors ${
+                          active
+                            ? "border-foreground bg-foreground/5"
+                            : "border-border hover:bg-secondary"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="work_auth"
+                          value={o.v}
+                          checked={active}
+                          onChange={() => setForm({ ...form, work_authorization: o.v })}
+                          className="size-4"
+                        />
+                        <span className="font-medium">{o.l}</span>
+                      </label>
+                    );
+                  })}
+                </div>
               </div>
             </div>
+
           ) : tab === "availability" ? (
             <div className="space-y-6">
               <Heading

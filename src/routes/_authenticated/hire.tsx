@@ -35,7 +35,6 @@ function HirePage() {
   const [form, setForm] = useState({
     company_name: "",
     company_website: "",
-    company_stage: "" as "" | "idea" | "pre_seed" | "seed" | "series_a" | "series_b_plus",
     role_title: "",
     stack: "",
     budget_monthly_usd: "",

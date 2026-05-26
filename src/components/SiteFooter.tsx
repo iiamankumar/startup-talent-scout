@@ -21,29 +21,32 @@ export function SiteFooter() {
         </nav>
         <div className="flex items-center gap-4">
           <a
-            href="https://www.linkedin.com"
+            href="https://www.linkedin.com/"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-foreground"
             aria-label="LinkedIn"
+            title="Open LinkedIn"
           >
             <Linkedin className="h-4 w-4" />
           </a>
           <a
-            href="https://twitter.com"
+            href="https://x.com/"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-foreground"
-            aria-label="Twitter"
+            aria-label="X (Twitter)"
+            title="Open X (Twitter)"
           >
             <Twitter className="h-4 w-4" />
           </a>
           <a
-            href="https://www.instagram.com"
+            href="https://www.instagram.com/"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-foreground"
             aria-label="Instagram"
+            title="Open Instagram"
           >
             <Instagram className="h-4 w-4" />
           </a>

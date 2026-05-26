@@ -68,29 +68,33 @@ function ResumeReviewPage() {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-8">
-        <Link to="/" className="flex items-center gap-2">
-          <AveiqLogo />
-        </Link>
+      <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-8">
         <div className="flex items-center gap-6">
+          <Link to="/" className="flex items-center gap-2">
+            <AveiqLogo />
+          </Link>
           {user && (
             <Link to="/dashboard" className="text-sm font-medium text-muted-foreground hover:text-foreground">
               Dashboard
             </Link>
           )}
-          <Link to="/network" className="hidden text-sm font-medium text-muted-foreground hover:text-foreground sm:inline">
-            Network
-          </Link>
-          <Link to="/apply" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-            Apply as Talent
-          </Link>
-          <Link
-            to="/hire"
-            className="inline-flex items-center rounded-full bg-foreground py-2 pl-4 pr-4 text-sm font-medium text-background"
-          >
-            Hire Talent
-          </Link>
         </div>
+        {!user && (
+          <div className="flex items-center gap-6">
+            <Link to="/network" className="hidden text-sm font-medium text-muted-foreground hover:text-foreground sm:inline">
+              Network
+            </Link>
+            <Link to="/apply" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+              Apply as Talent
+            </Link>
+            <Link
+              to="/hire"
+              className="inline-flex items-center rounded-full bg-foreground py-2 pl-4 pr-4 text-sm font-medium text-background"
+            >
+              Hire Talent
+            </Link>
+          </div>
+        )}
       </nav>
 
       <section className="px-6 pt-8 pb-12 lg:pt-16">

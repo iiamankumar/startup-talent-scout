@@ -74,7 +74,10 @@ function AuthLayout() {
               </Link>
             ))}
             <button
-              onClick={() => signOut()}
+              onClick={async () => {
+                await signOut();
+                window.location.assign("/");
+              }}
               className="whitespace-nowrap rounded-md border border-border px-3 py-1.5 text-xs font-medium transition-colors hover:bg-secondary"
             >
               Sign out

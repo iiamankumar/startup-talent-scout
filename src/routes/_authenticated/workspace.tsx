@@ -22,6 +22,7 @@ import { setWorkAuthorization } from "@/lib/screening.functions";
 import { extractTextFromFile } from "@/lib/pdf-extract";
 import { screenResume } from "@/lib/screening.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { COUNTRIES } from "@/lib/countries";
 
 export const Route = createFileRoute("/_authenticated/workspace")({
   head: () => ({ meta: [{ title: "Workspace — Aveiq" }] }),
@@ -347,13 +348,19 @@ function WorkspacePage() {
                 subtitle="Helps us match you to roles in your timezone and that fit your legal status."
               />
               <div className="grid gap-5 md:grid-cols-2">
-                <Field label="Location *">
-                  <input
+                <Field label="Country *">
+                  <select
                     className={input}
                     value={form.location}
                     onChange={(ev) => setForm({ ...form, location: ev.target.value })}
-                    placeholder="e.g. Bangalore, IN"
-                  />
+                  >
+                    <option value="">Select your country…</option>
+                    {COUNTRIES.map((c) => (
+                      <option key={c.code} value={c.name}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
                 </Field>
                 <Field label="Work authorization *">
                   <select

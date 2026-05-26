@@ -554,8 +554,58 @@ function WorkspacePage() {
                   Back to dashboard
                 </Link>
               </div>
+
+              {/* Danger zone */}
+              <div className="mt-8 rounded-xl border border-destructive/30 bg-destructive/5 p-5">
+                <div className="flex items-center gap-2 text-sm font-semibold text-destructive">
+                  <Trash2 className="size-4" />
+                  Delete account
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Permanently delete your account, profile, applications, and referrals. This cannot
+                  be undone.
+                </p>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <button className="mt-4 inline-flex h-10 items-center gap-2 rounded-md bg-destructive px-4 text-sm font-medium text-destructive-foreground hover:bg-destructive/90">
+                      <Trash2 className="size-3.5" />
+                      Delete my account
+                    </button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete your account?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This permanently deletes your account, profile, applications, and referral
+                        data. You won't be able to recover it.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        onClick={async () => {
+                          try {
+                            await deleteAcc();
+                            toast.success("Account deleted");
+                            await signOut();
+                            navigate({ to: "/" });
+                          } catch (err) {
+                            toast.error(
+                              err instanceof Error ? err.message : "Could not delete account",
+                            );
+                          }
+                        }}
+                      >
+                        Yes, delete forever
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </div>
           )}
+
 
           <div className="mt-8 flex items-center justify-end gap-3 border-t border-border pt-6">
             <button

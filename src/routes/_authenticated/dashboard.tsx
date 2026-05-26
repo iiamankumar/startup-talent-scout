@@ -53,6 +53,18 @@ function Dashboard() {
     enabled: showEngineerPanel,
   });
 
+  // Live updates: refresh dashboard lists when hire_requests or applications change.
+  useRealtimeInvalidate([
+    {
+      table: "hire_requests",
+      invalidate: [["openRequests"], ["myHireRequests", user?.id]],
+    },
+    {
+      table: "applications",
+      invalidate: [["myHireRequests", user?.id], ["openRequests"]],
+    },
+  ]);
+
   const referralCode = referralsQ.data?.code ?? "";
   const referralLink =
     typeof window !== "undefined" && referralCode

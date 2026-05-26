@@ -7,6 +7,7 @@ import { listMyHireRequests, listOpenRequestsForEngineers } from "@/lib/hire.fun
 import { peekMyReferrals } from "@/lib/referrals.functions";
 import { ArrowRight, Briefcase, Copy, Gift, ShieldCheck, Sparkles, UserCircle2 } from "lucide-react";
 import { toast } from "sonner";
+import { useRealtimeInvalidate } from "@/hooks/use-realtime-invalidate";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Aveiq" }] }),
@@ -51,6 +52,18 @@ function Dashboard() {
     queryFn: () => getOpen(),
     enabled: showEngineerPanel,
   });
+
+  // Live updates: refresh dashboard lists when hire_requests or applications change.
+  useRealtimeInvalidate([
+    {
+      table: "hire_requests",
+      invalidate: [["openRequests"], ["myHireRequests", user?.id]],
+    },
+    {
+      table: "applications",
+      invalidate: [["myHireRequests", user?.id], ["openRequests"]],
+    },
+  ]);
 
   const referralCode = referralsQ.data?.code ?? "";
   const referralLink =

@@ -8,6 +8,7 @@ import {
 } from "@/lib/applications.functions";
 import { updateHireRequest, setHireRequestStatus } from "@/lib/hire.functions";
 import { toast } from "sonner";
+import { useRealtimeInvalidate } from "@/hooks/use-realtime-invalidate";
 
 export const Route = createFileRoute("/_authenticated/requests/$requestId")({
   head: () => ({ meta: [{ title: "Applications — Aveiq" }] }),
@@ -25,6 +26,20 @@ function RequestApplicationsPage() {
     queryKey: ["requestApps", requestId],
     queryFn: () => list({ data: { hire_request_id: requestId } }),
   });
+
+  // Live updates: refresh when new applications come in or this request is edited.
+  useRealtimeInvalidate([
+    {
+      table: "applications",
+      filter: `hire_request_id=eq.${requestId}`,
+      invalidate: [["requestApps", requestId]],
+    },
+    {
+      table: "hire_requests",
+      filter: `id=eq.${requestId}`,
+      invalidate: [["requestApps", requestId]],
+    },
+  ]);
 
   const hr = appsQ.data?.hire_request as
     | {

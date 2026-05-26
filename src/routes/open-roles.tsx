@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { listOpenRequestsPublic } from "@/lib/hire.functions";
 import { AveiqLogo } from "@/components/AveiqLogo";
 import { useAuth } from "@/lib/auth-context";
+import { useRealtimeInvalidate } from "@/hooks/use-realtime-invalidate";
 
 export const Route = createFileRoute("/open-roles")({
   head: () => ({
@@ -21,6 +22,10 @@ function OpenRolesPage() {
   const { data, isLoading } = useQuery({ queryKey: ["openRolesPublic"], queryFn: () => fn() });
   const isEngineer = roles.includes("engineer");
   const requests = data?.requests ?? [];
+
+  useRealtimeInvalidate([
+    { table: "hire_requests", invalidate: [["openRolesPublic"]] },
+  ]);
 
   return (
     <main className="min-h-screen bg-background">

@@ -35,7 +35,6 @@ function HirePage() {
   const [form, setForm] = useState({
     company_name: "",
     company_website: "",
-    company_stage: "" as "" | "idea" | "pre_seed" | "seed" | "series_a" | "series_b_plus",
     role_title: "",
     stack: "",
     budget_monthly_usd: "",
@@ -51,7 +50,6 @@ function HirePage() {
       ...f,
       company_name: f.company_name || c.name || "",
       company_website: f.company_website || c.website || "",
-      company_stage: (f.company_stage || (c.stage ?? "")) as typeof f.company_stage,
     }));
   }, [companyData]);
 
@@ -67,7 +65,6 @@ function HirePage() {
         data: {
           company_name: form.company_name,
           company_website: form.company_website || "",
-          company_stage: form.company_stage || null,
           role_title: form.role_title,
           stack: form.stack
             .split(",")
@@ -149,22 +146,6 @@ function HirePage() {
               onChange={(e) => setForm({ ...form, company_website: e.target.value })}
               className="h-11 w-full rounded-md border border-border bg-background px-3 text-sm"
             />
-          </Field>
-          <Field label="Stage">
-            <select
-              value={form.company_stage}
-              onChange={(e) =>
-                setForm({ ...form, company_stage: e.target.value as typeof form.company_stage })
-              }
-              className="h-11 w-full rounded-md border border-border bg-background px-3 text-sm"
-            >
-              <option value="">Select…</option>
-              <option value="idea">Idea</option>
-              <option value="pre_seed">Pre-seed</option>
-              <option value="seed">Seed</option>
-              <option value="series_a">Series A</option>
-              <option value="series_b_plus">Series B+</option>
-            </select>
           </Field>
           <Field label="Urgency *">
             <select

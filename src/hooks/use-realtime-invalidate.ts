@@ -23,8 +23,9 @@ export function useRealtimeInvalidate(subs: Sub[], enabled = true) {
     );
 
     for (const s of subs) {
-      channel.on(
-        // @ts-expect-error supabase types are narrow here
+      (channel as unknown as {
+        on: (e: string, opts: Record<string, unknown>, cb: () => void) => void;
+      }).on(
         "postgres_changes",
         { event: "*", schema: s.schema ?? "public", table: s.table, ...(s.filter ? { filter: s.filter } : {}) },
         () => {

@@ -156,24 +156,41 @@ function Dashboard() {
             <p className="mt-4 text-sm text-muted-foreground">Loading…</p>
           ) : requestsQ.data && requestsQ.data.requests.length > 0 ? (
             <ul className="mt-4 divide-y divide-border">
-              {requestsQ.data.requests.map((r) => (
-                <li key={r.id} className="flex items-center justify-between py-3">
-                  <div>
-                    <p className="text-sm font-medium">{r.role_title}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {(r.companies as { name: string } | null)?.name ?? "—"} ·{" "}
-                      {r.stack.slice(0, 3).join(", ")}
-                    </p>
-                  </div>
-                  <Link
-                    to="/requests/$requestId"
-                    params={{ requestId: r.id }}
-                    className="rounded-full bg-background px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ring-black/5 hover:bg-foreground hover:text-background"
-                  >
-                    {r.status} · view
-                  </Link>
-                </li>
-              ))}
+              {requestsQ.data.requests.map((r) => {
+                const company = r.companies as { name?: string; logo_url?: string | null } | null;
+                const name = company?.name ?? "—";
+                const initial = (name?.[0] ?? "?").toUpperCase();
+                return (
+                  <li key={r.id} className="flex items-center justify-between py-3">
+                    <div className="flex items-center gap-3">
+                      {company?.logo_url ? (
+                        <img
+                          src={company.logo_url}
+                          alt={name}
+                          className="size-9 rounded-md object-cover ring-1 ring-black/5"
+                        />
+                      ) : (
+                        <div className="flex size-9 items-center justify-center rounded-md bg-secondary text-xs font-semibold text-muted-foreground ring-1 ring-black/5">
+                          {initial}
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-sm font-medium">{r.role_title}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {name} · {r.stack.slice(0, 3).join(", ")}
+                        </p>
+                      </div>
+                    </div>
+                    <Link
+                      to="/requests/$requestId"
+                      params={{ requestId: r.id }}
+                      className="rounded-full bg-background px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ring-black/5 hover:bg-foreground hover:text-background"
+                    >
+                      {r.status} · view
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           ) : (
             <p className="mt-4 text-sm text-muted-foreground">

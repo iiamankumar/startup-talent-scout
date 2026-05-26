@@ -293,27 +293,34 @@ function Dashboard() {
           ) : openQ.data && openQ.data.requests.length > 0 ? (
             <ul className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {openQ.data.requests.map((r) => (
-                <li key={r.id} className="rounded-xl bg-background p-5 ring-1 ring-black/5">
-                  <p className="text-sm font-semibold">{r.role_title}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {(r.companies as { name?: string; stage?: string } | null)?.name ?? "Stealth"}
-                  </p>
-                  <div className="mt-4 flex flex-wrap gap-1.5">
-                    {r.stack.slice(0, 4).map((s) => (
-                      <span
-                        key={s}
-                        className="rounded bg-secondary px-1.5 py-0.5 text-[10px] text-muted-foreground"
-                      >
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Urgency: {r.urgency}</span>
-                    {r.budget_monthly_usd && (
-                      <span>₹{r.budget_monthly_usd.toLocaleString("en-IN")}/mo</span>
-                    )}
-                  </div>
+                <li key={r.id}>
+                  <Link
+                    to="/jobs/$jobId"
+                    params={{ jobId: r.id }}
+                    className="group block rounded-xl bg-background p-5 ring-1 ring-black/5 transition hover:ring-foreground/30"
+                  >
+                    <p className="text-sm font-semibold group-hover:underline">{r.role_title}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {(r.companies as { name?: string; stage?: string } | null)?.name ?? "Stealth"}
+                    </p>
+                    <div className="mt-4 flex flex-wrap gap-1.5">
+                      {r.stack.slice(0, 4).map((s) => (
+                        <span
+                          key={s}
+                          className="rounded bg-secondary px-1.5 py-0.5 text-[10px] text-muted-foreground"
+                        >
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
+                      <span>Urgency: {r.urgency}</span>
+                      {r.budget_monthly_usd && (
+                        <span>₹{r.budget_monthly_usd.toLocaleString("en-IN")}/mo</span>
+                      )}
+                    </div>
+                    <div className="mt-3 text-xs font-medium text-foreground">View role →</div>
+                  </Link>
                 </li>
               ))}
             </ul>

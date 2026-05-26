@@ -156,24 +156,41 @@ function Dashboard() {
             <p className="mt-4 text-sm text-muted-foreground">Loading…</p>
           ) : requestsQ.data && requestsQ.data.requests.length > 0 ? (
             <ul className="mt-4 divide-y divide-border">
-              {requestsQ.data.requests.map((r) => (
-                <li key={r.id} className="flex items-center justify-between py-3">
-                  <div>
-                    <p className="text-sm font-medium">{r.role_title}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {(r.companies as { name: string } | null)?.name ?? "—"} ·{" "}
-                      {r.stack.slice(0, 3).join(", ")}
-                    </p>
-                  </div>
-                  <Link
-                    to="/requests/$requestId"
-                    params={{ requestId: r.id }}
-                    className="rounded-full bg-background px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ring-black/5 hover:bg-foreground hover:text-background"
-                  >
-                    {r.status} · view
-                  </Link>
-                </li>
-              ))}
+              {requestsQ.data.requests.map((r) => {
+                const company = r.companies as { name?: string; logo_url?: string | null } | null;
+                const name = company?.name ?? "—";
+                const initial = (name?.[0] ?? "?").toUpperCase();
+                return (
+                  <li key={r.id} className="flex items-center justify-between py-3">
+                    <div className="flex items-center gap-3">
+                      {company?.logo_url ? (
+                        <img
+                          src={company.logo_url}
+                          alt={name}
+                          className="size-9 rounded-md object-cover ring-1 ring-black/5"
+                        />
+                      ) : (
+                        <div className="flex size-9 items-center justify-center rounded-md bg-secondary text-xs font-semibold text-muted-foreground ring-1 ring-black/5">
+                          {initial}
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-sm font-medium">{r.role_title}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {name} · {r.stack.slice(0, 3).join(", ")}
+                        </p>
+                      </div>
+                    </div>
+                    <Link
+                      to="/requests/$requestId"
+                      params={{ requestId: r.id }}
+                      className="rounded-full bg-background px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ring-black/5 hover:bg-foreground hover:text-background"
+                    >
+                      {r.status} · view
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           ) : (
             <p className="mt-4 text-sm text-muted-foreground">
@@ -276,27 +293,34 @@ function Dashboard() {
           ) : openQ.data && openQ.data.requests.length > 0 ? (
             <ul className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {openQ.data.requests.map((r) => (
-                <li key={r.id} className="rounded-xl bg-background p-5 ring-1 ring-black/5">
-                  <p className="text-sm font-semibold">{r.role_title}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {(r.companies as { name?: string; stage?: string } | null)?.name ?? "Stealth"}
-                  </p>
-                  <div className="mt-4 flex flex-wrap gap-1.5">
-                    {r.stack.slice(0, 4).map((s) => (
-                      <span
-                        key={s}
-                        className="rounded bg-secondary px-1.5 py-0.5 text-[10px] text-muted-foreground"
-                      >
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Urgency: {r.urgency}</span>
-                    {r.budget_monthly_usd && (
-                      <span>₹{r.budget_monthly_usd.toLocaleString("en-IN")}/mo</span>
-                    )}
-                  </div>
+                <li key={r.id}>
+                  <Link
+                    to="/jobs/$jobId"
+                    params={{ jobId: r.id }}
+                    className="group block rounded-xl bg-background p-5 ring-1 ring-black/5 transition hover:ring-foreground/30"
+                  >
+                    <p className="text-sm font-semibold group-hover:underline">{r.role_title}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {(r.companies as { name?: string; stage?: string } | null)?.name ?? "Stealth"}
+                    </p>
+                    <div className="mt-4 flex flex-wrap gap-1.5">
+                      {r.stack.slice(0, 4).map((s) => (
+                        <span
+                          key={s}
+                          className="rounded bg-secondary px-1.5 py-0.5 text-[10px] text-muted-foreground"
+                        >
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
+                      <span>Urgency: {r.urgency}</span>
+                      {r.budget_monthly_usd && (
+                        <span>₹{r.budget_monthly_usd.toLocaleString("en-IN")}/mo</span>
+                      )}
+                    </div>
+                    <div className="mt-3 text-xs font-medium text-foreground">View role →</div>
+                  </Link>
                 </li>
               ))}
             </ul>

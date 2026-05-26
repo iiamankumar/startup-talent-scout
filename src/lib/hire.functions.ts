@@ -77,7 +77,7 @@ export const listMyHireRequests = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     const { data, error } = await supabase
       .from("hire_requests")
-      .select("id, role_title, stack, urgency, status, created_at, companies(name)")
+      .select("id, role_title, stack, urgency, status, created_at, companies(name, logo_url)")
       .eq("owner_id", userId)
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);

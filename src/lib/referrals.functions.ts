@@ -33,6 +33,26 @@ export const getMyReferrals = createServerFn({ method: "GET" })
     return { code: codeRow.code, referrals: referrals ?? [] };
   });
 
+// Peek — does NOT create a code if missing. Used by dashboards/UIs that want to know
+// whether the user has explicitly generated a referral link yet.
+export const peekMyReferrals = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { userId } = context;
+    const { data: codeRow } = await supabaseAdmin
+      .from("referral_codes")
+      .select("code")
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (!codeRow) return { code: null as string | null, referrals: [] as never[] };
+    const { data: referrals } = await supabaseAdmin
+      .from("referrals")
+      .select("*")
+      .eq("referrer_user_id", userId)
+      .order("created_at", { ascending: false });
+    return { code: codeRow.code as string, referrals: referrals ?? [] };
+  });
+
 // Attribute a referral on signup (called from auth-context after login if ?ref=CODE was stored)
 export const attributeReferral = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

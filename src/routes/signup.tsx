@@ -175,7 +175,14 @@ function SignupPage() {
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-muted-foreground">
+      <p className="mt-4 text-center text-xs text-muted-foreground">
+        Didn't get the verification email?{" "}
+        <button type="button" onClick={handleResend} className="font-medium text-foreground underline">
+          Resend it
+        </button>
+      </p>
+
+      <p className="mt-3 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
         <Link to="/login" search={{ redirect: target }} className="font-medium text-foreground underline">
           Sign in

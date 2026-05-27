@@ -116,6 +116,9 @@ function AdminPage() {
 
       <MetricsDashboard />
 
+      <IncompleteSignupReminder />
+
+
       <div className="mt-12 flex items-center justify-between border-b border-border pb-4">
         <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
           Vetting queue

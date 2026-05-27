@@ -567,10 +567,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      can_subscribe_realtime_topic: {
-        Args: { _topic: string }
-        Returns: boolean
-      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean

@@ -83,7 +83,7 @@ const CompleteSignupEmail = ({ name, audience = 'unknown' }: CompleteSignupProps
             <Heading style={h2}>Any questions?</Heading>
             <Text style={text}>
               Reply to this email or reach us at{' '}
-              <Link href="mailto:support@aveiq.app" style={link}>support@aveiq.app</Link>.
+              <Link href="mailto:care@aveiq.app" style={link}>care@aveiq.app</Link>.
             </Text>
 
             <Text style={signoff}>— The {SITE_NAME} Team</Text>

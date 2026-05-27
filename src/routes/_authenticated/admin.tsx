@@ -8,6 +8,7 @@ import {
   bulkUpdateEngineerVetting,
   getAdminMetrics,
 } from "@/lib/admin.functions";
+import { sendIncompleteSignupReminders } from "@/lib/incomplete-signup.functions";
 import { listAllReferralsAdmin, updateReferralReward } from "@/lib/referrals.functions";
 
 import { scheduleMainInterview, setMainInterviewVerdict } from "@/lib/interview.functions";
@@ -115,6 +116,9 @@ function AdminPage() {
       </div>
 
       <MetricsDashboard />
+
+      <IncompleteSignupReminder />
+
 
       <div className="mt-12 flex items-center justify-between border-b border-border pb-4">
         <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
@@ -554,6 +558,59 @@ function MetricsDashboard() {
           </div>
         ))}
       </div>
+    </section>
+  );
+}
+
+function IncompleteSignupReminder() {
+  const run = useServerFn(sendIncompleteSignupReminders);
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState<null | {
+    scanned: number;
+    eligible: number;
+    queued: number;
+    skipped: number;
+    suppressed: number;
+  }>(null);
+
+  const handleClick = async () => {
+    if (busy) return;
+    if (!confirm("Send reminder email to all users who signed up but haven't completed the next step?")) return;
+    setBusy(true);
+    try {
+      const res = await run();
+      setResult(res);
+      toast.success(`Queued ${res.queued} reminder${res.queued === 1 ? "" : "s"}`);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Failed to send reminders");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <section className="mt-10 rounded-lg border border-border p-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h3 className="text-sm font-semibold">Incomplete signup reminders</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Sends a one-time email to users who created an account 24h+ ago but haven't completed an engineer profile or hire request. Safe to re-run — each user only receives one reminder.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={handleClick}
+          disabled={busy}
+          className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-50"
+        >
+          {busy ? "Sending…" : "Send reminders"}
+        </button>
+      </div>
+      {result && (
+        <p className="mt-3 text-xs text-muted-foreground">
+          Scanned {result.scanned} · Eligible {result.eligible} · Queued {result.queued} · Skipped {result.skipped} · Suppressed {result.suppressed}
+        </p>
+      )}
     </section>
   );
 }

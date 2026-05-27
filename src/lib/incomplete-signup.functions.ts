@@ -88,14 +88,9 @@ export const sendIncompleteSignupReminders = createServerFn({ method: "POST" })
     const emailsLower = candidates.map((u) => u.email!.toLowerCase());
 
     // 2. Identify "completed" users (have engineer record OR have hire_request)
-    const [engRes, hireRes, sentRes, suppRes] = await Promise.all([
+    const [engRes, hireRes, suppRes] = await Promise.all([
       supabaseAdmin.from("engineers").select("user_id").in("user_id", ids),
       supabaseAdmin.from("hire_requests").select("owner_id").in("owner_id", ids),
-      supabaseAdmin
-        .from("email_send_log")
-        .select("recipient_email")
-        .eq("template_name", "complete-your-signup")
-        .in("recipient_email", candidates.map((u) => u.email!)),
       supabaseAdmin
         .from("suppressed_emails")
         .select("email")
@@ -104,12 +99,9 @@ export const sendIncompleteSignupReminders = createServerFn({ method: "POST" })
 
     const completedEngineers = new Set((engRes.data ?? []).map((r: any) => r.user_id));
     const completedFounders = new Set((hireRes.data ?? []).map((r: any) => r.owner_id));
-    const alreadySent = new Set(
-      (sentRes.data ?? []).map((r: any) => (r.recipient_email as string).toLowerCase()),
-    );
     const suppressed = new Set((suppRes.data ?? []).map((r: any) => r.email));
 
-    // Look up role hints
+    // Look up role hints (fallback when signup metadata.intent missing)
     const { data: rolesData } = await supabaseAdmin
       .from("user_roles")
       .select("user_id, role")
@@ -133,21 +125,22 @@ export const sendIncompleteSignupReminders = createServerFn({ method: "POST" })
         skipped += 1;
         continue;
       }
-      if (alreadySent.has(emailLower)) {
-        skipped += 1;
-        continue;
-      }
       if (suppressed.has(emailLower)) {
         suppressedCount += 1;
         continue;
       }
 
+      // Audience detection: prefer signup-time intent, then assigned role, else unknown
+      const intent = u.user_metadata?.intent as string | undefined;
       const roles = roleMap.get(u.id) ?? [];
-      const audience: "engineer" | "founder" | "unknown" = roles.includes("founder")
-        ? "founder"
-        : roles.includes("engineer")
-          ? "engineer"
-          : "unknown";
+      let audience: "engineer" | "founder" | "unknown" = "unknown";
+      if (intent === "founder" || intent === "engineer") {
+        audience = intent;
+      } else if (roles.includes("founder")) {
+        audience = "founder";
+      } else if (roles.includes("engineer")) {
+        audience = "engineer";
+      }
 
       const name =
         (u.user_metadata?.full_name as string | undefined) ||
@@ -162,8 +155,10 @@ export const sendIncompleteSignupReminders = createServerFn({ method: "POST" })
         typeof template.subject === "function" ? template.subject(props) : template.subject;
 
       const messageId = crypto.randomUUID();
-      const idempotencyKey = `complete-signup-${u.id}`;
+      // Unique idempotency key per send so admins can resend reminders
+      const idempotencyKey = `complete-signup-${u.id}-${Date.now()}`;
       const unsubscribeToken = await getOrCreateUnsubscribeToken(email);
+
 
       await supabaseAdmin.from("email_send_log").insert({
         message_id: messageId,

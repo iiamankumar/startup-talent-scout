@@ -91,5 +91,46 @@ export const updateApplicationStatus = createServerFn({ method: "POST" })
       .update({ status: data.status })
       .eq("id", data.application_id);
     if (error) throw new Error(error.message);
+
+    // Notify the candidate by email (best-effort; do not fail the request)
+    try {
+      const { data: app } = await supabaseAdmin
+        .from("applications")
+        .select(
+          "engineer_id, hire_requests(role_title, companies(name)), engineers!inner(display_name)"
+        )
+        .eq("id", data.application_id)
+        .maybeSingle();
+
+      if (app?.engineer_id) {
+        const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(
+          app.engineer_id
+        );
+        const email = authUser?.user?.email;
+        if (email) {
+          const hr = app.hire_requests as
+            | { role_title?: string; companies?: { name?: string } | null }
+            | null;
+          const eng = app.engineers as { display_name?: string } | null;
+          await supabaseAdmin.rpc("enqueue_email", {
+            queue_name: "transactional_emails",
+            payload: {
+              templateName: "application-status-update",
+              recipientEmail: email,
+              templateData: {
+                candidateName: eng?.display_name,
+                roleTitle: hr?.role_title,
+                companyName: hr?.companies?.name,
+                status: data.status,
+              } as never,
+              idempotencyKey: `app-status-${data.application_id}-${data.status}-${Date.now()}`,
+            } as never,
+          });
+        }
+      }
+    } catch (e) {
+      console.error("Failed to enqueue status email:", e);
+    }
+
     return { ok: true };
   });

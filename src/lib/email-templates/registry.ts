@@ -15,6 +15,7 @@ import { template as welcome } from './welcome'
 import { template as interviewScheduledEngineer } from './interview-scheduled-engineer'
 import { template as interviewScheduledAdmin } from './interview-scheduled-admin'
 import { template as completeYourSignup } from './complete-your-signup'
+import { template as applicationStatusUpdate } from './application-status-update'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'application-submitted': applicationSubmitted,
@@ -23,4 +24,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'interview-scheduled-engineer': interviewScheduledEngineer,
   'interview-scheduled-admin': interviewScheduledAdmin,
   'complete-your-signup': completeYourSignup,
+  'application-status-update': applicationStatusUpdate,
 }

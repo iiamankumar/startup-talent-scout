@@ -233,7 +233,13 @@ function RequestApplicationsPage() {
             <article key={a.id} className="rounded-2xl bg-card p-6 ring-1 ring-black/5">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-lg font-semibold">{eng?.display_name}</p>
+                  <Link
+                    to="/engineer/$userId"
+                    params={{ userId: a.engineer_id as string }}
+                    className="text-lg font-semibold hover:underline"
+                  >
+                    {eng?.display_name}
+                  </Link>
                   <p className="text-sm text-muted-foreground">{eng?.headline ?? "—"}</p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     {eng?.location ?? "Remote"} · {eng?.years_experience ?? "?"} yrs
@@ -274,7 +280,24 @@ function RequestApplicationsPage() {
                     </a>
                   )}
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Link
+                    to="/engineer/$userId"
+                    params={{ userId: a.engineer_id as string }}
+                    className="rounded-md border border-border px-3 py-1.5 text-xs font-medium hover:bg-secondary"
+                  >
+                    View profile
+                  </Link>
+                  {a.status === "hired" && (
+                    <Link
+                      to="/engineer/$userId"
+                      params={{ userId: a.engineer_id as string }}
+                      hash="reviews"
+                      className="rounded-md bg-foreground px-3 py-1.5 text-xs font-medium text-background hover:opacity-90"
+                    >
+                      Leave a review
+                    </Link>
+                  )}
                   {(["shortlisted", "hired", "rejected"] as const).map((s) => (
                     <button
                       key={s}

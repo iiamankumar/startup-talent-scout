@@ -233,7 +233,13 @@ function RequestApplicationsPage() {
             <article key={a.id} className="rounded-2xl bg-card p-6 ring-1 ring-black/5">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-lg font-semibold">{eng?.display_name}</p>
+                  <Link
+                    to="/engineer/$userId"
+                    params={{ userId: a.engineer_id as string }}
+                    className="text-lg font-semibold hover:underline"
+                  >
+                    {eng?.display_name}
+                  </Link>
                   <p className="text-sm text-muted-foreground">{eng?.headline ?? "—"}</p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     {eng?.location ?? "Remote"} · {eng?.years_experience ?? "?"} yrs

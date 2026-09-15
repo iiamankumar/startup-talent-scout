@@ -7,7 +7,9 @@ import { useAuth } from "@/lib/auth-context";
 import { AuthShell, Field, Divider, GoogleIcon } from "@/components/AuthShell";
 
 export const Route = createFileRoute("/signup")({
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { redirect?: string; ref?: string; intent?: "engineer" | "founder" } => ({
     redirect: typeof search.redirect === "string" ? search.redirect : undefined,
     ref: typeof search.ref === "string" ? search.ref : undefined,
     intent:

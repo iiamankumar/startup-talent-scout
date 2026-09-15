@@ -60,15 +60,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(s);
       setUser(s?.user ?? null);
       setTimeout(() => {
-        loadRoles(s?.user?.id);
-        if (s?.user) attributeRef();
+        if (s?.user) {
+          applyIntent(s.user.id).finally(() => loadRoles(s.user.id));
+          attributeRef();
+        } else {
+          loadRoles(undefined);
+        }
       }, 0);
     });
 
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       setUser(data.session?.user ?? null);
-      loadRoles(data.session?.user?.id).finally(() => setLoading(false));
+      const uid = data.session?.user?.id;
+      const start = uid ? applyIntent(uid) : Promise.resolve();
+      start.then(() => loadRoles(uid)).finally(() => setLoading(false));
       if (data.session?.user) attributeRef();
     });
 

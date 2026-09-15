@@ -35,6 +35,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
 
+    const applyIntent = async (uid: string | undefined) => {
+      try {
+        const pending = localStorage.getItem("aveiq_intent");
+        if (pending !== "engineer" && pending !== "founder") return;
+        localStorage.removeItem("aveiq_intent");
+        const { applySignupIntent } = await import("@/lib/intent.functions");
+        await applySignupIntent({ data: { intent: pending } });
+        await loadRoles(uid);
+      } catch { /* ignore */ }
+    };
+
     const attributeRef = async () => {
       try {
         const ref = localStorage.getItem("aveiq_ref");
@@ -49,15 +60,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(s);
       setUser(s?.user ?? null);
       setTimeout(() => {
-        loadRoles(s?.user?.id);
-        if (s?.user) attributeRef();
+        if (s?.user) {
+          applyIntent(s.user.id).finally(() => loadRoles(s.user.id));
+          attributeRef();
+        } else {
+          loadRoles(undefined);
+        }
       }, 0);
     });
 
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       setUser(data.session?.user ?? null);
-      loadRoles(data.session?.user?.id).finally(() => setLoading(false));
+      const uid = data.session?.user?.id;
+      const start = uid ? applyIntent(uid) : Promise.resolve();
+      start.then(() => loadRoles(uid)).finally(() => setLoading(false));
       if (data.session?.user) attributeRef();
     });
 

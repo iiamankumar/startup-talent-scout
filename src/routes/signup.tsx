@@ -7,7 +7,9 @@ import { useAuth } from "@/lib/auth-context";
 import { AuthShell, Field, Divider, GoogleIcon } from "@/components/AuthShell";
 
 export const Route = createFileRoute("/signup")({
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { redirect?: string; ref?: string; intent?: "engineer" | "founder" } => ({
     redirect: typeof search.redirect === "string" ? search.redirect : undefined,
     ref: typeof search.ref === "string" ? search.ref : undefined,
     intent:
@@ -28,9 +30,10 @@ function SignupPage() {
   const { redirect, intent: intentParam } = Route.useSearch();
   const defaultIntent: "engineer" | "founder" =
     intentParam ?? (redirect?.startsWith("/apply") || redirect?.startsWith("/jobs") ? "engineer" : "founder");
-  const target = safeRedirect(redirect ?? (defaultIntent === "engineer" ? "/apply" : "/hire"));
   const { user, loading } = useAuth();
   const [intent, setIntent] = useState<"engineer" | "founder">(defaultIntent);
+  // Follow the live toggle unless an explicit redirect was requested.
+  const target = safeRedirect(redirect ?? (intent === "engineer" ? "/apply" : "/hire"));
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -91,6 +94,7 @@ function SignupPage() {
   };
 
   const handleGoogle = async () => {
+    try { localStorage.setItem("aveiq_intent", intent); } catch { /* ignore */ }
     const res = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin + target,
     });

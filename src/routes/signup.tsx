@@ -28,9 +28,10 @@ function SignupPage() {
   const { redirect, intent: intentParam } = Route.useSearch();
   const defaultIntent: "engineer" | "founder" =
     intentParam ?? (redirect?.startsWith("/apply") || redirect?.startsWith("/jobs") ? "engineer" : "founder");
-  const target = safeRedirect(redirect ?? (defaultIntent === "engineer" ? "/apply" : "/hire"));
   const { user, loading } = useAuth();
   const [intent, setIntent] = useState<"engineer" | "founder">(defaultIntent);
+  // Follow the live toggle unless an explicit redirect was requested.
+  const target = safeRedirect(redirect ?? (intent === "engineer" ? "/apply" : "/hire"));
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

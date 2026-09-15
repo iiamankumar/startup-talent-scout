@@ -26,7 +26,7 @@ export const applySignupIntent = createServerFn({ method: "POST" })
 
     const [{ count: engCount }, { count: reqCount }] = await Promise.all([
       supabaseAdmin.from("engineers").select("user_id", { count: "exact", head: true }).eq("user_id", userId),
-      supabaseAdmin.from("hire_requests").select("id", { count: "exact", head: true }).eq("founder_id", userId),
+      supabaseAdmin.from("hire_requests").select("id", { count: "exact", head: true }).eq("owner_id", userId),
     ]);
     if ((engCount ?? 0) > 0 || (reqCount ?? 0) > 0) {
       return { ok: false, reason: "account_in_use" };

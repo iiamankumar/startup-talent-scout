@@ -92,6 +92,7 @@ function SignupPage() {
   };
 
   const handleGoogle = async () => {
+    try { localStorage.setItem("aveiq_intent", intent); } catch { /* ignore */ }
     const res = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin + target,
     });

@@ -35,6 +35,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
 
+    const applyIntent = async (uid: string | undefined) => {
+      try {
+        const pending = localStorage.getItem("aveiq_intent");
+        if (pending !== "engineer" && pending !== "founder") return;
+        localStorage.removeItem("aveiq_intent");
+        const { applySignupIntent } = await import("@/lib/intent.functions");
+        await applySignupIntent({ data: { intent: pending } });
+        await loadRoles(uid);
+      } catch { /* ignore */ }
+    };
+
     const attributeRef = async () => {
       try {
         const ref = localStorage.getItem("aveiq_ref");

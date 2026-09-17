@@ -150,3 +150,69 @@ export const getAdminMetrics = createServerFn({ method: "GET" })
     };
   });
 
+
+// ADMIN: full candidate detail for the vetting review panel.
+export const getEngineerAdminDetail = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => z.object({ user_id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+
+    const { data: engineer, error } = await supabaseAdmin
+      .from("engineers")
+      .select("*")
+      .eq("user_id", data.user_id)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!engineer) throw new Error("Engineer not found");
+
+    // Signed URL so admins can actually open the uploaded resume.
+    let resumeSignedUrl: string | null = null;
+    let resumeFileName: string | null = null;
+    if (engineer.resume_url) {
+      resumeFileName = engineer.resume_url.split("/").pop() ?? engineer.resume_url;
+      const { data: signed } = await supabaseAdmin.storage
+        .from("resumes")
+        .createSignedUrl(engineer.resume_url, 60 * 60);
+      resumeSignedUrl = signed?.signedUrl ?? null;
+    }
+
+    let email: string | null = null;
+    let accountCreatedAt: string | null = null;
+    try {
+      const { data: u } = await supabaseAdmin.auth.admin.getUserById(data.user_id);
+      email = u?.user?.email ?? null;
+      accountCreatedAt = u?.user?.created_at ?? null;
+    } catch {
+      /* non-fatal */
+    }
+
+    const [{ data: applications }, { data: reviews }, { data: pasteFlags }] = await Promise.all([
+      supabaseAdmin
+        .from("applications")
+        .select("id, status, note, created_at, hire_requests(role_title)")
+        .eq("engineer_id", data.user_id)
+        .order("created_at", { ascending: false }),
+      supabaseAdmin
+        .from("engineer_reviews")
+        .select("id, rating, quote, reviewer_name, reviewer_company, approved, created_at")
+        .eq("engineer_id", data.user_id)
+        .order("created_at", { ascending: false }),
+      supabaseAdmin
+        .from("engineer_paste_flags")
+        .select("id, turn_index, reason, snippet, created_at")
+        .eq("user_id", data.user_id)
+        .order("created_at", { ascending: false }),
+    ]);
+
+    return {
+      engineer,
+      email,
+      accountCreatedAt,
+      resumeSignedUrl,
+      resumeFileName,
+      applications: applications ?? [],
+      reviews: reviews ?? [],
+      pasteFlags: pasteFlags ?? [],
+    };
+  });

@@ -126,13 +126,44 @@ async function assertAdmin(userId: string) {
   if (!data) throw new Error("Forbidden: admin role required");
 }
 
+// ADMIN: all reviews (pending + approved) with engineer names resolved manually —
+// engineer_reviews has no FK to engineers, so PostgREST cannot embed the relation.
+export const listAllReviewsAdmin = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.userId);
+    const { data, error } = await supabaseAdmin
+      .from("engineer_reviews")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    const rows = data ?? [];
+
+    const ids = Array.from(new Set(rows.map((r) => r.engineer_id)));
+    const nameMap = new Map<string, string>();
+    if (ids.length) {
+      const { data: engineers } = await supabaseAdmin
+        .from("engineers")
+        .select("user_id, display_name")
+        .in("user_id", ids);
+      (engineers ?? []).forEach((e) => nameMap.set(e.user_id, e.display_name));
+    }
+
+    return {
+      reviews: rows.map((r) => ({
+        ...r,
+        engineer_name: nameMap.get(r.engineer_id) ?? null,
+      })),
+    };
+  });
+
 export const listPendingReviewsAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertAdmin(context.userId);
     const { data, error } = await supabaseAdmin
       .from("engineer_reviews")
-      .select("*, engineers(display_name)")
+      .select("*")
       .eq("approved", false)
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);

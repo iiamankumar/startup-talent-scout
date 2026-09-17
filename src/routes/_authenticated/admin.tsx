@@ -12,7 +12,8 @@ import { sendIncompleteSignupReminders } from "@/lib/incomplete-signup.functions
 import { listAllReferralsAdmin, updateReferralReward } from "@/lib/referrals.functions";
 
 import { scheduleMainInterview, setMainInterviewVerdict } from "@/lib/interview.functions";
-import { listPendingReviewsAdmin, setReviewApprovalAdmin } from "@/lib/reviews.functions";
+import { listAllReviewsAdmin, setReviewApprovalAdmin } from "@/lib/reviews.functions";
+import { getEngineerAdminDetail } from "@/lib/admin.functions";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ChevronDown, Search, ShieldCheck, Star } from "lucide-react";
@@ -279,67 +280,96 @@ function ReferralsAdmin() {
 }
 
 function ReviewModeration() {
-  const list = useServerFn(listPendingReviewsAdmin);
+  const list = useServerFn(listAllReviewsAdmin);
   const setApproval = useServerFn(setReviewApprovalAdmin);
-  const q = useQuery({ queryKey: ["pendingReviews"], queryFn: () => list() });
+  const q = useQuery({ queryKey: ["adminReviews"], queryFn: () => list() });
+  const [tab, setTab] = useState<"pending" | "approved">("pending");
+
+  const all = q.data?.reviews ?? [];
+  const pending = all.filter((r) => !r.approved);
+  const approved = all.filter((r) => r.approved);
+  const shown = tab === "pending" ? pending : approved;
+
+  const act = async (id: string, approved: boolean) => {
+    try {
+      await setApproval({ data: { id, approved } });
+      toast.success(approved ? "Review approved" : "Review hidden");
+      q.refetch();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not update review");
+    }
+  };
 
   return (
     <section className="mt-12">
-      <div className="flex items-center justify-between border-b border-border pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
         <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
-          Pending reviews
+          Reviews
         </h2>
-        <span className="text-xs text-muted-foreground/70">
-          {q.data?.reviews.length ?? 0} awaiting
-        </span>
+        <div className="flex items-center gap-2 text-xs">
+          <button
+            onClick={() => setTab("pending")}
+            className={`rounded-full px-3 py-1 ${tab === "pending" ? "bg-foreground text-background" : "bg-secondary"}`}
+          >
+            Pending {pending.length}
+          </button>
+          <button
+            onClick={() => setTab("approved")}
+            className={`rounded-full px-3 py-1 ${tab === "approved" ? "bg-foreground text-background" : "bg-secondary"}`}
+          >
+            Published {approved.length}
+          </button>
+        </div>
       </div>
       <ul className="mt-6 space-y-4">
         {q.isLoading && <li className="text-sm text-muted-foreground">Loading…</li>}
-        {q.data?.reviews.map((r) => {
-          const eng = r.engineers as { display_name?: string } | null;
-          return (
-            <li key={r.id} className="rounded-2xl bg-card p-5 ring-1 ring-black/5">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm font-semibold">
-                    For {eng?.display_name ?? "—"} · by {r.reviewer_name}
-                    {r.reviewer_company ? ` @ ${r.reviewer_company}` : ""}
-                  </p>
-                  <div className="mt-1 flex items-center gap-1 text-success">
-                    {Array.from({ length: r.rating }).map((_, i) => (
-                      <Star key={i} className="size-3 fill-current" />
-                    ))}
-                  </div>
+        {q.isError && (
+          <li className="text-sm text-destructive">Could not load reviews. Try refreshing.</li>
+        )}
+        {shown.map((r) => (
+          <li key={r.id} className="rounded-2xl bg-card p-5 ring-1 ring-black/5">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold">
+                  For {r.engineer_name ?? "Unknown engineer"} · by {r.reviewer_name}
+                  {r.reviewer_company ? ` @ ${r.reviewer_company}` : ""}
+                </p>
+                <div className="mt-1 flex items-center gap-1 text-success">
+                  {Array.from({ length: r.rating }).map((_, i) => (
+                    <Star key={i} className="size-3 fill-current" />
+                  ))}
+                  <span className="ml-2 text-[11px] text-muted-foreground">
+                    {r.reviewer_role ? `${r.reviewer_role} · ` : ""}
+                    {new Date(r.created_at).toLocaleDateString()}
+                  </span>
                 </div>
-                <div className="flex gap-2">
+              </div>
+              <div className="flex gap-2">
+                {!r.approved && (
                   <button
-                    onClick={async () => {
-                      await setApproval({ data: { id: r.id, approved: true } });
-                      toast.success("Approved");
-                      q.refetch();
-                    }}
+                    onClick={() => act(r.id, true)}
                     className="rounded-md bg-foreground px-3 py-1.5 text-xs font-medium text-background"
                   >
                     Approve
                   </button>
+                )}
+                {r.approved && (
                   <button
-                    onClick={async () => {
-                      await setApproval({ data: { id: r.id, approved: false } });
-                      toast.success("Hidden");
-                      q.refetch();
-                    }}
+                    onClick={() => act(r.id, false)}
                     className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground"
                   >
-                    Hide
+                    Unpublish
                   </button>
-                </div>
+                )}
               </div>
-              <p className="mt-3 text-sm text-foreground/90">“{r.quote}”</p>
-            </li>
-          );
-        })}
-        {q.data && q.data.reviews.length === 0 && (
-          <li className="text-sm text-muted-foreground">No pending reviews.</li>
+            </div>
+            <p className="mt-3 text-sm text-foreground/90">“{r.quote}”</p>
+          </li>
+        ))}
+        {!q.isLoading && shown.length === 0 && (
+          <li className="text-sm text-muted-foreground">
+            {tab === "pending" ? "No reviews awaiting moderation." : "No published reviews yet."}
+          </li>
         )}
       </ul>
     </section>
@@ -445,28 +475,9 @@ function AdminRow({
       {open && (
         <tr className="bg-secondary/30">
           <td colSpan={6} className="px-6 py-5">
-            <div className="grid gap-5 md:grid-cols-2">
-              <div>
-                <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Resume</h4>
-                <p className="mt-1 text-xs">
-                  {engineer.resume_url ? (
-                    <span className="text-muted-foreground">Path: <code>{engineer.resume_url}</code></span>
-                  ) : "No resume uploaded"}
-                </p>
-                {engineer.resume_feedback && (
-                  <p className="mt-2 whitespace-pre-wrap rounded bg-background p-3 text-xs">{engineer.resume_feedback}</p>
-                )}
-                <p className="mt-3 text-xs text-muted-foreground">
-                  Work auth: <b className="text-foreground">{engineer.work_authorization ?? "unspecified"}</b>
-                </p>
-              </div>
-              <div>
-                <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">AI interview (Kai)</h4>
-                <p className="mt-1 text-xs">Status: <b>{engineer.ai_interview_status ?? "not_started"}</b></p>
-                {engineer.ai_interview_summary && (
-                  <p className="mt-2 rounded bg-background p-3 text-xs">{engineer.ai_interview_summary}</p>
-                )}
-              </div>
+            <CandidateDetail userId={engineer.user_id} />
+            <div className="mt-6 grid gap-5 md:grid-cols-2">
+
               <div className="md:col-span-2">
                 <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Final interview</h4>
                 {engineer.main_interview_scheduled_at && (
@@ -615,3 +626,173 @@ function IncompleteSignupReminder() {
   );
 }
 
+
+function CandidateDetail({ userId }: { userId: string }) {
+  const load = useServerFn(getEngineerAdminDetail);
+  const q = useQuery({
+    queryKey: ["adminEngineerDetail", userId],
+    queryFn: () => load({ data: { user_id: userId } }),
+  });
+  const [showResumeText, setShowResumeText] = useState(false);
+  const [showTranscript, setShowTranscript] = useState(false);
+
+  if (q.isLoading) return <p className="text-xs text-muted-foreground">Loading candidate…</p>;
+  if (q.isError || !q.data)
+    return <p className="text-xs text-destructive">Could not load this candidate's details.</p>;
+
+  const { engineer, email, accountCreatedAt, resumeSignedUrl, resumeFileName, applications, reviews, pasteFlags } =
+    q.data as any;
+  const transcript: Array<{ role?: string; content?: string }> = Array.isArray(engineer.ai_interview_transcript)
+    ? engineer.ai_interview_transcript
+    : [];
+
+  return (
+    <div className="grid gap-5 md:grid-cols-2">
+      <div className="md:col-span-2 flex flex-wrap gap-x-6 gap-y-1 text-xs text-muted-foreground">
+        <span>Email: <b className="text-foreground">{email ?? "—"}</b></span>
+        <span>Location: <b className="text-foreground">{engineer.location ?? "—"}</b></span>
+        <span>Experience: <b className="text-foreground">{engineer.years_experience ?? "—"} yrs</b></span>
+        <span>Work auth: <b className="text-foreground">{engineer.work_authorization ?? "unspecified"}</b></span>
+        <span>Available: <b className="text-foreground">{engineer.available ? "Yes" : "No"}</b></span>
+        <span>Joined: <b className="text-foreground">{accountCreatedAt ? new Date(accountCreatedAt).toLocaleDateString() : "—"}</b></span>
+      </div>
+
+      {engineer.bio && (
+        <div className="md:col-span-2">
+          <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Bio</h4>
+          <p className="mt-1 whitespace-pre-wrap text-xs text-foreground/90">{engineer.bio}</p>
+        </div>
+      )}
+
+      <div>
+        <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Resume</h4>
+        {resumeSignedUrl ? (
+          <>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <a
+                href={resumeSignedUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-md bg-foreground px-3 py-1.5 text-xs font-medium text-background"
+              >
+                Open resume
+              </a>
+              <span className="text-[11px] text-muted-foreground">{resumeFileName}</span>
+            </div>
+            <iframe
+              title="Resume preview"
+              src={resumeSignedUrl}
+              className="mt-3 h-[420px] w-full rounded-md border border-border bg-background"
+            />
+          </>
+        ) : (
+          <p className="mt-1 text-xs text-muted-foreground">No resume uploaded.</p>
+        )}
+        <p className="mt-3 text-xs text-muted-foreground">
+          Resume score: <b className="text-foreground">{engineer.resume_score ?? "—"}</b>
+        </p>
+        {engineer.resume_feedback && (
+          <p className="mt-2 whitespace-pre-wrap rounded bg-background p-3 text-xs">{engineer.resume_feedback}</p>
+        )}
+        {engineer.resume_text && (
+          <>
+            <button
+              onClick={() => setShowResumeText((v) => !v)}
+              className="mt-2 text-[11px] underline text-muted-foreground"
+            >
+              {showResumeText ? "Hide extracted text" : "Show extracted text"}
+            </button>
+            {showResumeText && (
+              <pre className="mt-2 max-h-72 overflow-auto whitespace-pre-wrap rounded bg-background p-3 text-[11px] leading-relaxed">
+                {engineer.resume_text}
+              </pre>
+            )}
+          </>
+        )}
+      </div>
+
+      <div>
+        <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">AI interview (Kai)</h4>
+        <p className="mt-1 text-xs">
+          Status: <b>{engineer.ai_interview_status ?? "not_started"}</b> · Score:{" "}
+          <b>{engineer.ai_interview_score ?? "—"}</b>
+          {engineer.ai_interview_completed_at
+            ? ` · ${new Date(engineer.ai_interview_completed_at).toLocaleString()}`
+            : ""}
+        </p>
+        {engineer.ai_interview_summary && (
+          <p className="mt-2 whitespace-pre-wrap rounded bg-background p-3 text-xs">{engineer.ai_interview_summary}</p>
+        )}
+        {transcript.length > 0 && (
+          <>
+            <button
+              onClick={() => setShowTranscript((v) => !v)}
+              className="mt-2 text-[11px] underline text-muted-foreground"
+            >
+              {showTranscript ? "Hide transcript" : `Show transcript (${transcript.length} turns)`}
+            </button>
+            {showTranscript && (
+              <div className="mt-2 max-h-72 space-y-2 overflow-auto rounded bg-background p-3">
+                {transcript.map((t, i) => (
+                  <p key={i} className="text-[11px]">
+                    <b className="uppercase text-muted-foreground">{t.role ?? "msg"}:</b>{" "}
+                    <span className="whitespace-pre-wrap">{t.content ?? ""}</span>
+                  </p>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+        {pasteFlags.length > 0 && (
+          <p className="mt-2 rounded bg-destructive/10 p-2 text-[11px] text-destructive">
+            {pasteFlags.length} integrity flag{pasteFlags.length === 1 ? "" : "s"} during the interview.
+          </p>
+        )}
+      </div>
+
+      <div>
+        <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Applications</h4>
+        {applications.length === 0 ? (
+          <p className="mt-1 text-xs text-muted-foreground">No applications yet.</p>
+        ) : (
+          <ul className="mt-2 space-y-1 text-xs">
+            {applications.map((a: any) => (
+              <li key={a.id} className="flex items-center justify-between gap-3 rounded bg-background px-3 py-2">
+                <span>{a.hire_requests?.role_title ?? "Role"}</span>
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground">{a.status}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div>
+        <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Reviews received</h4>
+        {reviews.length === 0 ? (
+          <p className="mt-1 text-xs text-muted-foreground">No reviews yet.</p>
+        ) : (
+          <ul className="mt-2 space-y-2 text-xs">
+            {reviews.map((r: any) => (
+              <li key={r.id} className="rounded bg-background p-3">
+                <p className="font-medium">
+                  {r.rating}★ · {r.reviewer_name}
+                  {r.reviewer_company ? ` @ ${r.reviewer_company}` : ""}
+                  <span className="ml-2 text-[10px] uppercase text-muted-foreground">
+                    {r.approved ? "published" : "pending"}
+                  </span>
+                </p>
+                <p className="mt-1 text-foreground/90">“{r.quote}”</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div className="md:col-span-2 flex flex-wrap gap-3 text-xs">
+        {engineer.github_url && <a className="underline" href={engineer.github_url} target="_blank" rel="noopener noreferrer">GitHub</a>}
+        {engineer.linkedin_url && <a className="underline" href={engineer.linkedin_url} target="_blank" rel="noopener noreferrer">LinkedIn</a>}
+        {engineer.website_url && <a className="underline" href={engineer.website_url} target="_blank" rel="noopener noreferrer">Website</a>}
+      </div>
+    </div>
+  );
+}

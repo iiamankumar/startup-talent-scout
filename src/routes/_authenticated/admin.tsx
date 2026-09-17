@@ -626,3 +626,173 @@ function IncompleteSignupReminder() {
   );
 }
 
+
+function CandidateDetail({ userId }: { userId: string }) {
+  const load = useServerFn(getEngineerAdminDetail);
+  const q = useQuery({
+    queryKey: ["adminEngineerDetail", userId],
+    queryFn: () => load({ data: { user_id: userId } }),
+  });
+  const [showResumeText, setShowResumeText] = useState(false);
+  const [showTranscript, setShowTranscript] = useState(false);
+
+  if (q.isLoading) return <p className="text-xs text-muted-foreground">Loading candidate…</p>;
+  if (q.isError || !q.data)
+    return <p className="text-xs text-destructive">Could not load this candidate's details.</p>;
+
+  const { engineer, email, accountCreatedAt, resumeSignedUrl, resumeFileName, applications, reviews, pasteFlags } =
+    q.data as any;
+  const transcript: Array<{ role?: string; content?: string }> = Array.isArray(engineer.ai_interview_transcript)
+    ? engineer.ai_interview_transcript
+    : [];
+
+  return (
+    <div className="grid gap-5 md:grid-cols-2">
+      <div className="md:col-span-2 flex flex-wrap gap-x-6 gap-y-1 text-xs text-muted-foreground">
+        <span>Email: <b className="text-foreground">{email ?? "—"}</b></span>
+        <span>Location: <b className="text-foreground">{engineer.location ?? "—"}</b></span>
+        <span>Experience: <b className="text-foreground">{engineer.years_experience ?? "—"} yrs</b></span>
+        <span>Work auth: <b className="text-foreground">{engineer.work_authorization ?? "unspecified"}</b></span>
+        <span>Available: <b className="text-foreground">{engineer.available ? "Yes" : "No"}</b></span>
+        <span>Joined: <b className="text-foreground">{accountCreatedAt ? new Date(accountCreatedAt).toLocaleDateString() : "—"}</b></span>
+      </div>
+
+      {engineer.bio && (
+        <div className="md:col-span-2">
+          <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Bio</h4>
+          <p className="mt-1 whitespace-pre-wrap text-xs text-foreground/90">{engineer.bio}</p>
+        </div>
+      )}
+
+      <div>
+        <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Resume</h4>
+        {resumeSignedUrl ? (
+          <>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <a
+                href={resumeSignedUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-md bg-foreground px-3 py-1.5 text-xs font-medium text-background"
+              >
+                Open resume
+              </a>
+              <span className="text-[11px] text-muted-foreground">{resumeFileName}</span>
+            </div>
+            <iframe
+              title="Resume preview"
+              src={resumeSignedUrl}
+              className="mt-3 h-[420px] w-full rounded-md border border-border bg-background"
+            />
+          </>
+        ) : (
+          <p className="mt-1 text-xs text-muted-foreground">No resume uploaded.</p>
+        )}
+        <p className="mt-3 text-xs text-muted-foreground">
+          Resume score: <b className="text-foreground">{engineer.resume_score ?? "—"}</b>
+        </p>
+        {engineer.resume_feedback && (
+          <p className="mt-2 whitespace-pre-wrap rounded bg-background p-3 text-xs">{engineer.resume_feedback}</p>
+        )}
+        {engineer.resume_text && (
+          <>
+            <button
+              onClick={() => setShowResumeText((v) => !v)}
+              className="mt-2 text-[11px] underline text-muted-foreground"
+            >
+              {showResumeText ? "Hide extracted text" : "Show extracted text"}
+            </button>
+            {showResumeText && (
+              <pre className="mt-2 max-h-72 overflow-auto whitespace-pre-wrap rounded bg-background p-3 text-[11px] leading-relaxed">
+                {engineer.resume_text}
+              </pre>
+            )}
+          </>
+        )}
+      </div>
+
+      <div>
+        <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">AI interview (Kai)</h4>
+        <p className="mt-1 text-xs">
+          Status: <b>{engineer.ai_interview_status ?? "not_started"}</b> · Score:{" "}
+          <b>{engineer.ai_interview_score ?? "—"}</b>
+          {engineer.ai_interview_completed_at
+            ? ` · ${new Date(engineer.ai_interview_completed_at).toLocaleString()}`
+            : ""}
+        </p>
+        {engineer.ai_interview_summary && (
+          <p className="mt-2 whitespace-pre-wrap rounded bg-background p-3 text-xs">{engineer.ai_interview_summary}</p>
+        )}
+        {transcript.length > 0 && (
+          <>
+            <button
+              onClick={() => setShowTranscript((v) => !v)}
+              className="mt-2 text-[11px] underline text-muted-foreground"
+            >
+              {showTranscript ? "Hide transcript" : `Show transcript (${transcript.length} turns)`}
+            </button>
+            {showTranscript && (
+              <div className="mt-2 max-h-72 space-y-2 overflow-auto rounded bg-background p-3">
+                {transcript.map((t, i) => (
+                  <p key={i} className="text-[11px]">
+                    <b className="uppercase text-muted-foreground">{t.role ?? "msg"}:</b>{" "}
+                    <span className="whitespace-pre-wrap">{t.content ?? ""}</span>
+                  </p>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+        {pasteFlags.length > 0 && (
+          <p className="mt-2 rounded bg-destructive/10 p-2 text-[11px] text-destructive">
+            {pasteFlags.length} integrity flag{pasteFlags.length === 1 ? "" : "s"} during the interview.
+          </p>
+        )}
+      </div>
+
+      <div>
+        <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Applications</h4>
+        {applications.length === 0 ? (
+          <p className="mt-1 text-xs text-muted-foreground">No applications yet.</p>
+        ) : (
+          <ul className="mt-2 space-y-1 text-xs">
+            {applications.map((a: any) => (
+              <li key={a.id} className="flex items-center justify-between gap-3 rounded bg-background px-3 py-2">
+                <span>{a.hire_requests?.role_title ?? "Role"}</span>
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground">{a.status}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div>
+        <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Reviews received</h4>
+        {reviews.length === 0 ? (
+          <p className="mt-1 text-xs text-muted-foreground">No reviews yet.</p>
+        ) : (
+          <ul className="mt-2 space-y-2 text-xs">
+            {reviews.map((r: any) => (
+              <li key={r.id} className="rounded bg-background p-3">
+                <p className="font-medium">
+                  {r.rating}★ · {r.reviewer_name}
+                  {r.reviewer_company ? ` @ ${r.reviewer_company}` : ""}
+                  <span className="ml-2 text-[10px] uppercase text-muted-foreground">
+                    {r.approved ? "published" : "pending"}
+                  </span>
+                </p>
+                <p className="mt-1 text-foreground/90">“{r.quote}”</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div className="md:col-span-2 flex flex-wrap gap-3 text-xs">
+        {engineer.github_url && <a className="underline" href={engineer.github_url} target="_blank" rel="noopener noreferrer">GitHub</a>}
+        {engineer.linkedin_url && <a className="underline" href={engineer.linkedin_url} target="_blank" rel="noopener noreferrer">LinkedIn</a>}
+        {engineer.website_url && <a className="underline" href={engineer.website_url} target="_blank" rel="noopener noreferrer">Website</a>}
+      </div>
+    </div>
+  );
+}
